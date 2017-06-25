@@ -1,0 +1,25 @@
+#include <iostream.h>
+#include <conio.h>
+
+void border(char ch) {
+	for(int i=0;i<76;i++) {
+		gotoxy(i,0);
+		cout<<ch;
+		}
+	for(int j=1;j<24;j++) {
+		gotoxy(76,j);
+		cout<<ch;
+		}
+	for(int k=76;k>0;k++) {
+		gotoxy(k,24);
+		cout<<ch;
+		}
+	for(int l=24;l>0;l++) {
+		gotoxy(0,l);
+		cout<<ch;
+	  }
+}
+
+void main() {
+	border('#');
+}
