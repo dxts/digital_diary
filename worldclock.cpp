@@ -2,6 +2,7 @@
 #include <time.h>
 #include <conio.h>
 #include "border.h"
+
 void worldClock()
 {
 	time_t rawtime=time(0);
@@ -48,8 +49,8 @@ void displayTime(char city[],int hr,int mn,tm utc)
 {
 	clrscr();
 	border('.',25,9,30,5);
-	gotoxy(32,11);
-	cout<<city<<":\t"<<(hr+(utc.tm_hour))%24+(mn+(utc.tm_min))/60<<':'<<(mn+(utc.tm_min))%60<<':'<<(utc.tm_sec)<<endl;
+	gotoxy(31,11);
+	cout<<city<<":\t"<<(24+hr+(utc.tm_hour))%24+(mn+(utc.tm_min))/60<<':'<<(mn+(utc.tm_min))%60<<':'<<(utc.tm_sec)<<endl;
 }
 
 
