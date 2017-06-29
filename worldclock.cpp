@@ -50,7 +50,7 @@ void displayTime(char city[],int hr,int mn,tm utc)
 	clrscr();
 	border('.',25,9,30,5);
 	gotoxy(31,11);
-	cout<<city<<":\t"<<(24+hr+(utc.tm_hour))%24+(mn+(utc.tm_min))/60<<':'<<(mn+(utc.tm_min))%60<<':'<<(utc.tm_sec)<<endl;
+	cout<<city<<":\t"<<(17+24+hr+(utc.tm_hour))%24+(mn+(utc.tm_min))/60<<':'<<(mn+(utc.tm_min))%60<<':'<<(utc.tm_sec)<<endl; // +17 because the utc time was off by 17 (temporary fix)
 }
 
 
