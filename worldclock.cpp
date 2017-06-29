@@ -1,6 +1,7 @@
 #include <iostream.h>
 #include <time.h>
-
+#include <conio.h>
+#include "border.h"
 void worldClock()
 {
 	time_t rawtime=time(0);
