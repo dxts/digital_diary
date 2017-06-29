@@ -1,5 +1,5 @@
-void border(char ch,int x,int y,int l,int b)
-{
+void border(char ch,int x,int y,int l,int b)			/*(x,y) is the top left corner point and 
+{								 l and b are the length and breadth of the rectangle*/
 	int p,q,r,s;
 	for(p=x;p<x+l;p++)
 	{
