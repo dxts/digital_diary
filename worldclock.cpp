@@ -17,6 +17,8 @@ void worldClock()
 
 void displayTime(char city[],int hr,int mn,tm utc)
 {
+	border('.',25,9,30,5);
+	gotoxy(32,11);
 	cout<<city<<":\t"<<(hr+(utc.tm_hour))%24+(mn+(utc.tm_min))/60<<':'<<(mn+(utc.tm_min))%60<<':'<<(utc.tm_sec)<<endl;
 }
 
