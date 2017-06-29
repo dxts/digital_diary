@@ -1,6 +1,3 @@
-#include <iostream.h>
-#include <conio.h>
-
 void border(char ch,int x,int y,int l,int b)
 {
 	int p,q,r,s;
