@@ -1,13 +1,13 @@
 #include <iostream.h>
 #include <time.h>
 #include <conio.h>
-#include "border.h"
+#include "border.h" //contains border function : to create border of required size and using reqd. character 
 
 void worldClock()
 {
-	time_t rawtime=time(0);
+	time_t rawtime=time(0); //gets the unix timestamp. ie, no. of seconds since 1 Jan 1970
 	struct tm *gmt;
-	gmt=gmtime(&rawtime);
+	gmt=gmtime(&rawtime); //converts rawtime to UTC and stores in struct gmt
 
 	void displayTime(char city[],int hr,int mn,tm utc);
 
