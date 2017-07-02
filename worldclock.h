@@ -1,8 +1,3 @@
-#include <iostream.h>
-#include <time.h>
-#include <conio.h>
-#include "border.h" //contains border function : to create border of required size and using reqd. character 
-
 void worldClock()
 {
 	time_t rawtime=time(0); //gets the unix timestamp. ie, no. of seconds since 1 Jan 1970
@@ -41,9 +36,9 @@ void worldClock()
 						break;
 			default:	cout<<"Invalid option!";
 						goto ask_time_option;
+			}
 		}
 	}
-}
 
 void displayTime(char city[],int hr,int mn,tm utc)
 {
@@ -51,11 +46,4 @@ void displayTime(char city[],int hr,int mn,tm utc)
 	border('.',25,9,30,5);
 	gotoxy(31,11);
 	cout<<city<<":\t"<<(17+24+hr+(utc.tm_hour))%24+(mn+(utc.tm_min))/60<<':'<<(mn+(utc.tm_min))%60<<':'<<(utc.tm_sec)<<endl; // +17 because the utc time was off by 17 (temporary fix)
-}
-
-
-int main()
-{
-	 worldClock();
-	 return 1;
-}
+	}
