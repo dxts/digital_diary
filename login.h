@@ -1,10 +1,10 @@
-void login()
+char *getpass()
 {
 	for(int i=0;i<50;i++)
 	{
 		pass[i]=getch();
 		int intpass=int(pass[i]);
-		if(pass[i]==13)
+		if(intpass==13)
 		{
 			pass[i]='\0';
 			break;
@@ -22,4 +22,5 @@ void login()
 			}
 		cout<<'*';
 		}
+	return pass;
 	}
