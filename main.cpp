@@ -5,79 +5,96 @@
 #include <stdlib.h>
 
 class user
-{
+	{
 	private:
-		char username[50];
-		char password[50];
+			char password[50];
+			char username[50];
 	public:
-		char* login();
-		char* retuser()
-		{
-			return username;
+			char* retpassword()
+				{
+				return password;
 			}
-		char* retpass()
-		{
-			return password;
+			char* retusername()
+				{
+				return username;
 			}
-		void adduser();
-	};
+};
 
-char* user :: login()
-{
-	user U;
+void login()
+	{
 	char uname[50],pass[50];
 	int bool=0;
-	enter_username:
+	user U;
 
+	enter_username:
+	clrscr();
 	gotoxy(30,10);
 	cout<<"Username: ";
 	gets(uname);
 	ifstream infile("user.dat",ios::in|ios::binary);
 	if(!infile)
-	{
+		{
+		clrscr();
+		gotoxy(30,11);
+		cout<<"File doesn't exist!!";
+		getch();
+		exit(1);
+	}
+	while(!infile.eof())
+		{
+		infile.read((char*)&U,sizeof(user));
+		if(strcmp(U.retusername(),uname)==0)
+			{
+			bool=1;
+			infile.close();
+			break;
+		}
+	}
+	if(bool==0)
+		{
+		clrscr();
+		gotoxy(30,11);
+		cout<<"Username is incorrect";
+		getch();
+		goto enter_username;
+	}
+///////////////////////////////////////////////////////////////////////////////////
+	enter_password:
+
+	bool=0;
+	gotoxy(30,12);
+	cout<<"Password: ";
+	strcpy(pass,getpass());
+	infile.open("user.dat",ios::in|ios::binary);
+	if(!infile)
+		{
 		clrscr();
 		gotoxy(30,11);
 		cout<<"File doesn't exist!!";
 		exit(1);
-		}
+	}
 	while(!infile.eof())
-	{
-		infile.read((char*)&U, sizeof(user));
-		if(U.retuser()==uname)
+		{
+		infile.read((char*)&U,sizeof(user));
+		if(strcmp(U.retpassword(),pass)==0)
+			{
+			infile.close();
 			bool=1;
+			break;
 		}
+	}
 	if(bool==0)
-	{
+		{
 		clrscr();
 		gotoxy(30,11);
-		cout<<"Username is incorrect";
+		cout<<"Password is incorrect";
+		infile.close();
+		getch();
 		goto enter_username;
-		}
-///////////////////////////////////////////////////////////////////////////////////
-	enter_password:
-
-	gotoxy(30,12);
-	cout<<"Password: ";
-	pass=getpass();
-	infile.seekg(0,ios::beg);
-	while(!infile.eof())
-	{
-		infile.read((char*)&U, sizeof(user));
-		if(U.retpass()==pass)
-			{
-				infile.close();
-				return pass;
-				}
-		}
-	clrscr();
-	gotoxy(30,11);
-	cout<<"Password is incorrect";
-	infile.close();
-	goto enter_username;
+	}
 /////////////////////////////////////////////////////////////////////////////////////
-	}
+}
 void main()
-{
-	user a1;
-	cout<<a1.login();
-	}
+	{
+	login();
+}
