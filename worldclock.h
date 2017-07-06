@@ -1,49 +1,81 @@
 void worldClock()
-{
+	{
+	void displayTime(char city[],int hr,int mn);
+
+	ask_time_option:
+		{
+		clrscr();
+		border('*',1,1,80,24);
+		gotoxy(30,3);
+		cout<<"World Clock\n";
+		gotoxy(3,5);
+		cout<<"Choose the city:";
+		gotoxy(3,7);
+		cout<<"1.Los Angeles";
+		gotoxy(3,8);
+		cout<<"2.New York";
+		gotoxy(3,9);
+		cout<<"3.Buenos Aires";
+		gotoxy(3,10);
+		cout<<"4.London";
+		gotoxy(3,11);
+		cout<<"5.Paris";
+		gotoxy(3,12);
+		cout<<"6.Riyadh";
+		gotoxy(3,13);
+		cout<<"7.Delhi";
+		gotoxy(3,14);
+		cout<<"8.Beijing";
+		gotoxy(3,15);
+		cout<<"9.Sydney";
+		int opt;
+		gotoxy(3,17);
+		cin>>opt;
+		switch(opt)
+			{
+			case 1:	displayTime("Los Angeles",-8,0);
+						break;
+			case 2:	displayTime("New York",-5,0);
+						break;
+			case 3:	displayTime("Buenos Aires",-3,0);
+						break;
+			case 4:  displayTime("London",0,0);
+						break;
+			case 5:  displayTime("Paris",1,0);
+						break;
+			case 6:  displayTime("Riyadh",3,0);
+						break;
+			case 7:  displayTime("Delhi",5,30);
+						break;
+			case 8:  displayTime("Beijing",8,0);
+						break;
+			case 9:	displayTime("Sydney",10,0);
+						break;
+			default:	cout<<"Invalid option!";
+						goto ask_time_option;
+		}
+	}
+}
+
+void displayTime(char city[],int hr,int mn)
+	{
+	get_time:
 	time_t rawtime=time(0); //gets the unix timestamp. ie, no. of seconds since 1 Jan 1970
 	struct tm *gmt;
 	gmt=gmtime(&rawtime); //converts rawtime to UTC and stores in struct gmt
 
-	void displayTime(char city[],int hr,int mn,tm utc);
-
-	ask_time_option:
-	{
-		gotoxy(30,3);
-		cout<<"World Clock\n";
-		cout<<"Choose the city:";
-		cout<<"\n1.Los Angeles \n2.New York \n3.Buenos Aires \n4.London \n5.Paris \n6.Riyadh \n7.Delhi \n8.Beijing \n9.Sydney"<<endl;
-		int opt;
-		cin>>opt;
-		switch(opt)
-		{
-			case 1:	displayTime("Los Angeles",-8,0,*gmt);
-						break;
-			case 2:	displayTime("New York",-5,0,*gmt);
-						break;
-			case 3:	displayTime("Buenos Aires",-3,0,*gmt);
-						break;
-			case 4:  displayTime("London",0,0,*gmt);
-						break;
-			case 5:  displayTime("Paris",1,0,*gmt);
-						break;
-			case 6:  displayTime("Riyadh",3,0,*gmt);
-						break;
-			case 7:  displayTime("Delhi",5,30,*gmt);
-						break;
-			case 8:  displayTime("Beijing",8,0,*gmt);
-						break;
-			case 9:	displayTime("Sydney",10,0,*gmt);
-						break;
-			default:	cout<<"Invalid option!";
-						goto ask_time_option;
-			}
-		}
-	}
-
-void displayTime(char city[],int hr,int mn,tm utc)
-{
 	clrscr();
+	border('*',1,1,80,24);
 	border('.',25,9,30,5);
 	gotoxy(31,11);
-	cout<<city<<":\t"<<(17+24+hr+(utc.tm_hour))%24+(mn+(utc.tm_min))/60<<':'<<(mn+(utc.tm_min))%60<<':'<<(utc.tm_sec)<<endl; // +17 because the utc time was off by 17 (temporary fix)
-	}
+	cout<<city<<" --- "<<(17+24+hr+(gmt->tm_hour))%24+(mn+(gmt->tm_min))/60<<':'<<(mn+(gmt->tm_min))%60<<':'<<(gmt->tm_sec)<<endl; // +17 because the utc time was off by 17 (temporary fix)
+	gotoxy(3,23);
+	cout<<"Press r to refresh";
+	gotoxy(50,23);
+	cout<<"Press backspace to return";
+	char temp=getch();
+	if(temp=='r'||temp=='R')
+		goto get_time;
+	else if(temp==8)
+		worldClock();
+}
