@@ -1,7 +1,7 @@
 void menu()
 	{
 	clrscr();
-	border('*',1,1,80,24);
+	border('#',1,1,80,24);
 	gotoxy(33,3);
 	cout<<"DIGITAL DIARY";
 
@@ -50,7 +50,7 @@ void menu()
 		case '4':	cout<<"notes";
 				break;
 		default:	clrscr();
-				border('#',22,9,36,6);
+				border('*',22,9,36,6);
 				gotoxy(33,11);
 				cout<<"Invalid option!";
 				gotoxy(26,13);
