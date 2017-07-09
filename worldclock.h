@@ -1,6 +1,6 @@
-void worldClock()
+void world_clock()
 	{
-	void displayTime(char city[],int hr,int mn);
+	void display_time(char city[],int hr,int mn);
 
 	ask_time_option:
 		{
@@ -28,28 +28,32 @@ void worldClock()
 		cout<<"8.Beijing";
 		gotoxy(3,15);
 		cout<<"9.Sydney";
-		int opt;
+		gotoxy(43,23);
+		cout<<"Press backspace to go to main menu..";
+		char opt;
 		gotoxy(3,17);
-		cin>>opt;
+		opt=getch();
 		switch(opt)
 			{
-			case 1:	displayTime("Los Angeles",-8,0);
+			case '1':	display_time("Los Angeles",-8,0);
 						break;
-			case 2:	displayTime("New York",-5,0);
+			case '2':	display_time("New York",-5,0);
 						break;
-			case 3:	displayTime("Buenos Aires",-3,0);
+			case '3':	display_time("Buenos Aires",-3,0);
 						break;
-			case 4:  displayTime("London",0,0);
+			case '4':	display_time("London",0,0);
 						break;
-			case 5:  displayTime("Paris",1,0);
+			case '5':	display_time("Paris",1,0);
 						break;
-			case 6:  displayTime("Riyadh",3,0);
+			case '6':	display_time("Riyadh",3,0);
 						break;
-			case 7:  displayTime("Delhi",5,30);
+			case '7':  	display_time("Delhi",5,30);
 						break;
-			case 8:  displayTime("Beijing",8,0);
+			case '8':  	display_time("Beijing",8,0);
 						break;
-			case 9:	displayTime("Sydney",10,0);
+			case '9':	display_time("Sydney",10,0);
+						break;
+			case 8	:	menu();
 						break;
 			default:	cout<<"Invalid option!";
 						goto ask_time_option;
@@ -57,7 +61,7 @@ void worldClock()
 	}
 }
 
-void displayTime(char city[],int hr,int mn)
+void display_time(char city[],int hr,int mn)
 	{
 	get_time:
 	time_t rawtime=time(0); //gets the unix timestamp. ie, no. of seconds since 1 Jan 1970
@@ -77,5 +81,5 @@ void displayTime(char city[],int hr,int mn)
 	if(temp=='r'||temp=='R')
 		goto get_time;
 	else if(temp==8)
-		worldClock();
+		world_clock();
 }
