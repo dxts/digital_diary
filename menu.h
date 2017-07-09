@@ -43,7 +43,7 @@ void menu()
 		{
 		case '1':	c.menu();
 				break;
-		case '2':	worldClock();
+		case '2':	world_clock();
 				break;
 		case '3':	cout<<"calc";
 				break;
