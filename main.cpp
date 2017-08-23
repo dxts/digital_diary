@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 class user
 	{
@@ -97,4 +98,5 @@ void login()
 void main()
 	{
 	login();
+	menu();
 }
