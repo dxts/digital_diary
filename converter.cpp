@@ -10,7 +10,7 @@
 
 void currency();
 void calc();
-void massconv();
+void mass();
 void converter()
 {
 	clrscr();
@@ -24,7 +24,7 @@ void converter()
 	if(i==1)
 		currency();
 	else if(i==2)
-		massconv();
+		mass();
 	else if(i==3)
 		calc();
 }
@@ -63,7 +63,7 @@ void border(char ch,int x,int y,int l,int b)
 void currency()
 	{
 	clrscr();
-	border('*',1,1,81,24);
+	border('#',1,1,81,24);
 	gotoxy(34,4);
 	cout<<"Currency Converter";
 
@@ -180,63 +180,209 @@ void currency()
 }
 
 
+void unitmenu()
+	{
+	clrscr();
+	border('#',1,1,81,24);
+	gotoxy(33,3);
+	cout<<"Unit Converter";
 
-void massconv()
-  {
-  float i,num1,num2,num3;
-  char ch1[10],ch2[10],ch3[3];
-  clrscr();
-  cout<<"Welcome to Weight converter \n";
-  cout<<'\t'<<'\t'<<"Available units  are:";
-  cout<<'\t'<<'\t'<<"\n Pound      PD";
-  cout<<'\t'<<'\t'<<"\n Kilogram   KG";
-  cout<<'\t'<<'\t'<<"\n Gram       GR";
-  cout<<'\t'<<'\t'<<"\n Carat      CT";
-  cout<<'\t'<<'\t'<<"\n Ounce      OU";
-  cout<<'\t'<<'\t'<<"\n Stone      ST";
-  do
-  {
-  cout<<"\n  enter the unit that you have to convert from"<<endl;
- gets(ch1);
- cout<<"\n enter the quantity "<<endl;
- cin>>num1;
- if(ch1[0]=='P'&&ch1[1]=='D')
-	 num2=453.592*num1;
- else if(ch1[0]=='K'&&ch1[1]=='G')
-	 num2=1000*num1;
- else if(ch1[0]=='G'&&ch1[1]=='R')
-	 num2=num1;
- else if(ch1[0]=='C'&&ch1[1]=='T')
-	 num2=0.2*num1;
- else if(ch1[0]=='O'&&ch1[1]=='U')
-	 num2=28.3495*num1;
- else if(ch1[0]=='S'&&ch1[1]=='T')
-	 num2=6350.29*num1;
- else
-	 cout<<"\n invalid unit \n pls try again";
+	gotoxy(27,6);
+	cout<<"Select the desired option:"<<endl;
 
-cout<<"\n enter the unit to which convertion must take place"<<endl;
-gets(ch2);
-if(ch2[0]=='P'&&ch2[1]=='D')
-	 num3=0.00220462*num2;
- else if(ch2[0]=='K'&&ch2[1]=='G')
-	 num3=0.001*num2;
- else if(ch2[0]=='C'&&ch2[1]=='T')
-	 num3=5*num2;
- else if(ch2[0]=='O'&&ch2[1]=='U')
-	 num3=0.352734*num2;
- else if(ch2[0]=='G'&&ch2[1]=='R')
-	 num3=num2;
- else if(ch2[0]=='S'&&ch2[1]=='T')
-	 num3=0.000157473*num2;
- else
-	 cout<<"\n invalid currency \n pls try again";
-if(num3<0.000001)
- cout<<"error,pls report or press N";
- cout<<"\n the new weight is  "<<num3;
-	 cout<<"\n do you want to continue";
-	gets(ch3);
-	}while(ch3[0]=='Y');
+	border('.',15,8,20,5);
+	gotoxy(19,10);
+	cout<<"1. Mass";
+
+	border('.',45,8,20,5);
+	gotoxy(49,10);
+	cout<<"2. Length";
+
+	border('.',15,16,20,5);
+	gotoxy(19,18);
+	cout<<"3. Area";
+
+	border('.',45,16,20,5);
+	gotoxy(49,18);
+	cout<<"4. Volume";
+
+	gotoxy(39,22);
+	cout<<"__";
+	char opt;
+	gotoxy(39,22);
+	opt=getch();
+
+/*	switch(opt)
+		{
+		case '1':	mass();
+				break;
+		case '2':	length();
+				break;
+		case '3':	area();
+				break;
+		case '4':	volume();
+				break;
+		default:		clrscr();
+					border('*',22,9,36,6);
+					gotoxy(33,11);
+					cout<<"Invalid option!";
+					gotoxy(26,13);
+					cout<<"Press any key to continue..";
+					getch();
+					unitmenu();
+	}*/
+}
+
+void mass()
+  {
+	clrscr();
+	border('#',1,1,81,24);
+	gotoxy(34,4);
+	cout<<"Mass Converter";
+
+	border('.',10,6,25,5);
+	gotoxy(12,7);
+	cout<<"Unit: ___";
+	gotoxy(12,9);
+	cout<<"Mass: ______________";
+
+	gotoxy(39,8);
+	cout<<"TO";
+
+	border('.',45,6,25,5);
+	gotoxy(47,7);
+	cout<<"Unit: ___";
+	gotoxy(47,9);
+	cout<<"Mass: ______________";
+
+	gotoxy(12,15);
+	cout<<"Tonne";
+	gotoxy(32,15);
+	cout<<"t";
+	gotoxy(12,16);
+	cout<<"Kilogram";
+	gotoxy(32,16);
+	cout<<"kg";
+	gotoxy(12,17);
+	cout<<"Gram";
+	gotoxy(32,17);
+	cout<<"g";
+	gotoxy(12,18);
+	cout<<"Milligram";
+	gotoxy(32,18);
+	cout<<"mg";
+	gotoxy(12,19);
+	cout<<"Microgram";
+	gotoxy(32,19);
+	cout<<"ug";
+	gotoxy(47,15);
+	cout<<"Imperial Ton";
+	gotoxy(67,15);
+	cout<<"imt";
+	gotoxy(47,16);
+	cout<<"US Ton";
+	gotoxy(67,16);
+	cout<<"ust";
+	gotoxy(47,17);
+	cout<<"Stone";
+	gotoxy(67,17);
+	cout<<"st";
+	gotoxy(47,18);
+	cout<<"Pound";
+	gotoxy(67,18);
+	cout<<"lb";
+	gotoxy(47,19);
+	cout<<"Ounce";
+	gotoxy(67,19);
+	cout<<"oz";
+
+	gotoxy(18,7);
+	char in_mass[4];
+	gets(in_mass);
+	if(strcmpi(in_mass,"t")&&strcmpi(in_mass,"kg")&&strcmpi(in_mass,"g")&&strcmpi(in_mass,"mg")&&strcmpi(in_mass,"ug")&&strcmpi(in_mass,"imt")&&strcmpi(in_mass,"ust")&&strcmpi(in_mass,"st")&&strcmpi(in_mass,"lb")&&strcmpi(in_mass,"oz"))
+		{
+		clrscr();
+		border('#',20,10,40,6);
+		gotoxy(25,12);
+		cout<<"Invalid Mass Unit";
+		gotoxy(26,13);
+		cout<<"Press any key to continue..";
+		getch();
+		mass();
+	}
+	gotoxy(18,9);
+	double in_amt;
+	cin>>in_amt;
+	double temp_amt;
+	if(strcmpi(in_mass,"t"))
+		temp_amt=1000000*in_amt;
+	else if(strcmpi(in_mass,"kg"))
+		temp_amt=1000*in_amt;
+	else if(strcmpi(in_mass,"g"))
+		temp_amt=in_amt;
+	else if(strcmpi(in_mass,"mg"))
+		temp_amt=0.001*in_amt;
+	else if(strcmpi(in_mass,"ug"))
+		temp_amt=0.000001*in_amt;
+	else if(strcmpi(in_mass,"imt"))
+		temp_amt=1016000*in_amt;
+	else if(strcmpi(in_mass,"ust"))
+		temp_amt=907185*in_amt;
+	else if(strcmpi(in_mass,"st"))
+		temp_amt=6350.29*in_amt;
+	else if(strcmpi(in_mass,"lb"))
+		temp_amt=453.592*in_amt;
+	else if(strcmpi(in_mass,"oz"))
+		temp_amt=28.3495*in_amt;
+
+	gotoxy(53,7);
+	char out_mass[4];
+	gets(out_mass);
+	if(strcmpi(out_mass,"t")&&strcmpi(out_mass,"kg")&&strcmpi(out_mass,"g")&&strcmpi(out_mass,"mg")&&strcmpi(out_mass,"ug")&&strcmpi(out_mass,"imt")&&strcmpi(out_mass,"ust")&&strcmpi(out_mass,"st")&&strcmpi(out_mass,"lb")&&strcmpi(out_mass,"oz"))
+		{
+		clrscr();
+		border('#',20,10,40,6);
+		gotoxy(25,12);
+		cout<<"Invalid Mass Unit";
+		gotoxy(26,13);
+		cout<<"Press any key to continue..";
+		getch();
+		mass();
+	}
+
+	double out_amt;
+	if(strcmpi(out_mass,"t"))
+		out_amt=0.000001*temp_amt;
+	else if(strcmpi(out_mass,"kg"))
+		out_amt=0.001*temp_amt;
+	else if(strcmpi(out_mass,"g"))
+		out_amt=temp_amt;
+	else if(strcmpi(out_mass,"mg"))
+		out_amt=1000*temp_amt;
+	else if(strcmpi(out_mass,"ug"))
+		out_amt=1000000*temp_amt;
+	else if(strcmpi(out_mass,"imt"))
+		out_amt=0.00000098*temp_amt;
+	else if(strcmpi(out_mass,"ust"))
+		out_amt=0.0000011*temp_amt;
+	else if(strcmpi(out_mass,"st"))
+		out_amt=0.0001575*temp_amt;
+	else if(strcmpi(out_mass,"lb"))
+		out_amt=0.0022046*temp_amt;
+	else if(strcmpi(out_mass,"oz"))
+		out_amt=0.035274*temp_amt;
+	gotoxy(53,9);
+	cout<<out_amt;
+
+	gotoxy(26,21);
+	cout<<"Press Backspace to go back..";
+	gotoxy(26,22);
+	cout<<"Press Enter to use again..";
+	char temp=getch();
+	if(temp==13)
+		mass();
+	if(temp==8)
+		converter();
 }
 void calc()
  {
