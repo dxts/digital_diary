@@ -1,7 +1,7 @@
 void menu()
 	{
 	clrscr();
-	border('#',1,1,80,24);
+	border('#',1,1,81,24);
 	gotoxy(33,3);
 	cout<<"DIGITAL DIARY";
 
