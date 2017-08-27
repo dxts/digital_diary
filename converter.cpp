@@ -314,25 +314,25 @@ void mass()
 	double in_amt;
 	cin>>in_amt;
 	double temp_amt;
-	if(strcmpi(in_mass,"t"))		///////////////////////////////////////////////////
+	if(!strcmpi(in_mass,"t"))		///////////////////////////////////////////////////
 		temp_amt=1000000*in_amt;
-	else if(strcmpi(in_mass,"kg"))
+	else if(!strcmpi(in_mass,"kg"))
 		temp_amt=1000*in_amt;
-	else if(strcmpi(in_mass,"g"))
+	else if(!strcmpi(in_mass,"g"))
 		temp_amt=in_amt;
-	else if(strcmpi(in_mass,"mg"))
+	else if(!strcmpi(in_mass,"mg"))
 		temp_amt=0.001*in_amt;
-	else if(strcmpi(in_mass,"ug"))
+	else if(!strcmpi(in_mass,"ug"))
 		temp_amt=0.000001*in_amt;
-	else if(strcmpi(in_mass,"imt"))		//converts entered mass unit to grams
+	else if(!strcmpi(in_mass,"imt"))		//converts entered mass unit to grams
 		temp_amt=1016000*in_amt;
-	else if(strcmpi(in_mass,"ust"))
+	else if(!strcmpi(in_mass,"ust"))
 		temp_amt=907185*in_amt;
-	else if(strcmpi(in_mass,"st"))
+	else if(!strcmpi(in_mass,"st"))
 		temp_amt=6350.29*in_amt;
-	else if(strcmpi(in_mass,"lb"))
+	else if(!strcmpi(in_mass,"lb"))
 		temp_amt=453.592*in_amt;
-	else if(strcmpi(in_mass,"oz"))
+	else if(!strcmpi(in_mass,"oz"))
 		temp_amt=28.3495*in_amt;	///////////////////////////////////////////////////
 
 	gotoxy(53,7);
@@ -351,25 +351,25 @@ void mass()
 	}
 
 	double out_amt;
-	if(strcmpi(out_mass,"t"))		///////////////////////////////////////////////////
+	if(!strcmpi(out_mass,"t"))		///////////////////////////////////////////////////
 		out_amt=0.000001*temp_amt;
-	else if(strcmpi(out_mass,"kg"))
+	else if(!strcmpi(out_mass,"kg"))
 		out_amt=0.001*temp_amt;
-	else if(strcmpi(out_mass,"g"))
+	else if(!strcmpi(out_mass,"g"))
 		out_amt=temp_amt;
-	else if(strcmpi(out_mass,"mg"))
+	else if(!strcmpi(out_mass,"mg"))
 		out_amt=1000*temp_amt;
-	else if(strcmpi(out_mass,"ug"))
+	else if(!strcmpi(out_mass,"ug"))
 		out_amt=1000000*temp_amt;
-	else if(strcmpi(out_mass,"imt"))	//converts grams to required mass unit
+	else if(!strcmpi(out_mass,"imt"))	//converts grams to required mass unit
 		out_amt=0.00000098*temp_amt;
-	else if(strcmpi(out_mass,"ust"))
+	else if(!strcmpi(out_mass,"ust"))
 		out_amt=0.0000011*temp_amt;
-	else if(strcmpi(out_mass,"st"))
+	else if(!strcmpi(out_mass,"st"))
 		out_amt=0.0001575*temp_amt;
-	else if(strcmpi(out_mass,"lb"))
+	else if(!strcmpi(out_mass,"lb"))
 		out_amt=0.0022046*temp_amt;
-	else if(strcmpi(out_mass,"oz"))
+	else if(!strcmpi(out_mass,"oz"))
 		out_amt=0.035274*temp_amt;	///////////////////////////////////////////////////
 	gotoxy(53,9);
 	cout<<out_amt;
