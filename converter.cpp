@@ -11,7 +11,7 @@
 void currency();
 void calc();
 void mass();
-void converter()
+void converter()	//yet to optimize
 {
 	clrscr();
 	int i;
@@ -110,7 +110,7 @@ void currency()
 	gotoxy(22,7);
 	char in_cur[4];
 	gets(in_cur);
-	if(strcmpi(in_cur,"BHD")&&strcmpi(in_cur,"USD")&&strcmpi(in_cur,"INR")&&strcmpi(in_cur,"YEN")&&strcmpi(in_cur,"SAR")&&strcmpi(in_cur,"EUR"))
+	if(strcmpi(in_cur,"BHD")&&strcmpi(in_cur,"USD")&&strcmpi(in_cur,"INR")&&strcmpi(in_cur,"YEN")&&strcmpi(in_cur,"SAR")&&strcmpi(in_cur,"EUR"))	//checks if entered currency is valid
 		{
 		clrscr();
 		border('#',20,10,40,6);
@@ -125,23 +125,23 @@ void currency()
 	float in_amt;
 	cin>>in_amt;
 	float temp_amt;
-	if(strcmpi(in_cur,"BHD")==0)
+	if(strcmpi(in_cur,"BHD")==0)		///////////////////////////////////////////////////
 		temp_amt=2.65*in_amt;
 	else if(strcmpi(in_cur,"INR")==0)
 		temp_amt=0.016*in_amt;
 	else if(strcmpi(in_cur,"SAR")==0)
 		temp_amt=0.27*in_amt;
-	else if(strcmpi(in_cur,"EUR")==0)
+	else if(strcmpi(in_cur,"EUR")==0)	//converts entered currency to usd
 		temp_amt=1.14*in_amt;
 	else if(strcmpi(in_cur,"YEN")==0)
 		temp_amt=0.0088*in_amt;
 	else if(strcmpi(in_cur,"USD")==0)
-		temp_amt=in_amt;
+		temp_amt=in_amt;		////////////////////////////////////////////////////
 
 	gotoxy(57,7);
 	char out_cur[4];
 	gets(out_cur);
-	if(strcmpi(out_cur,"BHD")&&strcmpi(out_cur,"USD")&&strcmpi(out_cur,"INR")&&strcmpi(out_cur,"YEN")&&strcmpi(out_cur,"SAR")&&strcmpi(out_cur,"EUR"))
+	if(strcmpi(out_cur,"BHD")&&strcmpi(out_cur,"USD")&&strcmpi(out_cur,"INR")&&strcmpi(out_cur,"YEN")&&strcmpi(out_cur,"SAR")&&strcmpi(out_cur,"EUR"))	//checks if entered currency is valid
 		{
 		clrscr();
 		border('#',20,10,40,6);
@@ -153,18 +153,18 @@ void currency()
 		currency();
 	}
 	float out_amt;
-	if(strcmpi(out_cur,"BHD")==0)
+	if(strcmpi(out_cur,"BHD")==0)		////////////////////////////////////////////////////
 		out_amt=0.375*temp_amt;
 	else if(strcmpi(out_cur,"INR")==0)
 		out_amt=64.46*temp_amt;
 	else if(strcmpi(out_cur,"SAR")==0)
 		out_amt=3.75*temp_amt;
-	else if(strcmpi(out_cur,"EUR")==0)
+	else if(strcmpi(out_cur,"EUR")==0)	//converts usd to required currency
 		out_amt=0.88*temp_amt;
 	else if(strcmpi(out_cur,"YEN")==0)
 		out_amt=112.98*temp_amt;
 	else if(strcmpi(out_cur,"USD")==0)
-		out_amt=temp_amt;
+		out_amt=temp_amt;		///////////////////////////////////////////////////
 	gotoxy(55,9);
 	cout<<out_amt;
 
@@ -299,7 +299,7 @@ void mass()
 	gotoxy(18,7);
 	char in_mass[4];
 	gets(in_mass);
-	if(strcmpi(in_mass,"t")&&strcmpi(in_mass,"kg")&&strcmpi(in_mass,"g")&&strcmpi(in_mass,"mg")&&strcmpi(in_mass,"ug")&&strcmpi(in_mass,"imt")&&strcmpi(in_mass,"ust")&&strcmpi(in_mass,"st")&&strcmpi(in_mass,"lb")&&strcmpi(in_mass,"oz"))
+	if(strcmpi(in_mass,"t")&&strcmpi(in_mass,"kg")&&strcmpi(in_mass,"g")&&strcmpi(in_mass,"mg")&&strcmpi(in_mass,"ug")&&strcmpi(in_mass,"imt")&&strcmpi(in_mass,"ust")&&strcmpi(in_mass,"st")&&strcmpi(in_mass,"lb")&&strcmpi(in_mass,"oz"))	//checks if entered unit is valid
 		{
 		clrscr();
 		border('#',20,10,40,6);
@@ -314,7 +314,7 @@ void mass()
 	double in_amt;
 	cin>>in_amt;
 	double temp_amt;
-	if(strcmpi(in_mass,"t"))
+	if(strcmpi(in_mass,"t"))		///////////////////////////////////////////////////
 		temp_amt=1000000*in_amt;
 	else if(strcmpi(in_mass,"kg"))
 		temp_amt=1000*in_amt;
@@ -324,7 +324,7 @@ void mass()
 		temp_amt=0.001*in_amt;
 	else if(strcmpi(in_mass,"ug"))
 		temp_amt=0.000001*in_amt;
-	else if(strcmpi(in_mass,"imt"))
+	else if(strcmpi(in_mass,"imt"))		//converts entered mass unit to grams
 		temp_amt=1016000*in_amt;
 	else if(strcmpi(in_mass,"ust"))
 		temp_amt=907185*in_amt;
@@ -333,7 +333,7 @@ void mass()
 	else if(strcmpi(in_mass,"lb"))
 		temp_amt=453.592*in_amt;
 	else if(strcmpi(in_mass,"oz"))
-		temp_amt=28.3495*in_amt;
+		temp_amt=28.3495*in_amt;	///////////////////////////////////////////////////
 
 	gotoxy(53,7);
 	char out_mass[4];
@@ -351,7 +351,7 @@ void mass()
 	}
 
 	double out_amt;
-	if(strcmpi(out_mass,"t"))
+	if(strcmpi(out_mass,"t"))		///////////////////////////////////////////////////
 		out_amt=0.000001*temp_amt;
 	else if(strcmpi(out_mass,"kg"))
 		out_amt=0.001*temp_amt;
@@ -361,7 +361,7 @@ void mass()
 		out_amt=1000*temp_amt;
 	else if(strcmpi(out_mass,"ug"))
 		out_amt=1000000*temp_amt;
-	else if(strcmpi(out_mass,"imt"))
+	else if(strcmpi(out_mass,"imt"))	//converts grams to required mass unit
 		out_amt=0.00000098*temp_amt;
 	else if(strcmpi(out_mass,"ust"))
 		out_amt=0.0000011*temp_amt;
@@ -370,7 +370,7 @@ void mass()
 	else if(strcmpi(out_mass,"lb"))
 		out_amt=0.0022046*temp_amt;
 	else if(strcmpi(out_mass,"oz"))
-		out_amt=0.035274*temp_amt;
+		out_amt=0.035274*temp_amt;	///////////////////////////////////////////////////
 	gotoxy(53,9);
 	cout<<out_amt;
 
@@ -384,7 +384,7 @@ void mass()
 	if(temp==8)
 		converter();
 }
-void calc()
+void calc()					//yet to optimize
  {
   char l,l1,l2,l3,l4,ch[10];
   int a,b;
