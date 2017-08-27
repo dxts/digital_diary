@@ -1,5 +1,5 @@
-#include<stdlib.h>
 #include<fstream.h>
+#include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
 #include<ctype.h>
@@ -7,32 +7,6 @@
 #include<process.h>
 #include<conio.h>
 #include<math.h>
-
-void currency();
-void calc();
-void mass();
-void converter()	//yet to optimize
-{
-	clrscr();
-	int i;
-	char ch[10];
-	cout<<"\n welcome ";
-	cout<<"\n Press 1 for currency converter";
-	cout<<"\n Press 2 for mass converter";
-	cout<<"\n Press 3 for calculator";
-	cin>>i;
-	if(i==1)
-		currency();
-	else if(i==2)
-		mass();
-	else if(i==3)
-		calc();
-}
-
-void main()
-	{
-	converter();
-}
 
 void border(char ch,int x,int y,int l,int b)
 /*(x,y) is the top left corner point and l and b are the length and breadth of the rectangle*/
@@ -58,6 +32,57 @@ void border(char ch,int x,int y,int l,int b)
 		gotoxy(x,s);
 		cout<<ch;
 	}
+}
+
+void currency();
+void unitmenu();
+void calc();
+
+void converter()
+{
+	clrscr();
+	border('#',1,1,81,24);
+	gotoxy(29,3);
+	cout<<"Calculator & Converter";
+
+	border('.',10,8,17,5);
+	gotoxy(12,10);
+	cout<<"1. Currency";
+	border('.',32,8,17,5);
+	gotoxy(36,10);
+	cout<<"2. Unit";
+	border('.',54,8,17,5);
+	gotoxy(56,10);
+	cout<<"3. Calculator";
+
+	gotoxy(39,16);
+	cout<<"___";
+	gotoxy(40,16);
+	char opt=getch();
+	switch(opt)
+	{
+		case '1':	currency();
+				break;
+		case '2':	unitmenu();
+				break;
+		case '3':	calc();
+				break;
+		//case 8	:	menu();
+		//		break;
+		default :	clrscr();
+				border('*',22,9,36,6);
+				gotoxy(33,11);
+				cout<<"Invalid option!";
+				gotoxy(26,13);
+				cout<<"Press any key to continue..";
+				getch();
+				converter();
+	}
+}
+
+void main()
+	{
+	converter();
 }
 
 void currency()
@@ -179,9 +204,12 @@ void currency()
 		converter();
 }
 
-
 void unitmenu()
 	{
+	void mass();
+	void length();
+	void area();
+	
 	clrscr();
 	border('#',1,1,81,24);
 	gotoxy(33,3);
@@ -212,7 +240,7 @@ void unitmenu()
 	gotoxy(39,22);
 	opt=getch();
 
-/*	switch(opt)
+	switch(opt)
 		{
 		case '1':	mass();
 				break;
@@ -220,7 +248,7 @@ void unitmenu()
 				break;
 		case '3':	area();
 				break;
-		case '4':	volume();
+		case '4':	cout<<"volume()";
 				break;
 		default:		clrscr();
 					border('*',22,9,36,6);
@@ -230,11 +258,11 @@ void unitmenu()
 					cout<<"Press any key to continue..";
 					getch();
 					unitmenu();
-	}*/
+	}
 }
 
 void mass()
-  {
+	{
 	clrscr();
 	border('#',1,1,81,24);
 	gotoxy(34,4);
@@ -297,9 +325,9 @@ void mass()
 	cout<<"oz";
 
 	gotoxy(18,7);
-	char in_mass[4];
-	gets(in_mass);
-	if(strcmpi(in_mass,"t")&&strcmpi(in_mass,"kg")&&strcmpi(in_mass,"g")&&strcmpi(in_mass,"mg")&&strcmpi(in_mass,"ug")&&strcmpi(in_mass,"imt")&&strcmpi(in_mass,"ust")&&strcmpi(in_mass,"st")&&strcmpi(in_mass,"lb")&&strcmpi(in_mass,"oz"))	//checks if entered unit is valid
+	char in_unit[4];
+	gets(in_unit);
+	if(strcmpi(in_unit,"t")&&strcmpi(in_unit,"kg")&&strcmpi(in_unit,"g")&&strcmpi(in_unit,"mg")&&strcmpi(in_unit,"ug")&&strcmpi(in_unit,"imt")&&strcmpi(in_unit,"ust")&&strcmpi(in_unit,"st")&&strcmpi(in_unit,"lb")&&strcmpi(in_unit,"oz"))	//checks if entered unit is valid
 		{
 		clrscr();
 		border('#',20,10,40,6);
@@ -314,31 +342,31 @@ void mass()
 	double in_amt;
 	cin>>in_amt;
 	double temp_amt;
-	if(strcmpi(in_mass,"t"))		///////////////////////////////////////////////////
+	if(strcmpi(in_unit,"t")==0)		///////////////////////////////////////////////////
 		temp_amt=1000000*in_amt;
-	else if(strcmpi(in_mass,"kg"))
+	else if(strcmpi(in_unit,"kg")==0)
 		temp_amt=1000*in_amt;
-	else if(strcmpi(in_mass,"g"))
+	else if(strcmpi(in_unit,"g")==0)
 		temp_amt=in_amt;
-	else if(strcmpi(in_mass,"mg"))
+	else if(strcmpi(in_unit,"mg")==0)
 		temp_amt=0.001*in_amt;
-	else if(strcmpi(in_mass,"ug"))
+	else if(strcmpi(in_unit,"ug")==0)
 		temp_amt=0.000001*in_amt;
-	else if(strcmpi(in_mass,"imt"))		//converts entered mass unit to grams
+	else if(strcmpi(in_unit,"imt")==0)	//converts entered mass unit to grams
 		temp_amt=1016000*in_amt;
-	else if(strcmpi(in_mass,"ust"))
+	else if(strcmpi(in_unit,"ust")==0)
 		temp_amt=907185*in_amt;
-	else if(strcmpi(in_mass,"st"))
+	else if(strcmpi(in_unit,"st")==0)
 		temp_amt=6350.29*in_amt;
-	else if(strcmpi(in_mass,"lb"))
+	else if(strcmpi(in_unit,"lb")==0)
 		temp_amt=453.592*in_amt;
-	else if(strcmpi(in_mass,"oz"))
+	else if(strcmpi(in_unit,"oz")==0)
 		temp_amt=28.3495*in_amt;	///////////////////////////////////////////////////
 
 	gotoxy(53,7);
-	char out_mass[4];
-	gets(out_mass);
-	if(strcmpi(out_mass,"t")&&strcmpi(out_mass,"kg")&&strcmpi(out_mass,"g")&&strcmpi(out_mass,"mg")&&strcmpi(out_mass,"ug")&&strcmpi(out_mass,"imt")&&strcmpi(out_mass,"ust")&&strcmpi(out_mass,"st")&&strcmpi(out_mass,"lb")&&strcmpi(out_mass,"oz"))
+	char out_unit[4];
+	gets(out_unit);
+	if(strcmpi(out_unit,"t")&&strcmpi(out_unit,"kg")&&strcmpi(out_unit,"g")&&strcmpi(out_unit,"mg")&&strcmpi(out_unit,"ug")&&strcmpi(out_unit,"imt")&&strcmpi(out_unit,"ust")&&strcmpi(out_unit,"st")&&strcmpi(out_unit,"lb")&&strcmpi(out_unit,"oz"))
 		{
 		clrscr();
 		border('#',20,10,40,6);
@@ -351,25 +379,25 @@ void mass()
 	}
 
 	double out_amt;
-	if(strcmpi(out_mass,"t"))		///////////////////////////////////////////////////
+	if(strcmpi(out_unit,"t")==0)		///////////////////////////////////////////////////
 		out_amt=0.000001*temp_amt;
-	else if(strcmpi(out_mass,"kg"))
+	else if(strcmpi(out_unit,"kg")==0)
 		out_amt=0.001*temp_amt;
-	else if(strcmpi(out_mass,"g"))
+	else if(strcmpi(out_unit,"g")==0)
 		out_amt=temp_amt;
-	else if(strcmpi(out_mass,"mg"))
+	else if(strcmpi(out_unit,"mg")==0)
 		out_amt=1000*temp_amt;
-	else if(strcmpi(out_mass,"ug"))
+	else if(strcmpi(out_unit,"ug")==0)
 		out_amt=1000000*temp_amt;
-	else if(strcmpi(out_mass,"imt"))	//converts grams to required mass unit
+	else if(strcmpi(out_unit,"imt")==0)	//converts grams to required mass unit
 		out_amt=0.00000098*temp_amt;
-	else if(strcmpi(out_mass,"ust"))
+	else if(strcmpi(out_unit,"ust")==0)
 		out_amt=0.0000011*temp_amt;
-	else if(strcmpi(out_mass,"st"))
+	else if(strcmpi(out_unit,"st")==0)
 		out_amt=0.0001575*temp_amt;
-	else if(strcmpi(out_mass,"lb"))
+	else if(strcmpi(out_unit,"lb")==0)
 		out_amt=0.0022046*temp_amt;
-	else if(strcmpi(out_mass,"oz"))
+	else if(strcmpi(out_unit,"oz")==0)
 		out_amt=0.035274*temp_amt;	///////////////////////////////////////////////////
 	gotoxy(53,9);
 	cout<<out_amt;
@@ -384,6 +412,296 @@ void mass()
 	if(temp==8)
 		converter();
 }
+
+void length()
+  	{
+	clrscr();
+	border('#',1,1,81,24);
+	gotoxy(34,4);
+	cout<<"Length Converter";
+
+	border('.',10,6,25,5);
+	gotoxy(12,7);
+	cout<<"Unit: ___";
+	gotoxy(12,9);
+	cout<<"Length: ______________";
+
+	gotoxy(39,8);
+	cout<<"TO";
+
+	border('.',45,6,25,5);
+	gotoxy(47,7);
+	cout<<"Unit: ___";
+	gotoxy(47,9);
+	cout<<"Length: ______________";
+
+	gotoxy(12,15);
+	cout<<"Kilometre";
+	gotoxy(32,15);
+	cout<<"km";
+	gotoxy(12,16);
+	cout<<"Metre";
+	gotoxy(32,16);
+	cout<<"m";
+	gotoxy(12,17);
+	cout<<"Centimetre";
+	gotoxy(32,17);
+	cout<<"cm";
+	gotoxy(12,18);
+	cout<<"Millimetre";
+	gotoxy(32,18);
+	cout<<"mm";
+	gotoxy(12,19);
+	cout<<"Nanometre";
+	gotoxy(32,19);
+	cout<<"nm";
+	gotoxy(47,15);
+	cout<<"Mile";
+	gotoxy(67,15);
+	cout<<"mi";
+	gotoxy(47,16);
+	cout<<"Yard";
+	gotoxy(67,16);
+	cout<<"yd";
+	gotoxy(47,17);
+	cout<<"Foot";
+	gotoxy(67,17);
+	cout<<"ft";
+	gotoxy(47,18);
+	cout<<"Inch";
+	gotoxy(67,18);
+	cout<<"in";
+	gotoxy(47,19);
+	cout<<"Nautical mile";
+	gotoxy(67,19);
+	cout<<"nmi";
+
+	gotoxy(18,7);
+	char in_unit[4];
+	gets(in_unit);
+	if(strcmpi(in_unit,"km")&&strcmpi(in_unit,"m")&&strcmpi(in_unit,"cm")&&strcmpi(in_unit,"mm")&&strcmpi(in_unit,"nm")&&strcmpi(in_unit,"mi")&&strcmpi(in_unit,"yd")&&strcmpi(in_unit,"ft")&&strcmpi(in_unit,"in")&&strcmpi(in_unit,"nmi"))	//checks if entered unit is valid
+		{
+		clrscr();
+		border('#',20,10,40,6);
+		gotoxy(25,12);
+		cout<<"Invalid Unit";
+		gotoxy(26,13);
+		cout<<"Press any key to continue..";
+		getch();
+		length();
+	}
+	gotoxy(20,9);
+	double in_amt;
+	cin>>in_amt;
+	double temp_amt;
+	if(strcmpi(in_unit,"km")==0)		///////////////////////////////////////////////////
+		temp_amt=1000*in_amt;
+	else if(strcmpi(in_unit,"m")==0)
+		temp_amt=in_amt;
+	else if(strcmpi(in_unit,"cm")==0)
+		temp_amt=0.01*in_amt;
+	else if(strcmpi(in_unit,"mm")==0)
+		temp_amt=0.001*in_amt;
+	else if(strcmpi(in_unit,"nm")==0)
+		temp_amt=0.000000001*in_amt;
+	else if(strcmpi(in_unit,"mi")==0)	//converts entered length unit to metre
+		temp_amt=1609.34*in_amt;
+	else if(strcmpi(in_unit,"yd")==0)
+		temp_amt=0.9144*in_amt;
+	else if(strcmpi(in_unit,"ft")==0)
+		temp_amt=0.3048*in_amt;
+	else if(strcmpi(in_unit,"in")==0)
+		temp_amt=0.0254*in_amt;
+	else if(strcmpi(in_unit,"nmi")==0)
+		temp_amt=1852*in_amt;		///////////////////////////////////////////////////
+
+	gotoxy(53,7);
+	char out_unit[4];
+	gets(out_unit);
+	if(strcmpi(out_unit,"km")&&strcmpi(out_unit,"m")&&strcmpi(out_unit,"cm")&&strcmpi(out_unit,"mm")&&strcmpi(out_unit,"nm")&&strcmpi(out_unit,"mi")&&strcmpi(out_unit,"yd")&&strcmpi(out_unit,"ft")&&strcmpi(out_unit,"in")&&strcmpi(out_unit,"nmi"))
+		{
+		clrscr();
+		border('#',20,10,40,6);
+		gotoxy(25,12);
+		cout<<"Invalid Unit";
+		gotoxy(26,13);
+		cout<<"Press any key to continue..";
+		getch();
+		length();
+	}
+
+	double out_amt;
+	if(strcmpi(out_unit,"km")==0)		///////////////////////////////////////////////////
+		out_amt=0.001*temp_amt;
+	else if(strcmpi(out_unit,"m")==0)
+		out_amt=temp_amt;
+	else if(strcmpi(out_unit,"cm")==0)
+		out_amt=100*temp_amt;
+	else if(strcmpi(out_unit,"mm")==0)
+		out_amt=1000*temp_amt;
+	else if(strcmpi(out_unit,"nm")==0)
+		out_amt=1000000000*temp_amt;
+	else if(strcmpi(out_unit,"mi")==0)	//converts metre to required length unit
+		out_amt=0.000621371*temp_amt;
+	else if(strcmpi(out_unit,"yd")==0)
+		out_amt=1.09361*temp_amt;
+	else if(strcmpi(out_unit,"ft")==0)
+		out_amt=3.28084*temp_amt;
+	else if(strcmpi(out_unit,"in")==0)
+		out_amt=39.3701*temp_amt;
+	else if(strcmpi(out_unit,"nmi")==0)
+		out_amt=0.000539957*temp_amt;	///////////////////////////////////////////////////
+	gotoxy(55,9);
+	cout<<out_amt;
+
+	gotoxy(26,21);
+	cout<<"Press Backspace to go back..";
+	gotoxy(26,22);
+	cout<<"Press Enter to use again..";
+	char temp=getch();
+	if(temp==13)
+		length();
+	if(temp==8)
+		converter();
+}
+
+void area()
+  	{
+	clrscr();
+	border('#',1,1,81,24);
+	gotoxy(34,4);
+	cout<<"Area Converter";
+
+	border('.',10,6,25,5);
+	gotoxy(12,7);
+	cout<<"Unit: ___";
+	gotoxy(12,9);
+	cout<<"Area: ______________";
+
+	gotoxy(39,8);
+	cout<<"TO";
+
+	border('.',45,6,25,5);
+	gotoxy(47,7);
+	cout<<"Unit: ___";
+	gotoxy(47,9);
+	cout<<"Area: ______________";
+
+	gotoxy(10,15);
+	cout<<"Square kilometre";
+	gotoxy(30,15);
+	cout<<"sq km";
+	gotoxy(10,16);
+	cout<<"Square metre";
+	gotoxy(30,16);
+	cout<<"sq m";
+	gotoxy(10,17);
+	cout<<"Square mile";
+	gotoxy(30,17);
+	cout<<"sq mi";
+	gotoxy(10,18);
+	cout<<"Square yard";
+	gotoxy(30,18);
+	cout<<"sq yd";
+	gotoxy(10,19);
+	cout<<"Square foot";
+	gotoxy(30,19);
+	cout<<"sq ft";
+	gotoxy(45,15);
+	cout<<"Square inch";
+	gotoxy(65,15);
+	cout<<"sq in";
+	gotoxy(45,16);
+	cout<<"Hectare";
+	gotoxy(65,16);
+	cout<<"ha";
+	gotoxy(45,17);
+	cout<<"Acre";
+	gotoxy(65,17);
+	cout<<"ac";
+	
+	gotoxy(18,7);
+	char in_unit[6];
+	gets(in_unit);
+	if(strcmpi(in_unit,"sq km")&&strcmpi(in_unit,"sq m")&&strcmpi(in_unit,"sq mi")&&strcmpi(in_unit,"sq yd")&&strcmpi(in_unit,"sq ft")&&strcmpi(in_unit,"sq in")&&strcmpi(in_unit,"ac")&&strcmpi(in_unit,"ha"))
+		{
+		clrscr();
+		border('#',20,10,40,6);
+		gotoxy(25,12);
+		cout<<"Invalid Unit";
+		gotoxy(26,13);
+		cout<<"Press any key to continue..";
+		getch();
+		area();
+	}
+	gotoxy(18,9);
+	double in_amt;
+	cin>>in_amt;
+	double temp_amt;
+	if(strcmpi(in_unit,"sq km")==0)			///////////////////////////////////////////////////
+		temp_amt=1000000*in_amt;
+	else if(strcmpi(in_unit,"sq m")==0)
+		temp_amt=1000*in_amt;
+	else if(strcmpi(in_unit,"sq mi")==0)
+		temp_amt=in_amt;
+	else if(strcmpi(in_unit,"sq yd")==0)
+		temp_amt=0.001*in_amt;
+	else if(strcmpi(in_unit,"sq ft")==0)		//converts entered area unit to sq m
+		temp_amt=0.000001*in_amt;
+	else if(strcmpi(in_unit,"sq in")==0)
+		temp_amt=1016000*in_amt;
+	else if(strcmpi(in_unit,"ac")==0)
+		temp_amt=907185*in_amt;
+	else if(strcmpi(in_unit,"ha")==0)
+		temp_amt=6350.29*in_amt;		/////////////////////////////////////////////
+	
+	gotoxy(53,7);
+	char out_unit[4];
+	gets(out_unit);
+	if(strcmpi(out_unit,"sq km")&&strcmpi(out_unit,"sq m")&&strcmpi(out_unit,"sq mi")&&strcmpi(out_unit,"sq yd")&&strcmpi(out_unit,"sq ft")&&strcmpi(out_unit,"sq in")&&strcmpi(out_unit,"ac")&&strcmpi(out_unit,"ha"))
+		{
+		clrscr();
+		border('#',20,10,40,6);
+		gotoxy(25,12);
+		cout<<"Invalid Unit";
+		gotoxy(26,13);
+		cout<<"Press any key to continue..";
+		getch();
+		area();
+	}
+
+	double out_amt;
+	if(strcmpi(out_unit,"sq km")==0)		///////////////////////////////////////////////////
+		out_amt=0.000001*temp_amt;
+	else if(strcmpi(out_unit,"sq m")==0)
+		out_amt=0.001*temp_amt;
+	else if(strcmpi(out_unit,"sq mi")==0)
+		out_amt=temp_amt;
+	else if(strcmpi(out_unit,"sq yd")==0)
+		out_amt=1000*temp_amt;
+	else if(strcmpi(out_unit,"sq ft")==0)		//converts grams to required mass unit
+		out_amt=1000000*temp_amt;
+	else if(strcmpi(out_unit,"sq in")==0)
+		out_amt=0.00000098*temp_amt;
+	else if(strcmpi(out_unit,"ac")==0)
+		out_amt=0.0000011*temp_amt;
+	else if(strcmpi(out_unit,"ha")==0)
+		out_amt=0.0001575*temp_amt;		///////////////////////////////////////////////
+
+	gotoxy(53,9);
+	cout<<out_amt;
+
+	gotoxy(26,21);
+	cout<<"Press Backspace to go back..";
+	gotoxy(26,22);
+	cout<<"Press Enter to use again..";
+	char temp=getch();
+	if(temp==13)
+		area();
+	if(temp==8)
+		converter();
+}
+
 void calc()					//yet to optimize
  {
   char l,l1,l2,l3,l4,ch[10];

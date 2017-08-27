@@ -40,12 +40,12 @@ void menu()
 
 	contacts c;
 	switch(opt)
-		{
+	{
 		case '1':	c.menu();
 				break;
 		case '2':	world_clock();
 				break;
-		case '3':	cout<<"calc";
+		case '3':	converter();
 				break;
 		case '4':	cout<<"notes";
 				break;
@@ -54,7 +54,7 @@ void menu()
 				gotoxy(33,11);
 				cout<<"Invalid option!";
 				gotoxy(26,13);
-				cout<<"Press backspace to continue..";
+				cout<<"Press any key to continue..";
 				getch();
 				menu();
 	}
