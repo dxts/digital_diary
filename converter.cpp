@@ -34,6 +34,19 @@ void border(char ch,int x,int y,int l,int b)
 	}
 }
 
+void error_mssg(char mssg[],int x=27)
+{
+	clrscr();
+	border('#',15,10,50,7);
+	gotoxy(x,12);
+	cout<<mssg;
+	gotoxy(30,15);
+	cout<<"Press any key to continue..";
+	getch();
+}
+
+
+
 void currency();
 void unitmenu();
 void calc();
@@ -67,15 +80,9 @@ void converter()
 				break;
 		case '3':	calc();
 				break;
-		//case 8	:	menu();
-		//		break;
-		default :	clrscr();
-				border('*',22,9,36,6);
-				gotoxy(33,11);
-				cout<<"Invalid option!";
-				gotoxy(26,13);
-				cout<<"Press any key to continue..";
-				getch();
+		case 8	:	menu();
+				break;
+		default :	error_mssg("Invalid option!");
 				converter();
 	}
 }
@@ -136,14 +143,8 @@ void currency()
 	char in_cur[4];
 	gets(in_cur);
 	if(strcmpi(in_cur,"BHD")&&strcmpi(in_cur,"USD")&&strcmpi(in_cur,"INR")&&strcmpi(in_cur,"YEN")&&strcmpi(in_cur,"SAR")&&strcmpi(in_cur,"EUR"))	//checks if entered currency is valid
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Currency";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid currency!",31);
 		currency();
 	}
 	gotoxy(20,9);
@@ -167,14 +168,8 @@ void currency()
 	char out_cur[4];
 	gets(out_cur);
 	if(strcmpi(out_cur,"BHD")&&strcmpi(out_cur,"USD")&&strcmpi(out_cur,"INR")&&strcmpi(out_cur,"YEN")&&strcmpi(out_cur,"SAR")&&strcmpi(out_cur,"EUR"))	//checks if entered currency is valid
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Currency";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid currency!",31);
 		currency();
 	}
 	float out_amt;
@@ -205,7 +200,7 @@ void currency()
 }
 
 void unitmenu()
-	{
+{
 	void mass();
 	void length();
 	void area();
@@ -236,12 +231,11 @@ void unitmenu()
 
 	gotoxy(39,22);
 	cout<<"__";
-	char opt;
 	gotoxy(39,22);
-	opt=getch();
+	char opt=getch();
 
 	switch(opt)
-		{
+	{
 		case '1':	mass();
 				break;
 		case '2':	length();
@@ -250,19 +244,24 @@ void unitmenu()
 				break;
 		case '4':	cout<<"volume()";
 				break;
-		default:		clrscr();
-					border('*',22,9,36,6);
-					gotoxy(33,11);
-					cout<<"Invalid option!";
-					gotoxy(26,13);
-					cout<<"Press any key to continue..";
-					getch();
-					unitmenu();
+		default	:	error_mssg("Invalid option!",32);
+				unitmenu();
 	}
 }
 
-void mass()
+double convert(char enter_unit[], double enter_amt, char list_units[][10], double mltip_values[])
+{
+	int i;
+	for(i=0; strcmpi(enter_unit,list_units[][i])==0; ++i)
 	{
+		double tempo_amt=enter_amt*mltip_values[--i];
+		return tempo_amt;
+		break;
+	}
+}
+		
+void mass()
+{
 	clrscr();
 	border('#',1,1,81,24);
 	gotoxy(34,4);
@@ -328,14 +327,8 @@ void mass()
 	char in_unit[4];
 	gets(in_unit);
 	if(strcmpi(in_unit,"t")&&strcmpi(in_unit,"kg")&&strcmpi(in_unit,"g")&&strcmpi(in_unit,"mg")&&strcmpi(in_unit,"ug")&&strcmpi(in_unit,"imt")&&strcmpi(in_unit,"ust")&&strcmpi(in_unit,"st")&&strcmpi(in_unit,"lb")&&strcmpi(in_unit,"oz"))	//checks if entered unit is valid
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Mass Unit";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid Mass Unit!");
 		mass();
 	}
 	gotoxy(18,9);
@@ -367,14 +360,8 @@ void mass()
 	char out_unit[4];
 	gets(out_unit);
 	if(strcmpi(out_unit,"t")&&strcmpi(out_unit,"kg")&&strcmpi(out_unit,"g")&&strcmpi(out_unit,"mg")&&strcmpi(out_unit,"ug")&&strcmpi(out_unit,"imt")&&strcmpi(out_unit,"ust")&&strcmpi(out_unit,"st")&&strcmpi(out_unit,"lb")&&strcmpi(out_unit,"oz"))
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Mass Unit";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid Mass Unit!");
 		mass();
 	}
 
@@ -414,7 +401,7 @@ void mass()
 }
 
 void length()
-  	{
+{
 	clrscr();
 	border('#',1,1,81,24);
 	gotoxy(34,4);
@@ -480,14 +467,8 @@ void length()
 	char in_unit[4];
 	gets(in_unit);
 	if(strcmpi(in_unit,"km")&&strcmpi(in_unit,"m")&&strcmpi(in_unit,"cm")&&strcmpi(in_unit,"mm")&&strcmpi(in_unit,"nm")&&strcmpi(in_unit,"mi")&&strcmpi(in_unit,"yd")&&strcmpi(in_unit,"ft")&&strcmpi(in_unit,"in")&&strcmpi(in_unit,"nmi"))	//checks if entered unit is valid
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Unit";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid length unit!");
 		length();
 	}
 	gotoxy(20,9);
@@ -519,14 +500,8 @@ void length()
 	char out_unit[4];
 	gets(out_unit);
 	if(strcmpi(out_unit,"km")&&strcmpi(out_unit,"m")&&strcmpi(out_unit,"cm")&&strcmpi(out_unit,"mm")&&strcmpi(out_unit,"nm")&&strcmpi(out_unit,"mi")&&strcmpi(out_unit,"yd")&&strcmpi(out_unit,"ft")&&strcmpi(out_unit,"in")&&strcmpi(out_unit,"nmi"))
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Unit";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid length unit!");
 		length();
 	}
 
@@ -566,7 +541,7 @@ void length()
 }
 
 void area()
-  	{
+{
 	clrscr();
 	border('#',1,1,81,24);
 	gotoxy(34,4);
@@ -624,14 +599,8 @@ void area()
 	char in_unit[6];
 	gets(in_unit);
 	if(strcmpi(in_unit,"sq km")&&strcmpi(in_unit,"sq m")&&strcmpi(in_unit,"sq mi")&&strcmpi(in_unit,"sq yd")&&strcmpi(in_unit,"sq ft")&&strcmpi(in_unit,"sq in")&&strcmpi(in_unit,"ac")&&strcmpi(in_unit,"ha"))
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Unit";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid area unit!");
 		area();
 	}
 	gotoxy(18,9);
@@ -659,14 +628,8 @@ void area()
 	char out_unit[4];
 	gets(out_unit);
 	if(strcmpi(out_unit,"sq km")&&strcmpi(out_unit,"sq m")&&strcmpi(out_unit,"sq mi")&&strcmpi(out_unit,"sq yd")&&strcmpi(out_unit,"sq ft")&&strcmpi(out_unit,"sq in")&&strcmpi(out_unit,"ac")&&strcmpi(out_unit,"ha"))
-		{
-		clrscr();
-		border('#',20,10,40,6);
-		gotoxy(25,12);
-		cout<<"Invalid Unit";
-		gotoxy(26,13);
-		cout<<"Press any key to continue..";
-		getch();
+	{
+		error_mssg("Invalid area unit!");
 		area();
 	}
 
