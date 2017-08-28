@@ -1,7 +1,7 @@
 /*
-PROBLEMS:
+PROBLEMS:       (BUGS)
 so far nothing :) , pls write down if u find any!!
-
+-Phone number not displaying properly
 
 */
 
@@ -31,9 +31,9 @@ class contacts
 {
 private:
 			char name[20],addline_1[20],addline_2[20],email_id[20];
-			char ph_no[10],mob_no[10];
+			char ph_no[10],mob_no[10],encrypted_text[20],decrypted_text[20];
 public:
-			void init();
+			void file_edit();
 			void input();    //get contacts details by input
 			void display();
 			void menu();
@@ -41,9 +41,98 @@ public:
 			void createnew();
 			void edit();
 			void search();
+			void encrypt(char temp[]);
+			void decrypt(char temp[]);
 }c,f;
 
-void contacts :: init()
+
+void contacts :: encrypt(char temp[])
+{
+char ekeyl[]="gi*dhwp(k{}?|^y$+#fv'%q!ua@.";
+char ekeyu[]="coen7m4&):<>+][_`jlorz~s-=@.";
+char dkeyl[]="abcdefghijklmnopqrstuvwxyz@.";
+char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
+
+char output[100];
+//gets(temp);
+int l=strlen(temp);
+for(int i=0;i<=l-1;i++)
+{
+con:
+for(int j=0;j<=27;j++)
+{
+
+//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
+if(temp[i]==dkeyl[j])
+{
+//cout<<"here1";                                                //debug info
+output[i]=ekeyl[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+if(dkeyu[j]==temp[i])
+{
+//cout<<"here2";                                                //debug info
+output[i]=ekeyu[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+}
+}
+exit:
+output[i]='\0';
+//cout<<endl<<output;                                           //debug info
+strcpy(encrypted_text,output);
+}
+
+void contacts :: decrypt(char temp[])
+{
+char ekeyl[]="gi*dhwp(k{}?|^y$+#fv'%q!ua@.";
+char ekeyu[]="coen7m4&):<>+][_`jlorz~s-=@.";
+char dkeyl[]="abcdefghijklmnopqrstuvwxyz@.";
+char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
+
+char output[100];
+//gets(temp);
+int l=strlen(temp);
+for(int i=0;i<=l-1;i++)
+{
+con:
+for(int j=0;j<=27;j++)
+{
+
+//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
+if(temp[i]==ekeyl[j])
+{
+//cout<<"here1";                                                //debug info
+output[i]=dkeyl[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+if(ekeyu[j]==temp[i])
+{
+//cout<<"here2";                                                //debug info
+output[i]=dkeyu[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+}
+}
+exit:
+output[i]='\0';
+//cout<<endl<<output;                                           //debug info
+strcpy(decrypted_text,output);
+}
+
+void contacts :: file_edit()
 {
 int n,i=0;
 cout<<"Enter number of contacts:";
@@ -75,34 +164,34 @@ exit:
 void contacts :: display()
 {
 cout<<"Contact Name:";
-puts(name);
+decrypt(name);puts(decrypted_text);
 cout<<"Phone no:";
-puts(ph_no);
+cout<<ph_no<<endl;
 cout<<"Mobile no:";
 puts(mob_no);
 cout<<"Email id:";
-puts(email_id);
+decrypt(email_id);puts(decrypted_text);
 cout<<"Address (line 1):";
-puts(addline_1);
+decrypt(addline_1);puts(decrypted_text);
 cout<<"Address (line 2):";
-puts(addline_2);
+decrypt(addline_2);puts(decrypted_text);
 }
 
 void contacts :: input()    //get contacts details by input
 {
-cout<<"Enter Contact Detials:"<<endl;
+cout<<"Enter Contact Details:"<<endl;
 cout<<"Contact Name:";
-gets(name);
+gets(name);encrypt(name);strcpy(name,encrypted_text);
 cout<<"Phone no:";
 gets(ph_no);
 cout<<"Mobile no:";
 gets(mob_no);
 cout<<"Email id:";
-gets(email_id);
+gets(email_id);encrypt(email_id);strcpy(email_id,encrypted_text);
 cout<<"Address (line 1):";
-gets(addline_1);
+gets(addline_1);encrypt(addline_1);strcpy(addline_1,encrypted_text);
 cout<<"Address (line 2):";
-gets(addline_2);
+gets(addline_2);encrypt(addline_2);strcpy(addline_2,encrypted_text);
 }
 
 void contacts :: edit()
@@ -118,8 +207,8 @@ char temp[20];
 gets(temp);
 while(fio.read((char*)&c,sizeof(c)))   //testing if we can still read
 {
-
-if(strcmpi(name,temp)==0)              //check name
+decrypt(name);
+if(strcmpi(decrypted_text,temp)==0)              //check name
 {
 display();
 input();
@@ -170,8 +259,11 @@ gets(tmp);
 ifstream file;
 file.open("contacts.cf",ios::binary);
 while(file.read((char*)&c,sizeof(c)))
-if(strcmpi(name,tmp)==0)
+{
+decrypt(name);
+if(strcmpi(decrypted_text,tmp)==0)
 display();
+}
 file.close();
 }
 
@@ -195,7 +287,7 @@ char a=getch();
 if(a==96)                              //HACKS   use '`'
 {
 clrscr();
-init();
+file_edit();
 }
 if(a==45)                              //HACKS   use '-'
 {
@@ -248,7 +340,6 @@ edit();
 else
 cout<<"ERROR 101";
 }
-
 void main()
 {
 c.menu();
