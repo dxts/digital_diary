@@ -12,7 +12,7 @@ void world_clock()
 	cout<<"Choose the city:";
 	gotoxy(3,7);
 	cout<<"1.Los Angeles";
-	otoxy(3,8);
+	gotoxy(3,8);
 	cout<<"2.New York";
 	gotoxy(3,9);
 	cout<<"3.Buenos Aires";

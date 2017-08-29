@@ -42,11 +42,45 @@ void error_mssg(char mssg[],int x=27)
 	border('#',15,10,50,7);
 	gotoxy(x,12);
 	cout<<mssg;
-	gotoxy(30,15);
+	gotoxy(36,15);
 	cout<<"Press any key to continue..";
 	getch();
 }
 
+char create_menu(char* list_opt[],int no_of_elements)
+{
+	clrscr();
+	border('#',1,1,81,24);
+	gotoxy(41-strlen(list_opt[0])/2,3);
+	cout<<list_opt[0];
+
+	int step=6;
+	for(int i=1; i<no_of_elements; ++i)
+	{
+		if(i%2==1)
+			{
+				border('+',11,step,25,5);
+				gotoxy(13,step+2);
+				cout<<list_opt[i];
+			}
+		if(i%2==0)
+			{
+				border('+',46,step,25,5);
+				gotoxy(48,step+2);
+				cout<<list_opt[i];
+				step+=5;
+			}
+	}
+
+	gotoxy(39,22);
+	cout<<"___";
+	gotoxy(34,23);
+	cout<<"Press backspace to return to previous screen.";
+
+	gotoxy(40,22);
+	char opt=getch();
+	return opt;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////
 class user
 {
@@ -85,6 +119,8 @@ class contacts
 /////////////////////////////////////login starts/////////////////////////////////////////////
 char* getpass()
 {
+	void login();
+	
 	char pass[50];
 	for(int i=0;i<50;i++)
 	{
@@ -175,54 +211,21 @@ void menu()
 	void world_clock();
 	void converter();
 	
-	clrscr();
-	border('#',1,1,81,24);
-	gotoxy(33,3);
-	cout<<"DIGITAL DIARY";
-
-	gotoxy(27,6);
-	cout<<"Select the desired option:"<<endl;
-
-	border('.',15,8,20,5);
-	gotoxy(19,10);
-	cout<<"1. Contacts";
-
-	border('.',45,8,20,5);
-	gotoxy(49,10);
-	cout<<"2. World Clock";
-
-	border('.',15,16,20,5);
-	gotoxy(17,17);
-	cout<<"3. Calculator";
-	gotoxy(24,18);
-	cout<<"and";
-	gotoxy(25,19);
-	cout<<"converter";
-
-	border('.',45,16,20,5);
-	gotoxy(48,17);
-	cout<<"4. Notes";
-	gotoxy(53,18);
-	cout<<"and";
-	gotoxy(52,19);
-	cout<<"To-Do list";
-
-	gotoxy(39,22);
-	cout<<"__";
-	gotoxy(39,22);
-	char opt=getch();
+	char* main_menu[]={"Digital Diary","1. Contacts","2. Calc. & Conv.","3. World Clock","4. Notes","5. Horoscope","6. Games"};
+	char option=create_menu(main_menu,sizeof(main_menu)/4);
 
 	contacts c;
-	switch(opt)
+	switch(option)
 	{
 		case '1':	c.menu();
 				break;
-		case '2':	world_clock();
+		case '2':	converter();
 				break;
-		case '3':	converter();
+		case '3':	world_clock();
 				break;
 		case '4':	cout<<"notes";
 				break;
+		case 8	:	login();
 		default:	error_mssg("Invalid option!",32);
 				menu();
 	}
@@ -406,7 +409,7 @@ void contacts :: edit()
 	fio.close();
 }
 
-void contacts:: view()
+void contacts :: view()
 {
 	ifstream file;
 	file.open("contacts.cf",ios::binary);
@@ -418,7 +421,7 @@ void contacts:: view()
 	file.close();
 }
 
-void contacts::createnew()
+void contacts :: createnew()
 {
 
 	ifstream file;
@@ -530,33 +533,17 @@ void contacts :: menu()
 void converter()
 {
 	void currency();
-	void unitmenu();
+	void unit();
 	void calc();
 	
-	clrscr();
-	border('#',1,1,81,24);
-	gotoxy(29,3);
-	cout<<"Calculator & Converter";
-
-	border('.',10,8,17,5);
-	gotoxy(12,10);
-	cout<<"1. Currency";
-	border('.',32,8,17,5);
-	gotoxy(36,10);
-	cout<<"2. Unit";
-	border('.',54,8,17,5);
-	gotoxy(56,10);
-	cout<<"3. Calculator";
-
-	gotoxy(39,16);
-	cout<<"___";
-	gotoxy(40,16);
-	char opt=getch();
-	switch(opt)
+	char* converter_menu[]={"Calc. & Conv.","1. Currency","2. Unit","3. Calculator"};
+	char option=create_menu(converter_menu,sizeof(converter_menu)/4);
+	
+	switch(option)
 	{
 		case '1':	currency();
 				break;
-		case '2':	unitmenu();
+		case '2':	unit();
 				break;
 		case '3':	calc();
 				break;
@@ -674,42 +661,16 @@ void currency()
 		converter();
 }
 /////////////////////////////////////////////////
-void unitmenu()
+void unit()
 {
 	void mass();
 	void length();
 	void area();
 	
-	clrscr();
-	border('#',1,1,81,24);
-	gotoxy(33,3);
-	cout<<"Unit Converter";
-
-	gotoxy(27,6);
-	cout<<"Select the desired option:"<<endl;
-
-	border('.',15,8,20,5);
-	gotoxy(19,10);
-	cout<<"1. Mass";
-
-	border('.',45,8,20,5);
-	gotoxy(49,10);
-	cout<<"2. Length";
-
-	border('.',15,16,20,5);
-	gotoxy(19,18);
-	cout<<"3. Area";
-
-	border('.',45,16,20,5);
-	gotoxy(49,18);
-	cout<<"4. Volume";
-
-	gotoxy(39,22);
-	cout<<"__";
-	gotoxy(39,22);
-	char opt=getch();
-
-	switch(opt)
+	char* unit_menu[]={"Unit Converter","1. Mass","2. Length","3. Area","4. Volume"};
+	char option=create_menu(unit_menu,sizeof(unit_menu)/4);
+	
+	switch(option)
 	{
 		case '1':	mass();
 				break;
@@ -720,7 +681,7 @@ void unitmenu()
 		case '4':	cout<<"volume()";
 				break;
 		default	:	error_mssg("Invalid option!",32);
-				unitmenu();
+				unit();
 	}
 }
 
@@ -1275,27 +1236,29 @@ void world_clock()
 	cout<<"World Clock\n";
 	gotoxy(3,5);
 	cout<<"Choose the city:";
-	gotoxy(3,7);
-	cout<<"1.Los Angeles";
-	otoxy(3,8);
-	cout<<"2.New York";
-	gotoxy(3,9);
-	cout<<"3.Buenos Aires";
-	gotoxy(3,10);
-	cout<<"4.London";
-	gotoxy(3,11);
-	cout<<"5.Paris";
-	gotoxy(3,12);
-	cout<<"6.Riyadh";
-	gotoxy(3,13);
-	cout<<"7.Delhi";
-	gotoxy(3,14);
-	cout<<"8.Beijing";
-	gotoxy(3,15);
-	cout<<"9.Sydney";
+	gotoxy(10,7);
+	cout<<"1. Los Angeles";
+	gotoxy(10,8);
+	cout<<"2. New York";
+	gotoxy(10,9);
+	cout<<"3. Buenos Aires";
+	gotoxy(10,10);
+	cout<<"4. London";
+	gotoxy(10,11);
+	cout<<"5. Paris";
+	gotoxy(10,12);
+	cout<<"6. Riyadh";
+	gotoxy(10,13);
+	cout<<"7. Delhi";
+	gotoxy(10,14);
+	cout<<"8. Beijing";
+	gotoxy(10,15);
+	cout<<"9. Sydney";
 	gotoxy(43,23);
 	cout<<"Press backspace to go to main menu..";
-	gotoxy(3,17);
+	gotoxy(39,19);
+	cout<<"___";
+	gotoxy(40,19);
 	char opt=getch();
 	
 	switch(opt)
@@ -1338,6 +1301,8 @@ void display_time(char city[],int hr,int mn)
 	border('.',25,9,30,5);
 	gotoxy(31,11);
 	cout<<city<<" --- "<<(17+24+hr+(gmt->tm_hour))%24+(mn+(gmt->tm_min))/60<<':'<<(mn+(gmt->tm_min))%60<<':'<<(gmt->tm_sec)<<endl; // +17 because the utc time was off by 17 (temporary fix)
+	
+	time_refresh:
 	gotoxy(3,23);
 	cout<<"Press r to refresh";
 	gotoxy(50,23);
@@ -1347,6 +1312,8 @@ void display_time(char city[],int hr,int mn)
 		goto get_time;
 	else if(temp==8)
 		world_clock();
+	else				//this is so that it rejects other key presses
+		goto time_refresh;
 }
 /////////////////////////////////////world clock ends///////////////////////////////////////////
 

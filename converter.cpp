@@ -45,38 +45,24 @@ void error_mssg(char mssg[],int x=27)
 	getch();
 }
 
-
-
 void currency();
 void unitmenu();
 void calc();
 
 void converter()
 {
-	clrscr();
-	border('#',1,1,81,24);
-	gotoxy(29,3);
-	cout<<"Calculator & Converter";
-
-	border('.',10,8,17,5);
-	gotoxy(12,10);
-	cout<<"1. Currency";
-	border('.',32,8,17,5);
-	gotoxy(36,10);
-	cout<<"2. Unit";
-	border('.',54,8,17,5);
-	gotoxy(56,10);
-	cout<<"3. Calculator";
-
-	gotoxy(39,16);
-	cout<<"___";
-	gotoxy(40,16);
-	char opt=getch();
-	switch(opt)
+	void currency();
+	void unit();
+	void calc();
+	
+	char* converter_menu[]={"Calc. & Conv.","1. Currency","2. Unit","3. Calculator"};
+	char option=create_menu(converter_menu,sizeof(converter_menu)/4);
+	
+	switch(option)
 	{
 		case '1':	currency();
 				break;
-		case '2':	unitmenu();
+		case '2':	unit();
 				break;
 		case '3':	calc();
 				break;
@@ -86,14 +72,9 @@ void converter()
 				converter();
 	}
 }
-
-void main()
-	{
-	converter();
-}
-
+/////////////////////////////////////////////////
 void currency()
-	{
+{
 	clrscr();
 	border('#',1,1,81,24);
 	gotoxy(34,4);
@@ -198,43 +179,17 @@ void currency()
 	if(temp==8)
 		converter();
 }
-
-void unitmenu()
+/////////////////////////////////////////////////
+void unit()
 {
 	void mass();
 	void length();
 	void area();
 	
-	clrscr();
-	border('#',1,1,81,24);
-	gotoxy(33,3);
-	cout<<"Unit Converter";
-
-	gotoxy(27,6);
-	cout<<"Select the desired option:"<<endl;
-
-	border('.',15,8,20,5);
-	gotoxy(19,10);
-	cout<<"1. Mass";
-
-	border('.',45,8,20,5);
-	gotoxy(49,10);
-	cout<<"2. Length";
-
-	border('.',15,16,20,5);
-	gotoxy(19,18);
-	cout<<"3. Area";
-
-	border('.',45,16,20,5);
-	gotoxy(49,18);
-	cout<<"4. Volume";
-
-	gotoxy(39,22);
-	cout<<"__";
-	gotoxy(39,22);
-	char opt=getch();
-
-	switch(opt)
+	char* unit_menu[]={"Unit Converter","1. Mass","2. Length","3. Area","4. Volume"};
+	char option=create_menu(unit_menu,sizeof(unit_menu)/4);
+	
+	switch(option)
 	{
 		case '1':	mass();
 				break;
@@ -245,21 +200,10 @@ void unitmenu()
 		case '4':	cout<<"volume()";
 				break;
 		default	:	error_mssg("Invalid option!",32);
-				unitmenu();
+				unit();
 	}
 }
 
-double convert(char enter_unit[], double enter_amt, char list_units[][10], double mltip_values[])
-{
-	int i;
-	for(i=0; strcmpi(enter_unit,list_units[][i])==0; ++i)
-	{
-		double tempo_amt=enter_amt*mltip_values[--i];
-		return tempo_amt;
-		break;
-	}
-}
-		
 void mass()
 {
 	clrscr();
@@ -664,7 +608,7 @@ void area()
 	if(temp==8)
 		converter();
 }
-
+/////////////////////////////////////////////////
 void calc()					//yet to optimize
  {
   char l,l1,l2,l3,l4,ch[10];
@@ -796,4 +740,10 @@ void calc()					//yet to optimize
   cout<<"\n do you want to continue";
 	gets(ch);
  }while(ch[0]=='Y');
+}
+///////////////////////////////////////converter ends///////////////////////////////////////////
+
+void main()
+	{
+	converter();
 }
