@@ -32,19 +32,22 @@ left=0;
 right=0;
 up=0;
 down=1;
-int score=0;
+int score=0,eaten=1,a,b;
 while(!GetAsyncKeyState(VK_ESCAPE))
 {
-//randomize();
+randomize();
 //score report
 gotoxy(70,0);
 cout<<score;
-int a=rand()%10+rand()%10+10;
-int b=rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+10;
-cout<<b;
+if(eaten){
+b=rand()%10+rand()%10+10;
+a=rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+10;
+gotoxy(a,b);cout<<"#";eaten=0;}
+
 while(down)
 {
-
+if(x==a&&y==b)
+{score++;eaten=1;}
 check();
 gotoxy(x,y);
 cout<<"*"<<endl;
@@ -58,13 +61,15 @@ cout<<" ";
 y=1;
 }
 y++;
+
 if(left||right||up||escape)
 {gotoxy(x,y-1);cout<<" ";goto out0;}
 }
 out0:
 while(up)
 {
-
+ if(x==a&&y==b)
+{score++;eaten=1;}
 check();
 gotoxy(x,y);
 cout<<"*"<<endl;
@@ -88,7 +93,8 @@ out1:
 while(left)
 {
 check();
-VKLEFT:
+if(x==a&&y==b)
+{score++;eaten=1;}
 gotoxy(x,y);
 cout<<"*"<<endl;
 gotoxy(x+1,y);
@@ -103,8 +109,6 @@ x=80;
 x--;
 check();
 if(down||right||up||escape)
-//goto VKLEFT;
-//if(GetAsyncKeyState(VK_DOWN)||GetAsyncKeyState(VK_UP)||GetAsyncKeyState(VK_RIGHT)||GetAsyncKeyState(VK_ESCAPE))
 {gotoxy(x+1,y);
 cout<<" ";
 gotoxy(x,y);
@@ -116,7 +120,8 @@ out2:
 while(right)
 {
 check();
-VKRIGHT:
+if(x==a&&y==b)
+{score++;eaten=1;}
 gotoxy(x,y);
 cout<<"*"<<endl;
 gotoxy(x-1,y);
