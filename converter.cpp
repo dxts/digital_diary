@@ -45,9 +45,17 @@ void error_mssg(char mssg[],int x=27)
 	getch();
 }
 
-void currency();
-void unitmenu();
-void calc();
+float convert(char enter_unit[], float enter_amt, char* valid_units[], float mltip_values[])
+{
+	for(int i=0; i<3; ++i)   //If the strcmp is used here it terminates the loop
+		if(strcmpi(enter_unit,valid_units[i])==0)
+		{
+			float ret_amt=enter_amt*mltip_values[i];
+			return ret_amt;
+
+		}
+	return 0;   //Prevents crashes in case of invalid units
+}
 
 void converter()
 {
@@ -120,6 +128,10 @@ void currency()
 	gotoxy(35,18);
 	cout<<"SAR";
 
+	char* currency_units[]={"BHD","INR","SAR","EUR","YEN","USD"};
+	double to_usd[]={2.65,0.016,0.27,1.14,0.0088,1};
+	double from_usd[]={0.375,64.46,3.75,0.88,112.98,1};
+	
 	gotoxy(22,7);
 	char in_cur[4];
 	gets(in_cur);
@@ -131,20 +143,9 @@ void currency()
 	gotoxy(20,9);
 	float in_amt;
 	cin>>in_amt;
-	float temp_amt;
-	if(strcmpi(in_cur,"BHD")==0)		///////////////////////////////////////////////////
-		temp_amt=2.65*in_amt;
-	else if(strcmpi(in_cur,"INR")==0)
-		temp_amt=0.016*in_amt;
-	else if(strcmpi(in_cur,"SAR")==0)
-		temp_amt=0.27*in_amt;
-	else if(strcmpi(in_cur,"EUR")==0)	//converts entered currency to usd
-		temp_amt=1.14*in_amt;
-	else if(strcmpi(in_cur,"YEN")==0)
-		temp_amt=0.0088*in_amt;
-	else if(strcmpi(in_cur,"USD")==0)
-		temp_amt=in_amt;		////////////////////////////////////////////////////
-
+		
+	double temp_amt=convert(in_cur,in_amt,currency_units,to_usd);
+	
 	gotoxy(57,7);
 	char out_cur[4];
 	gets(out_cur);
@@ -153,19 +154,9 @@ void currency()
 		error_mssg("Invalid currency!",31);
 		currency();
 	}
-	float out_amt;
-	if(strcmpi(out_cur,"BHD")==0)		////////////////////////////////////////////////////
-		out_amt=0.375*temp_amt;
-	else if(strcmpi(out_cur,"INR")==0)
-		out_amt=64.46*temp_amt;
-	else if(strcmpi(out_cur,"SAR")==0)
-		out_amt=3.75*temp_amt;
-	else if(strcmpi(out_cur,"EUR")==0)	//converts usd to required currency
-		out_amt=0.88*temp_amt;
-	else if(strcmpi(out_cur,"YEN")==0)
-		out_amt=112.98*temp_amt;
-	else if(strcmpi(out_cur,"USD")==0)
-		out_amt=temp_amt;		///////////////////////////////////////////////////
+	
+	double out_amt=convert(out_cur,temp_amt,currency_units,from_usd);
+	
 	gotoxy(55,9);
 	cout<<out_amt;
 
@@ -267,6 +258,10 @@ void mass()
 	gotoxy(67,19);
 	cout<<"oz";
 
+	char* mass_units[]={"t","kg","g","mg","ug","imt","ust","st","lb","oz"};
+	double to_gram[]={1000000.0,1000.0,1.0,0.001,0.000001,1016000.0,907185.0,6350.29,453.592,28.3495};
+	double from_gram[]={0.000001,0.001,1.0,1000.0,1000000.0,0.00000098,0.0000011,0.0001575,0.0022046,0.035274};
+	
 	gotoxy(18,7);
 	char in_unit[4];
 	gets(in_unit);
@@ -278,28 +273,9 @@ void mass()
 	gotoxy(18,9);
 	double in_amt;
 	cin>>in_amt;
-	double temp_amt;
-	if(strcmpi(in_unit,"t")==0)		///////////////////////////////////////////////////
-		temp_amt=1000000*in_amt;
-	else if(strcmpi(in_unit,"kg")==0)
-		temp_amt=1000*in_amt;
-	else if(strcmpi(in_unit,"g")==0)
-		temp_amt=in_amt;
-	else if(strcmpi(in_unit,"mg")==0)
-		temp_amt=0.001*in_amt;
-	else if(strcmpi(in_unit,"ug")==0)
-		temp_amt=0.000001*in_amt;
-	else if(strcmpi(in_unit,"imt")==0)	//converts entered mass unit to grams
-		temp_amt=1016000*in_amt;
-	else if(strcmpi(in_unit,"ust")==0)
-		temp_amt=907185*in_amt;
-	else if(strcmpi(in_unit,"st")==0)
-		temp_amt=6350.29*in_amt;
-	else if(strcmpi(in_unit,"lb")==0)
-		temp_amt=453.592*in_amt;
-	else if(strcmpi(in_unit,"oz")==0)
-		temp_amt=28.3495*in_amt;	///////////////////////////////////////////////////
-
+	
+	double temp_amt=convert(in_unit,in_amt,mass_units,to_gram);
+	
 	gotoxy(53,7);
 	char out_unit[4];
 	gets(out_unit);
@@ -309,27 +285,8 @@ void mass()
 		mass();
 	}
 
-	double out_amt;
-	if(strcmpi(out_unit,"t")==0)		///////////////////////////////////////////////////
-		out_amt=0.000001*temp_amt;
-	else if(strcmpi(out_unit,"kg")==0)
-		out_amt=0.001*temp_amt;
-	else if(strcmpi(out_unit,"g")==0)
-		out_amt=temp_amt;
-	else if(strcmpi(out_unit,"mg")==0)
-		out_amt=1000*temp_amt;
-	else if(strcmpi(out_unit,"ug")==0)
-		out_amt=1000000*temp_amt;
-	else if(strcmpi(out_unit,"imt")==0)	//converts grams to required mass unit
-		out_amt=0.00000098*temp_amt;
-	else if(strcmpi(out_unit,"ust")==0)
-		out_amt=0.0000011*temp_amt;
-	else if(strcmpi(out_unit,"st")==0)
-		out_amt=0.0001575*temp_amt;
-	else if(strcmpi(out_unit,"lb")==0)
-		out_amt=0.0022046*temp_amt;
-	else if(strcmpi(out_unit,"oz")==0)
-		out_amt=0.035274*temp_amt;	///////////////////////////////////////////////////
+	double out_amt=convert(in_unit,in_amt,mass_units,from_gram);
+	
 	gotoxy(53,9);
 	cout<<out_amt;
 
@@ -407,6 +364,10 @@ void length()
 	gotoxy(67,19);
 	cout<<"nmi";
 
+	char* length_units[]={"km","m","cm","mm","nm","mi","yd","ft","in","nmi"};
+	double to_metre[]={1000.0,1.0,0.01,0.001,0.000000001,1609.34,0.9144,0.3048,0.0254,1852.0};
+	double from_metre[]={0.001,1.0,100.0,1000.0,1000000000.0,0.000621371,1.09361,3.28084,39.3701,0.000539957};
+	
 	gotoxy(18,7);
 	char in_unit[4];
 	gets(in_unit);
@@ -418,28 +379,9 @@ void length()
 	gotoxy(20,9);
 	double in_amt;
 	cin>>in_amt;
-	double temp_amt;
-	if(strcmpi(in_unit,"km")==0)		///////////////////////////////////////////////////
-		temp_amt=1000*in_amt;
-	else if(strcmpi(in_unit,"m")==0)
-		temp_amt=in_amt;
-	else if(strcmpi(in_unit,"cm")==0)
-		temp_amt=0.01*in_amt;
-	else if(strcmpi(in_unit,"mm")==0)
-		temp_amt=0.001*in_amt;
-	else if(strcmpi(in_unit,"nm")==0)
-		temp_amt=0.000000001*in_amt;
-	else if(strcmpi(in_unit,"mi")==0)	//converts entered length unit to metre
-		temp_amt=1609.34*in_amt;
-	else if(strcmpi(in_unit,"yd")==0)
-		temp_amt=0.9144*in_amt;
-	else if(strcmpi(in_unit,"ft")==0)
-		temp_amt=0.3048*in_amt;
-	else if(strcmpi(in_unit,"in")==0)
-		temp_amt=0.0254*in_amt;
-	else if(strcmpi(in_unit,"nmi")==0)
-		temp_amt=1852*in_amt;		///////////////////////////////////////////////////
-
+	
+	double temp_amt=convert(in_unit,in_amt,length_units,to_metre);
+	
 	gotoxy(53,7);
 	char out_unit[4];
 	gets(out_unit);
@@ -449,27 +391,8 @@ void length()
 		length();
 	}
 
-	double out_amt;
-	if(strcmpi(out_unit,"km")==0)		///////////////////////////////////////////////////
-		out_amt=0.001*temp_amt;
-	else if(strcmpi(out_unit,"m")==0)
-		out_amt=temp_amt;
-	else if(strcmpi(out_unit,"cm")==0)
-		out_amt=100*temp_amt;
-	else if(strcmpi(out_unit,"mm")==0)
-		out_amt=1000*temp_amt;
-	else if(strcmpi(out_unit,"nm")==0)
-		out_amt=1000000000*temp_amt;
-	else if(strcmpi(out_unit,"mi")==0)	//converts metre to required length unit
-		out_amt=0.000621371*temp_amt;
-	else if(strcmpi(out_unit,"yd")==0)
-		out_amt=1.09361*temp_amt;
-	else if(strcmpi(out_unit,"ft")==0)
-		out_amt=3.28084*temp_amt;
-	else if(strcmpi(out_unit,"in")==0)
-		out_amt=39.3701*temp_amt;
-	else if(strcmpi(out_unit,"nmi")==0)
-		out_amt=0.000539957*temp_amt;	///////////////////////////////////////////////////
+	double out_amt=convert(out_unit,temp_amt,length_units,from_metre);
+	
 	gotoxy(55,9);
 	cout<<out_amt;
 
@@ -539,6 +462,10 @@ void area()
 	gotoxy(65,17);
 	cout<<"ac";
 	
+	char* area_units[]={"sq km","sq m","sq mi","sq yd","sq ft","sq in","ha","ac"};
+	double to_metre_sq[]={1000000.0,1.0,2590000.0,0.836127,0.092903,0.00064516,10000.0,4046.86};
+	double from_metre_sq[]={0.000001,1.0,0.0000003861,1.19599,10.7639,1550,0.0001,0.000247105};
+	
 	gotoxy(18,7);
 	char in_unit[6];
 	gets(in_unit);
@@ -550,24 +477,9 @@ void area()
 	gotoxy(18,9);
 	double in_amt;
 	cin>>in_amt;
-	double temp_amt;
-	if(strcmpi(in_unit,"sq km")==0)			///////////////////////////////////////////////////
-		temp_amt=1000000*in_amt;
-	else if(strcmpi(in_unit,"sq m")==0)
-		temp_amt=1000*in_amt;
-	else if(strcmpi(in_unit,"sq mi")==0)
-		temp_amt=in_amt;
-	else if(strcmpi(in_unit,"sq yd")==0)
-		temp_amt=0.001*in_amt;
-	else if(strcmpi(in_unit,"sq ft")==0)		//converts entered area unit to sq m
-		temp_amt=0.000001*in_amt;
-	else if(strcmpi(in_unit,"sq in")==0)
-		temp_amt=1016000*in_amt;
-	else if(strcmpi(in_unit,"ac")==0)
-		temp_amt=907185*in_amt;
-	else if(strcmpi(in_unit,"ha")==0)
-		temp_amt=6350.29*in_amt;		/////////////////////////////////////////////
 	
+	double temp_amt=convert(in_unit,in_amt,area_units,to_metre_sq);
+		
 	gotoxy(53,7);
 	char out_unit[4];
 	gets(out_unit);
@@ -577,24 +489,8 @@ void area()
 		area();
 	}
 
-	double out_amt;
-	if(strcmpi(out_unit,"sq km")==0)		///////////////////////////////////////////////////
-		out_amt=0.000001*temp_amt;
-	else if(strcmpi(out_unit,"sq m")==0)
-		out_amt=0.001*temp_amt;
-	else if(strcmpi(out_unit,"sq mi")==0)
-		out_amt=temp_amt;
-	else if(strcmpi(out_unit,"sq yd")==0)
-		out_amt=1000*temp_amt;
-	else if(strcmpi(out_unit,"sq ft")==0)		//converts grams to required mass unit
-		out_amt=1000000*temp_amt;
-	else if(strcmpi(out_unit,"sq in")==0)
-		out_amt=0.00000098*temp_amt;
-	else if(strcmpi(out_unit,"ac")==0)
-		out_amt=0.0000011*temp_amt;
-	else if(strcmpi(out_unit,"ha")==0)
-		out_amt=0.0001575*temp_amt;		///////////////////////////////////////////////
-
+	double out_amt=convert(out_unit,temp_amt,area_units,from_metre_sq);
+	
 	gotoxy(53,9);
 	cout<<out_amt;
 
