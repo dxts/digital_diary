@@ -11,12 +11,14 @@
 float convert(char enter_unit[], float enter_amt, char* valid_units[], float mltip_values[])
 {
 	int i;
-	for(i=0; strcmpi(enter_unit,valid_units[i])==0; ++i)
-	{
-		float ret_amt=enter_amt*mltip_values[i];
-		return ret_amt;
-		break;
-	}
+	for(i=0;i<3; ++i)   //If the strcmp is used here it terminates the loop
+		if(strcmpi(enter_unit,valid_units[i])==0)
+		{
+			float ret_amt=enter_amt*mltip_values[i];
+			return ret_amt;
+			//break;   //Break will be unreachable code as the function terminates when a value is returned
+		}
+	return 0;   //Prevents crashes in case of invalid units
 }
 
 void main()
@@ -32,4 +34,5 @@ void main()
 
 	char out_unit[]="g";	// output unit ('to' unit)
 	float out_amt=convert(out_unit, temp_amt, mass_units, from_gram);
+	cout<<out_amt; //Atleast something to output
 	}
