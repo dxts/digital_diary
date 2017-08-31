@@ -225,6 +225,8 @@ void menu()
 				break;
 		case '4':	cout<<"notes";
 				break;
+		case '6':	snake;
+				break;
 		case 8	:	login();
 		default:	error_mssg("Invalid option!",32);
 				menu();
@@ -531,12 +533,12 @@ void contacts :: menu()
 ///////////////////////////////////contacts ends//////////////////////////////////////////////
 /////////////////////////////////////converter starts/////////////////////////////////////////
 
-float convert(char enter_unit[], float enter_amt, char* valid_units[], float mltip_values[])
+double convert(char enter_unit[], double enter_amt, char* valid_units[], int no_of_units, double mltip_values[])
 {
-	for(int i=0; i<3; ++i)   //If the strcmp is used here it terminates the loop
+	for(int i=0; i<no_of_units; ++i)   //If the strcmp is used here it terminates the loop
 		if(strcmpi(enter_unit,valid_units[i])==0)
 		{
-			float ret_amt=enter_amt*mltip_values[i];
+			double ret_amt=enter_amt*mltip_values[i];
 			return ret_amt;
 
 		}
@@ -627,10 +629,10 @@ void currency()
 		currency();
 	}
 	gotoxy(20,9);
-	float in_amt;
+	double in_amt;
 	cin>>in_amt;
 		
-	double temp_amt=convert(in_cur,in_amt,currency_units,to_usd);
+	double temp_amt=convert(in_cur,in_amt,currency_units,sizeof(currency_units)/4,to_usd);
 	
 	gotoxy(57,7);
 	char out_cur[4];
@@ -641,7 +643,7 @@ void currency()
 		currency();
 	}
 	
-	double out_amt=convert(out_cur,temp_amt,currency_units,from_usd);
+	double out_amt=convert(out_cur,temp_amt,currency_units,sizeof(currency_units)/4,from_usd);
 	
 	gotoxy(55,9);
 	cout<<out_amt;
@@ -760,7 +762,7 @@ void mass()
 	double in_amt;
 	cin>>in_amt;
 	
-	double temp_amt=convert(in_unit,in_amt,mass_units,to_gram);
+	double temp_amt=convert(in_unit,in_amt,mass_units,sizeof(mass_units)/4,to_gram);
 	
 	gotoxy(53,7);
 	char out_unit[4];
@@ -771,7 +773,7 @@ void mass()
 		mass();
 	}
 
-	double out_amt=convert(in_unit,in_amt,mass_units,from_gram);
+	double out_amt=convert(in_unit,in_amt,mass_units,sizeof(mass_units)/4,from_gram);
 	
 	gotoxy(53,9);
 	cout<<out_amt;
@@ -866,7 +868,7 @@ void length()
 	double in_amt;
 	cin>>in_amt;
 	
-	double temp_amt=convert(in_unit,in_amt,length_units,to_metre);
+	double temp_amt=convert(in_unit,in_amt,length_units,sizeof(length_units)/4,to_metre);
 	
 	gotoxy(53,7);
 	char out_unit[4];
@@ -877,7 +879,7 @@ void length()
 		length();
 	}
 
-	double out_amt=convert(out_unit,temp_amt,length_units,from_metre);
+	double out_amt=convert(out_unit,temp_amt,length_units,sizeof(length_units)/4,from_metre);
 	
 	gotoxy(55,9);
 	cout<<out_amt;
@@ -964,7 +966,7 @@ void area()
 	double in_amt;
 	cin>>in_amt;
 	
-	double temp_amt=convert(in_unit,in_amt,area_units,to_metre_sq);
+	double temp_amt=convert(in_unit,in_amt,area_units,sizeof(area_units)/4,to_metre_sq);
 		
 	gotoxy(53,7);
 	char out_unit[4];
@@ -975,7 +977,7 @@ void area()
 		area();
 	}
 
-	double out_amt=convert(out_unit,temp_amt,area_units,from_metre_sq);
+	double out_amt=convert(out_unit,temp_amt,area_units,sizeof(area_units)/4,from_metre_sq);
 	
 	gotoxy(53,9);
 	cout<<out_amt;
@@ -1217,7 +1219,183 @@ void display_time(char city[],int hr,int mn)
 		goto time_refresh;
 }
 /////////////////////////////////////world clock ends///////////////////////////////////////////
+/////////////////////////////////////snake game starts//////////////////////////////////////////
+void delay()
+{
+	long i;
+	for(i=0;i<30000000;i++);
+}
 
+int left=0,right=0,up=0,down=0,escape=0;
+
+void check()
+{
+	if(GetAsyncKeyState(VK_LEFT))
+	{
+		left=1,right=0,up=0,down=0;
+	}
+	else if(GetAsyncKeyState(VK_RIGHT))
+	{
+		left=0,right=1,up=0,down=0;
+	}
+	else if(GetAsyncKeyState(VK_UP))
+	{
+		left=0,right=0,up=1,down=0;
+	}
+	else if(GetAsyncKeyState(VK_DOWN))
+	{
+		left=0,right=0,up=0,down=1;
+	}
+	else if(GetAsyncKeyState(VK_ESCAPE))
+		escape=1;
+}
+
+void snake()
+{
+
+	int x=2,y=2;
+	left=0;
+	right=0;
+	up=0;
+	down=1;
+	int score=0,eaten=1,a,b;
+	while(!GetAsyncKeyState(VK_ESCAPE))
+	{
+		randomize();
+		//score report
+		gotoxy(70,0);
+		cout<<score;
+		if(eaten)
+		{
+			b=rand()%10+rand()%10+10;
+			a=rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+10;
+			gotoxy(a,b);
+			cout<<"#";
+			eaten=0;
+		}
+
+		while(down)
+		{
+			if(x==a&&y==b)
+			{
+				score++;eaten=1;
+			}
+			check();
+			gotoxy(x,y);
+			cout<<"*"<<endl;
+			gotoxy(x,y-1);
+			cout<<" ";
+			delay();
+			if(y==24)
+			{
+				gotoxy(x,y);
+				cout<<" ";
+				y=1;
+			}
+			y++;
+
+			if(left||right||up||escape)
+			{
+				gotoxy(x,y-1);
+				cout<<" ";
+				goto out0;
+			}
+		}
+
+		out0:
+		while(up)
+		{
+			if(x==a&&y==b)
+			{
+				score++;
+				eaten=1;
+			}
+			check();
+			gotoxy(x,y);
+			cout<<"*"<<endl;
+			gotoxy(x,y+1);
+			cout<<" ";
+			delay();
+			if(y==2)
+			{
+				gotoxy(x,y);
+				cout<<" ";
+				y=25;
+			}
+			y--;
+			check();
+			if(left||right||down||escape)
+			{
+				gotoxy(x,y+1);cout<<" ";goto out1;
+			}
+		}
+	
+		out1:
+		while(left)
+		{
+			check();
+			if(x==a&&y==b)
+			{
+				score++;
+				eaten=1;
+			}
+			gotoxy(x,y);
+			cout<<"*"<<endl;
+			gotoxy(x+1,y);
+			cout<<" ";
+			delay();
+			if(x==0)
+			{
+				gotoxy(x,y);
+				cout<<" ";
+				x=80;
+			}
+			x--;
+			check();
+			if(down||right||up||escape)
+			{
+				gotoxy(x+1,y);
+				cout<<" ";
+				gotoxy(x,y);
+				cout<<" ";
+				goto out2;
+			}
+		}
+		
+		out2:
+		while(right)
+		{
+			check();
+			if(x==a&&y==b)
+			{
+				score++;
+				eaten=1;
+			}
+			gotoxy(x,y);
+			cout<<"*"<<endl;
+			gotoxy(x-1,y);
+			cout<<" ";
+			delay();
+			if(x==80)
+			{
+				gotoxy(x,y);
+				cout<<" ";
+				x=0;
+			}
+			x++;
+			check();
+			if(left||down||up||escape)
+			{
+				gotoxy(x-1,y);
+				cout<<" ";
+				goto out3;
+			}
+		}
+		
+		out3:
+	}
+}
+////////////////////////////////////snake game ends///////////////////////////////////////////
 void main()
 	{
 	login();
