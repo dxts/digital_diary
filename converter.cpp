@@ -45,12 +45,12 @@ void error_mssg(char mssg[],int x=27)
 	getch();
 }
 
-float convert(char enter_unit[], float enter_amt, char* valid_units[], float mltip_values[])
+double convert(char enter_unit[], double enter_amt, char* valid_units[], int no_of_units, double mltip_values[])
 {
-	for(int i=0; i<3; ++i)   //If the strcmp is used here it terminates the loop
+	for(int i=0; i<no_of_units; ++i)   //If the strcmp is used here it terminates the loop
 		if(strcmpi(enter_unit,valid_units[i])==0)
 		{
-			float ret_amt=enter_amt*mltip_values[i];
+			double ret_amt=enter_amt*mltip_values[i];
 			return ret_amt;
 
 		}
@@ -141,10 +141,10 @@ void currency()
 		currency();
 	}
 	gotoxy(20,9);
-	float in_amt;
+	double in_amt;
 	cin>>in_amt;
 		
-	double temp_amt=convert(in_cur,in_amt,currency_units,to_usd);
+	double temp_amt=convert(in_cur,in_amt,currency_units,sizeof(currency_units)/4,to_usd);
 	
 	gotoxy(57,7);
 	char out_cur[4];
@@ -155,7 +155,7 @@ void currency()
 		currency();
 	}
 	
-	double out_amt=convert(out_cur,temp_amt,currency_units,from_usd);
+	double out_amt=convert(out_cur,temp_amt,currency_units,sizeof(currency_units)/4,from_usd);
 	
 	gotoxy(55,9);
 	cout<<out_amt;
@@ -274,7 +274,7 @@ void mass()
 	double in_amt;
 	cin>>in_amt;
 	
-	double temp_amt=convert(in_unit,in_amt,mass_units,to_gram);
+	double temp_amt=convert(in_unit,in_amt,mass_units,sizeof(mass_units)/4,to_gram);
 	
 	gotoxy(53,7);
 	char out_unit[4];
@@ -285,7 +285,7 @@ void mass()
 		mass();
 	}
 
-	double out_amt=convert(in_unit,in_amt,mass_units,from_gram);
+	double out_amt=convert(in_unit,in_amt,mass_units,sizeof(mass_units)/4,from_gram);
 	
 	gotoxy(53,9);
 	cout<<out_amt;
@@ -380,7 +380,7 @@ void length()
 	double in_amt;
 	cin>>in_amt;
 	
-	double temp_amt=convert(in_unit,in_amt,length_units,to_metre);
+	double temp_amt=convert(in_unit,in_amt,length_units,sizeof(length_units)/4,to_metre);
 	
 	gotoxy(53,7);
 	char out_unit[4];
@@ -391,7 +391,7 @@ void length()
 		length();
 	}
 
-	double out_amt=convert(out_unit,temp_amt,length_units,from_metre);
+	double out_amt=convert(out_unit,temp_amt,length_units,sizeof(length_units)/4,from_metre);
 	
 	gotoxy(55,9);
 	cout<<out_amt;
@@ -478,7 +478,7 @@ void area()
 	double in_amt;
 	cin>>in_amt;
 	
-	double temp_amt=convert(in_unit,in_amt,area_units,to_metre_sq);
+	double temp_amt=convert(in_unit,in_amt,area_units,sizeof(area_units)/4,to_metre_sq);
 		
 	gotoxy(53,7);
 	char out_unit[4];
@@ -489,7 +489,7 @@ void area()
 		area();
 	}
 
-	double out_amt=convert(out_unit,temp_amt,area_units,from_metre_sq);
+	double out_amt=convert(out_unit,temp_amt,area_units,sizeof(area_units)/4,from_metre_sq);
 	
 	gotoxy(53,9);
 	cout<<out_amt;
