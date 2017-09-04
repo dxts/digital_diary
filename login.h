@@ -1,21 +1,21 @@
 class user
-	{
+{
 	private:
 			char password[50];
 			char username[50];
 	public:
 			char* retpassword()
-				{
+			{
 				return password;
 			}
 			char* retusername()
-				{
+			{
 				return username;
 			}
 };
 
 void login()
-	{
+{
 	char uname[50],pass[50];
 	int bool=0;
 	user U;
@@ -27,32 +27,27 @@ void login()
 	gets(uname);
 	ifstream infile("user.dat",ios::in|ios::binary);
 	if(!infile)
-		{
-		clrscr();
-		gotoxy(30,11);
-		cout<<"File doesn't exist!!";
-		getch();
+	{
+		error_mssg("File doesn't exist!!",30);
 		exit(1);
 	}
 	while(!infile.eof())
-		{
+	{
 		infile.read((char*)&U,sizeof(user));
 		if(strcmp(U.retusername(),uname)==0)
-			{
+		{
 			bool=1;
 			infile.close();
 			break;
 		}
 	}
 	if(bool==0)
-		{
-		clrscr();
-		gotoxy(30,11);
-		cout<<"Username is incorrect";
-		getch();
+	{
+		error_mssg("Username is incorrect",29);
+		infile.close();
 		goto enter_username;
 	}
-          ///////////////////////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////////////////
 	enter_password:
 
 	bool=0;
@@ -61,30 +56,24 @@ void login()
 	strcpy(pass,getpass());
 	infile.open("user.dat",ios::in|ios::binary);
 	if(!infile)
-		{
-		clrscr();
-		gotoxy(30,11);
-		cout<<"File doesn't exist!!";
+	{
+		error_mssg("File doesn't exist!!",30);
 		exit(1);
 	}
 	while(!infile.eof())
-		{
+	{
 		infile.read((char*)&U,sizeof(user));
 		if(strcmp(U.retpassword(),pass)==0)
-			{
+		{
 			infile.close();
 			bool=1;
 			break;
 		}
 	}
 	if(bool==0)
-		{
-		clrscr();
-		gotoxy(30,11);
-		cout<<"Password is incorrect";
+	{
+		error_mssg("Password is incorrect",29);
 		infile.close();
-		getch();
 		goto enter_username;
-	}
-            /////////////////////////////////////////////////////////////////////////////////////
+	}			////////////////////////////////////////////////////////
 }
