@@ -123,10 +123,15 @@ class User
 		return password; 
 	}
 	
+	int ret_ir()
+	{
+		return initial_run;
+	}
+	
+	void initial_login(char*);
+	
 	User :: User()
 	{
-		strcpy(username,"d");
-		strcpy(password,"pd");
 		initial_run=1;
 	}
 }U;
@@ -134,8 +139,8 @@ class User
 class contacts
 {
 	private:
-			char name[20],addline_1[20],addline_2[20],email_id[20];
-			char ph_no[10],mob_no[10],encrypted_text[20],decrypted_text[20];
+			char name[20],addline_1[20],addline_2[20],email_id[30];
+			char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
 	public:
 			void file_edit();
 			void input();    //get contacts details by input
@@ -143,96 +148,99 @@ class contacts
 			void menu();
 			void view();
 			void createnew();
-			void edit();
+			void edit(char temp[]);
 			void search();
+			void deletecontact(char tmp[]);
+			void sort();
+			void clrdsp();
+			void charfix(char temp[],char letter,int mode);
 			void encrypt(char temp[]);
 			void decrypt(char temp[]);
 }c,f;
 //////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////login starts/////////////////////////////////////////////
-char* getpass()
+char* getpass(char* keyword="nor")
 {
-	void login(char* keyword);
+	void login(char*);
 
 	char pass[30];
 	for(int i=0;i<30;i++)
 	{
 		pass[i]=getch();
-
-		if(pass[i]==13)
-		{
-			pass[i]='\0';
-			break;
-		}
-
+		
 		if(i>=1 && pass[i]==8)
 		{
 			--i;
 			gotoxy(40+i,14);
 			cout<<' ';
 			gotoxy(40+i,14);
+			continue;
 		}
-
-		if(!(pass[i]>96&&pass[i]<123||pass[i]>64&&pass[i]<91||pass[i]>32&&pass[i]<43))
+		
+		if(strcmp(keyword,"ini")==0)
+			if(!(pass[i]>96&&pass[i]<123 || pass[i]>64&&pass[i]<91 || pass[i]>32&&pass[i]<43 || pass[i]==13))
+			{
+				error_mssg("Use characters A-Z, a-z, ! \" # $ % & ' ( ) *",17);
+				U.initial_login("pass");
+			}
+		
+		if(pass[i]==13)
 		{
-			error_mssg("Use characters A-Z, a-z, ! \" # $ % & ' ( ) *",17);
-			login("pass");
+			pass[i]='\0';
+			break;
 		}
-		cout<<'*';
+		
+		cout<<'*';	
 	}
 	return pass;
 }
 
-void login(char* keyword="user")
+void User :: initial_login(char* keyword="user")
 {
-	char uname[30],pass[30];
-	int bool=0;
-
+	ofstream fout;
+	fout.open("dduser.dat",ios::out|ios::binary);
+	
 	if(strcmp(keyword,"user")==0)
 		goto enter_username;
 	else if(strcmp(keyword,"pass")==0)
 		goto wrong_password_entered;
+	/////////////////////////////////////////////////////////
 	
 	enter_username:
 	
+	char temp_user[30];
+	
 	clrscr();
 	border('~',20,8,40,5);
+	gotoxy(21,14);
+	cout<<"Username should be less than 30 char";
 	gotoxy(30,10);
 	cout<<"Username: ";
-	gets(uname);
+	gets(temp_user);
 	
-	if(strcmp(uname,U.ret_user())==0)
-		bool=1;
-	
-	if(bool==0)
-	{
-		error_mssg("Username is incorrect",29);
+	if(strlen(temp_user)<30)
+		strcpy(username,temp_user);
+	else
 		goto enter_username;
-	}
-	//////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////
 	
 	enter_password:
-
-	bool=0;
 	
 	border('~',20,12,40,5);
-	gotoxy(30,14);
-	cout<<"Password:                    ";
+	gotoxy(18,18);
+	cout<<"Use characters A-Z, a-z, ! \" # $ % & ' ( ) *";
+	gotoxy(21,14);
+	cout<<"         Password:                    ";
 	gotoxy(40,14);
-	strcpy(pass,getpass());
+	strcpy(password,getpass("ini"));
 	
-	if(strcmp(pass,U.ret_pass())==0)
-	{
-		bool=1;
-		return;
-	}
-		
-	if(bool==0)
-	{
-		error_mssg("Password is incorrect",29);
-		goto wrong_password_entered;
-	}
-	///////////////////////////////////////////////////////////////////////////
+	initial_run=0;
+	
+	fout.seekp(0,ios::beg);
+	fout.write((char*)&U,sizeof(User));
+	fout.close();
+	return;
+	////////////////////////////////////////////////////////
 	
 	wrong_password_entered:
 	
@@ -240,8 +248,84 @@ void login(char* keyword="user")
 	border('~',20,8,40,5);
 	gotoxy(30,10);
 	cout<<"Username: ";
-	cout<<U.ret_user();
+	cout<<username;
 	goto enter_password;
+}
+
+void login(char* keyword="user")
+{
+	ifstream fin;
+	fin.open("dduser.dat",ios::in|ios::binary);
+	
+	if(!fin)
+	{
+		U.initial_login();
+		return;
+	}
+	
+	fin.seekg(0,ios::beg);
+	fin.read((char*)&U,sizeof(User));
+		
+	if(U.ret_ir()==0)
+	{
+		char uname[30],pass[30];
+		int bool=0;
+
+		if(strcmp(keyword,"user")==0)
+			goto enter_username;
+		else if(strcmp(keyword,"pass")==0)
+			goto wrong_password_entered;
+
+		enter_username:
+
+		clrscr();
+		border('~',20,8,40,5);
+		gotoxy(30,10);
+		cout<<"Username: ";
+		gets(uname);
+
+		if(strcmp(uname,U.ret_user())==0)
+			bool=1;
+
+		if(bool==0)
+		{
+			error_mssg("Username is incorrect",29);
+			goto enter_username;
+		}
+		//////////////////////////////////////////////////////////////////////////
+
+		enter_password:
+
+		bool=0;
+
+		border('~',20,12,40,5);
+		gotoxy(30,14);
+		cout<<"Password:                    ";
+		gotoxy(40,14);
+		strcpy(pass,getpass());
+
+		if(strcmp(pass,U.ret_pass())==0)
+		{
+			bool=1;
+			return;
+		}
+
+		if(bool==0)
+		{
+			error_mssg("Password is incorrect",29);
+			goto wrong_password_entered;
+		}
+		///////////////////////////////////////////////////////////////////////////
+
+		wrong_password_entered:
+
+		clrscr();
+		border('~',20,8,40,5);
+		gotoxy(30,10);
+		cout<<"Username: ";
+		cout<<U.ret_user();
+		goto enter_password;
+	}
 }
 //////////////////////////////////////login ends//////////////////////////////////////////////
 /////////////////////////////////////menu starts//////////////////////////////////////////////
@@ -275,300 +359,494 @@ void menu()
 /////////////////////////////////////menu ends////////////////////////////////////////////////
 ////////////////////////////////////contacts starts///////////////////////////////////////////
 
+void contacts :: clrdsp()
+{
+gotoxy(38,8);cout<<"                                    ";
+gotoxy(38,9);cout<<"                                    ";
+gotoxy(38,10);cout<<"                                    ";
+gotoxy(38,11);cout<<"                                    ";
+gotoxy(38,12);cout<<"                                    ";
+gotoxy(38,13);cout<<"                                    ";
+}
 void contacts :: encrypt(char temp[])
 {
-	char ekeyl[]="gi*dhwp(k{}?|^y$+#fv'%q!ua@.";
-	char ekeyu[]="coen7m4&):<>+][_`jlorz~s-=@.";
-	char dkeyl[]="abcdefghijklmnopqrstuvwxyz@.";
-	char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
+char ekeyl[]="gi*dhwp(k{}?|^y$x#fv'%q!ua@. ICFEUSWRVD";
+char ekeyu[]="coenXmZ&):<>+][_`jlorz~s-=@.";
+char dkeyl[]="abcdefghijklmnopqrstuvwxyz@. 0123456789";
+char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
 
-	char output[100];
-	//gets(temp);
-	int l=strlen(temp);
-	for(int i=0;i<=l-1;i++)
-	{
-		con:
-		for(int j=0;j<=27;j++)
-		{
-			//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
-			if(temp[i]==dkeyl[j])
-			{
-				//cout<<"here1";                                                //debug info
-				output[i]=ekeyl[j];
-				i++;
-				if(i!=l)
-				goto con;
-				else goto exit;
-			}
-			if(dkeyu[j]==temp[i])
-			{
-				//cout<<"here2";                                                //debug info
-				output[i]=ekeyu[j];
-				i++;
-				if(i!=l)
-				goto con;
-				else goto exit;
-			}
-		}
-	}
-	exit:
-	output[i]='\0';
-	//cout<<endl<<output;                                           //debug info
-	strcpy(encrypted_text,output);
+char output[100];
+//gets(temp);
+int l=strlen(temp);
+for(int i=0;i<=l-1;i++)
+{
+con:
+for(int j=0;j<=39;j++)
+{
+
+//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
+if(temp[i]==dkeyl[j])
+{
+//cout<<"here1";                                                //debug info
+output[i]=ekeyl[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+if(dkeyu[j]==temp[i])
+{
+//cout<<"here2";                                                //debug info
+output[i]=ekeyu[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+}
+}
+exit:
+output[i]='\0';
+//cout<<endl<<output;                                           //debug info
+strcpy(encrypted_text,output);
 }
 
 void contacts :: decrypt(char temp[])
 {
-	char ekeyl[]="gi*dhwp(k{}?|^y$+#fv'%q!ua@.";
-	char ekeyu[]="coen7m4&):<>+][_`jlorz~s-=@.";
-	char dkeyl[]="abcdefghijklmnopqrstuvwxyz@.";
-	char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
+char ekeyl[]="gi*dhwp(k{}?|^y$x#fv'%q!ua@. ICFEUSWRVD";
+char ekeyu[]="coenXmZ&):<>+][_`jlorz~s-=@.";
+char dkeyl[]="abcdefghijklmnopqrstuvwxyz@. 0123456789";
+char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
 
-	char output[100];
-	//gets(temp);
-	int l=strlen(temp);
-	for(int i=0;i<=l-1;i++)
-	{
-		con:
-		for(int j=0;j<=27;j++)
-		{
-			//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
-			if(temp[i]==ekeyl[j])
-			{
-				//cout<<"here1";                                                //debug info
-				output[i]=dkeyl[j];
-				i++;
-				if(i!=l)
-					goto con;
-				else goto exit;
-			}
-			if(ekeyu[j]==temp[i])
-			{
-				//cout<<"here2";                                                //debug info
-				output[i]=dkeyu[j];
-				i++;
-				if(i!=l)
-					goto con;
-				else goto exit;
-			}
-		}
-	}
-	exit:
-	output[i]='\0';
-	//cout<<endl<<output;                                           //debug info
-	strcpy(decrypted_text,output);
+char output[100];
+//gets(temp);
+int l=strlen(temp);
+for(int i=0;i<=l-1;i++)
+{
+con:
+for(int j=0;j<=39;j++)
+{
+
+//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
+if(temp[i]==ekeyl[j])
+{
+//cout<<"here1";                                                //debug info
+output[i]=dkeyl[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+if(ekeyu[j]==temp[i])
+{
+//cout<<"here2";                                                //debug info
+output[i]=dkeyu[j];
+i++;
+if(i!=l)
+goto con;
+else goto exit;
+}
+}
+}
+exit:
+output[i]='\0';
+//cout<<endl<<output;                                           //debug info
+strcpy(decrypted_text,output);
 }
 
 void contacts :: file_edit()
 {
-	int n,i=0;
-	cout<<"Enter number of contacts:";
-	cin>>n;
-	ofstream file;
-	file.open("contacts.cf",ios::binary||ios::out);
-	while(i<n)
-	{
-		c.input();
-		file.write((char*)&c,sizeof(c));i++;
-	}
-	file.close();
+int n,i=0;
+cout<<"Enter number of contacts:";
+cin>>n;
+ofstream file;
+file.open("contacts.cf",ios::binary||ios::out);
+while(i<n)
+{
+c.input();
+file.write((char*)&c,sizeof(c));i++;
+}
+file.close();
 
-	char a;
-	again:
-	cout<<"Do You Want to View Contacts:(Y/N)";
-	a=getchar();
-	if(a=='Y'||a=='y')
-		view();
-	else if(a=='N'||a=='n')
-		goto exit;
-	else
-	{
-		cout<<"Invalid input, Enter again";
-		goto again;
-	}
-	exit:
+char a;
+again:
+cout<<"Do You Want to View Contacts:(Y/N)";
+a=getchar();
+if(a=='Y'||a=='y')
+view();
+else if(a=='N'||a=='n')
+goto exit;
+else
+{
+cout<<"Invalid input, Enter again";
+goto again;}
+exit:
+}
+
+void contacts :: deletecontact(char tmp[])
+{
+ifstream file;
+ofstream temp;
+int fail=1;
+temp.open("$$.cf",ios::binary);
+file.open("contacts.cf",ios::binary);
+while(file.read((char*)&c,sizeof(c)))
+{
+decrypt(name);
+if(!(strcmpi(decrypted_text,tmp)==0))
+{
+temp.write((char*)&c,sizeof(c));
+continue;
+}
+fail=0;
+}
+temp.close();
+file.close();
+remove("contacts.cf");
+rename("$$.cf","contacts.cf");
+gotoxy(38,8);
+if(fail==0)
+cout<<"Contact Deleted";
+if(fail!=0)
+cout<<"ERROR 2";
+gotoxy(38,9);
+cout<<"Hit Enter to continue.....";
+char c=getch();
+if(c==13)
+{
+clrscr();
+menu();
+}
 }
 
 void contacts :: display()
 {
-	cout<<"Contact Name:";
-	decrypt(name);puts(decrypted_text);
-	cout<<"Phone no:";
-	cout<<ph_no<<endl;
-	cout<<"Mobile no:";
-	puts(mob_no);
-	cout<<"Email id:";
-	decrypt(email_id);puts(decrypted_text);
-	cout<<"Address (line 1):";
-	decrypt(addline_1);puts(decrypted_text);
-	cout<<"Address (line 2):";
-	decrypt(addline_2);puts(decrypted_text);
+gotoxy(51,8);cout<<"                         ";
+gotoxy(40,9);cout<<"                         ";
+gotoxy(41,10);cout<<"                         ";
+gotoxy(41,11);cout<<"                         ";
+gotoxy(41,12);cout<<"                         ";
+gotoxy(41,13);cout<<"                         ";
+gotoxy(38,8);
+cout<<"Contact Name:";
+decrypt(name);puts(decrypted_text);
+gotoxy(38,9);
+cout<<"Phone no:";
+cout<<ph_no<<endl;
+gotoxy(38,10);
+cout<<"Mobile no:";
+puts(mob_no);
+gotoxy(38,11);
+cout<<"Email id:";
+decrypt(email_id);puts(decrypted_text);
+gotoxy(38,12);
+cout<<"Address (line 1):";
+decrypt(addline_1);puts(decrypted_text);
+gotoxy(38,13);
+cout<<"Address (line 2):";
+decrypt(addline_2);puts(decrypted_text);
 }
-
+void contacts :: charfix(char temp[],char letter,int mode)
+{
+int l=strlen(temp);
+//temp[l]='o';                //just increasing the array size by 1
+memmove(temp+1,temp,l);     //move all characters +1 unit to the right
+temp[0]=letter;             //now replace 1st letter
+temp[l+1]='\0';
+if(mode==1)
+strcpy(name,temp);
+else if (mode==2)
+strcpy(ph_no,temp);
+else if (mode==3)
+strcpy(mob_no,temp);
+else if (mode==4)
+strcpy(email_id,temp);
+else if (mode==5)
+strcpy(addline_1,temp);
+else if (mode==6)
+strcpy(addline_2,temp);
+}
 void contacts :: input()    //get contacts details by input
 {
-	cout<<"Enter Contact Details:"<<endl;
-	cout<<"Contact Name:";
-	gets(name);encrypt(name);strcpy(name,encrypted_text);
-	cout<<"Phone no:";
-	gets(ph_no);
-	cout<<"Mobile no:";
-	gets(mob_no);
-	cout<<"Email id:";
-	gets(email_id);encrypt(email_id);strcpy(email_id,encrypted_text);
-	cout<<"Address (line 1):";
-	gets(addline_1);encrypt(addline_1);strcpy(addline_1,encrypted_text);
-	cout<<"Address (line 2):";
-	gets(addline_2);encrypt(addline_2);strcpy(addline_2,encrypted_text);
+char a;
+gotoxy(38,8);
+cout<<"Contact Name:";
+a=getche();
+if(a==13)goto next0;
+else
+gets(name);charfix(name,a,1);encrypt(name);strcpy(name,encrypted_text);
+next0:
+gotoxy(38,9);
+cout<<"Phone no:";
+a=getche();
+if(a==13)goto next1;
+else
+gets(ph_no);charfix(ph_no,a,2);
+next1:
+gotoxy(38,10);
+cout<<"Mobile no:";
+a=getche();
+if(a==13)goto next2;
+else
+gets(mob_no);charfix(mob_no,a,3);
+next2:
+gotoxy(38,11);
+cout<<"Email id:";
+a=getche();
+if(a==13)goto next3;
+else
+gets(email_id);charfix(email_id,a,4);encrypt(email_id);strcpy(email_id,encrypted_text);
+next3:
+gotoxy(38,12);
+cout<<"Address (line 1):";
+a=getche();
+if(a==13)goto next4;
+else
+gets(addline_1);charfix(addline_1,a,5);encrypt(addline_1);strcpy(addline_1,encrypted_text);
+next4:
+gotoxy(38,13);
+cout<<"Address (line 2):";
+a=getche();
+if(a==13)goto next5;
+else
+gets(addline_2);charfix(addline_2,a,6);encrypt(addline_2);strcpy(addline_2,encrypted_text);
+next5:
 }
 
-void contacts :: edit()
+void contacts :: edit(char tmpp[])
 {
-	fstream fio;
-	ofstream fout;
-	fout.open("contacts.cf",ios::out||ios::binary);
-	int recc=0;
-	fio.open("contacts.cf",ios::out||ios::in||ios::binary);
-	fio.seekg(0,ios::beg);
-	cout<<"Enter Contact name:";
-	char temp[20];
-	gets(temp);
-	while(fio.read((char*)&c,sizeof(c)))   //testing if we can still read
+fstream fio;
+ofstream fout;
+fout.open("contacts.cf",ios::out||ios::binary);
+int recc=0;
+fio.open("contacts.cf",ios::out||ios::in||ios::binary);
+char name1[20];
+strcpy(name1,tmpp);
+
+while(fio.read((char*)&c,sizeof(c)))   //testing if we can still read
+{
+
+if(strcmp(name,name1)==0)              //check name
+{
+input();
+fout.seekp(recc*sizeof(c),ios::beg);
+fout.write((char*)&c,sizeof(c));
+fout.close();
+break;
+}gotoxy(1,1);
+recc++;
+}
+fio.close();
+c.menu();
+}
+
+void contacts:: view()
+{
+ifstream file;
+file.open("contacts.cf",ios::binary);
+file.seekg(0,ios::beg);
+while(file.read((char*)&c,sizeof(c)))
+{c.display();cout<<endl;}
+file.close();
+}
+
+
+void contacts::createnew()
+{
+
+ifstream file;
+ofstream temp;
+temp.open("$$.cf",ios::binary);
+file.open("contacts.cf",ios::binary);
+while(file.read((char*)&c,sizeof(c)))
+temp.write((char*)&c,sizeof(c));
+c.input();
+temp.write((char*)&c,sizeof(c));
+temp.close();
+file.close();
+remove("contacts.cf");
+rename("$$.cf","contacts.cf");
+clrscr();
+menu();
+}
+/*
+void contacts :: sort()
+{
+ifstream file;
+ofstream temp;
+char name1[20],name2[20],contact[100],sort[100];
+int i=0,j,k;
+temp.open("$$.cf",ios::binary);
+file.open("contacts.cf",ios::binary);
+while(file.read((char*)&c,sizeof(c)))
+{contact[i]=name;i++;}
+for(j=0;j<=i;j++)
+{
+	for(k=0;k<=i;k++)
 	{
-		decrypt(name);
-		if(strcmpi(decrypted_text,temp)==0)              //check name
-		{
-			display();
-			input();
-			fout.seekp(recc*sizeof(c),ios::beg);
-			fout.write((char*)&c,sizeof(c));
-			fout.close();
-			display();
-			break;
-		}
-		recc++;
+	if(strcmp(contact[i],contact[j])<0)
+	char tmp[]=contact[i];
+	contact[i]=contact[j];
+	strcpy(contact[j],tmp);
 	}
-	fio.close();
 }
-
-void contacts :: view()
-{
-	ifstream file;
-	file.open("contacts.cf",ios::binary);
-	file.seekg(0,ios::beg);
-	while(file.read((char*)&c,sizeof(c)))
-	{
-		c.display();cout<<endl;
-	}
-	file.close();
-}
-
-void contacts :: createnew()
-{
-
-	ifstream file;
-	ofstream temp;
-	temp.open("$$.cf",ios::binary);
-	file.open("contacts.cf",ios::binary);
-	while(file.read((char*)&c,sizeof(c)))
-		temp.write((char*)&c,sizeof(c));
-	c.input();
-	temp.write((char*)&c,sizeof(c));
-	temp.close();
-	file.close();
-	remove("contacts.cf");
-	rename("$$.cf","contacts.cf");
-}
+}*/
 
 void contacts :: search()
 {
-	char tmp[20];
-	cout<<"Enter Contact's Name:";
-	gets(tmp);
-	ifstream file;
-	file.open("contacts.cf",ios::binary);
-	while(file.read((char*)&c,sizeof(c)))
-	{
-		decrypt(name);
-		if(strcmpi(decrypted_text,tmp)==0)
-			display();
-	}
-	file.close();
+char tmp[20];
+cout<<"Enter Contact's Name:";
+gets(tmp);
+ifstream file;
+file.open("contacts.cf",ios::binary);
+while(file.read((char*)&c,sizeof(c)))
+{
+decrypt(name);
+if(strcmpi(decrypted_text,tmp)==0)
+display();
+}
+file.close();
 }
 
 void contacts :: menu()
 {
-	gotoxy(0,25);
-	cout<<"USE W,S TO SCROLL";
+gotoxy(0,24);
+cout<<"Use W & D keys to scroll through contacts";
+cout<<endl<<"Hit Enter to select contact";
+gotoxy(38,17);
+cout<<"              ";
+gotoxy(38,18);
+cout<<"              ";
+gotoxy(55,17);
+cout<<"              ";
+gotoxy(55,18);
+cout<<"              ";
+gotoxy(30,1);
+cout<<" __   __         _____        __  _____  ___ "<<endl;
+gotoxy(30,2);
+cout<<"|    |  |  |\\  |   |    /\\   |      |   |__  "<<endl;
+//gotoxy(30,3);
+//cout<<"|    |  |  | \\ |   |   /__\\   |      |      | "<<endl;
+gotoxy(30,3);
+cout<<"|__  |__|  |  \\|   |   /  \\  |__    |   ___| "<<endl;
+ifstream file;
+file.open("contacts.cf",ios::binary);
+cout<<endl<<endl;
+int n=0;
+cout<<"Contacts List:"<<endl;
+cout<<"+Add New+"<<endl;;
+while(file.read((char*)&c,sizeof(c)))
+{
+n++;
+decrypt(name);
+cout<<decrypted_text<<endl;
+}
 
-	int y=5;                           //top text padding
-	int x=15;                          //left text padding
-	gotoxy(0,y);
-	cout<<"Create Contact"<<endl;
-	cout<<"Search Contact"<<endl;
-	cout<<"Edit Contact"<<endl;
-	cout<<"";
-	gotoxy(x,y);
-	cout<<"<--";
+file.close();
+ifstream file1;
+file1.open("contacts.cf",ios::binary);
+int y=8,x=20,recc=0;
+gotoxy(x,y);
+cout<<"<--";
+file1.read((char*)&c,sizeof(c));
+c.display();
+n--;
+loop:
+char a=getch();
+if(a=='w'&&y==8)
+{
+clrdsp();
+gotoxy(x,y);
+cout<<"   ";y--;
+gotoxy(x,y);
+cout<<"<--";
+}
+if(a=='s'&&y<(n+8))
+{
+gotoxy(x,y);
+cout<<"   ";y++;
+gotoxy(x,y);
+cout<<"<--";
+if(y>8)
+{file1.read((char*)&c,sizeof(c));recc++;}
+c.display();
+}
+if(a=='w'&&y>(n-5)&&y!=7)
+{
+gotoxy(x,y);
+cout<<"   ";y--;
+gotoxy(x,y);
+cout<<"<--";
+file1.seekg(((recc*sizeof(c))-sizeof(c)),ios::beg);
+file1.read((char*)&c,sizeof(c));
+c.display();
+recc--;
+}
+if(a==13&&y!=7)
+goto enterkey;
+if(a==13&&y==7)
+{
+createnew();
+}
 
-	loop:
-	char a=getch();
-	if(a==96)                              //HACKS   use '`'
-	{
-		clrscr();
-		file_edit();
-	}
-	if(a==45)                              //HACKS   use '-'
-	{
-		clrscr();
-		view();
-	}
-	if(a==13)               //enter key ascii value '13'
-		goto done;
-	if(a=='w' && y==5)
-	{
-		gotoxy(x,y);
-		cout<<"   ";
-		y=y+2;
-		gotoxy(x,y);
-		cout<<"<--";
-	}
-	else if(a=='w' && y!=5)
-	{
-		gotoxy(x,y);
-		cout<<"   ";
-		y=y--;
-		gotoxy(x,y);
-		cout<<"<--";
-	}
-	else if(a=='s' && y!=7)
-	{
-		gotoxy(x,y);
-		cout<<"   ";
-		y=y++;
-		gotoxy(x,y);
-		cout<<"<--";
-	}
-	else if(a=='s' && y==7)
-	{
-		gotoxy(x,y);
-		cout<<"   ";
-		y=y-2;
-		gotoxy(x,y);
-		cout<<"<--";
-	}
-	goto loop;
+goto loop;
+enterkey:
+gotoxy(0,24);
+cout<<"Use A & S keys to choose option";
+cout<<endl<<"Hit Enter to select option. Press B to go back";
+gotoxy(10,y);
+cout<<"   ";
+int y1=18,x1=38;
+gotoxy(38,y1-1);
+cout<<"Edit Contact";
+gotoxy(55,y1-1);
+cout<<"Delete Contact";
+gotoxy(x1,y1);
+cout<<"************";
+loop2:
+char b=getch();
+if(b=='d')
+{x1=55;
+gotoxy(38,y1);
+cout<<"               ";
+gotoxy(55,y1);
+cout<<"               ";
+gotoxy(x1,y1);
+cout<<"***************";
+}
+if(b=='a')
+{x1=38;
+gotoxy(38,y1);
+cout<<"               ";
+gotoxy(55,y1);
+cout<<"               ";
+gotoxy(x1,y1);
+cout<<"************";
+}
+if(b==13&&x1==38)
+{
+//clrdsp();
+file1.close();
+gotoxy(38,8);
+edit(name);
+}
+if(b==13&&x1==55)
+{
+clrdsp();
+file1.close();
+decrypt(name);
+char name2[20];
+strcpy(name2,decrypted_text);
+deletecontact(name2);
+}
+if(b=='b'||b=='B')
+{
+clrscr();
+menu();
+}
 
-	done:
-	clrscr();
-	if(y==5)
-		createnew();
-	else if(y==6)
-		search();
-	else if(y==7)
-		edit();
-	else
-		cout<<"ERROR 101";
+goto loop2;
+
 }
 ///////////////////////////////////contacts ends//////////////////////////////////////////////
 /////////////////////////////////////converter starts/////////////////////////////////////////
@@ -1155,7 +1433,6 @@ void check()
 
 void snake()
 {
-
 	int x=2,y=2;
 	left=0;
 	right=0;
@@ -1300,7 +1577,7 @@ void snake()
 }
 ////////////////////////////////////snake game ends///////////////////////////////////////////
 void main()
-	{
+{
 	login();
 	menu();
 }
