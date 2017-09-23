@@ -8,35 +8,37 @@
 #include <conio.h>
 #include <math.h>
 #include <time.h>
-#include<windows.h>
+#include <windows.h>
+
+#define ARRAY_SIZE(array)	sizeof(array)/sizeof(array[0])
+#define stringize(ch)	#ch
 
 void border(char ch,int x,int y,int l,int b)
 /*(x,y) is the top left corner point and l and b are the length and breadth of the rectangle*/
 {
-	int p,q,r,s;
-	for(p=x;p<x+l;p++)
+	for(int p=x; p<x+l; p++)			//creates the top horizontal rule
 	{
 		gotoxy(p,y);
 		cout<<ch;
 	}
-	for(q=y,--p;q<y+b;q++)
+	for(int q=x; q<x+l-1; q++)			//creates the bottom horizontal rule
 	{
-		gotoxy(p,q);
+		gotoxy(q,y+b-1);
 		cout<<ch;
 	}
-	for(r=x+l-1,--q;r>=x;r--)
+	for(int r=y; r<y+b; r++)			//creates the left vertical rule
 	{
-		gotoxy(r,q);
+		gotoxy(x,r);
 		cout<<ch;
 	}
-	for(s=y+b-1;s>=y;s--)
+	for(int s=y; s<y+b-1; s++)			//creates the right vertical rule
 	{
-		gotoxy(x,s);
+		gotoxy(x+l-1,s);
 		cout<<ch;
 	}
 }
 
-void error_mssg(char mssg[],int x=27)
+void error_message(char mssg[],int x=27)
 {
 	clrscr();
 	border('#',15,10,50,7);
@@ -47,23 +49,23 @@ void error_mssg(char mssg[],int x=27)
 	getch();
 }
 
-char create_menu(char* list_opt[],int no_of_elements)
+char create_menu(char* title, char* list_opt[]=NULL, int no_of_elements=0)
 {
 	clrscr();
-	border('#',1,1,81,24);
-	gotoxy(41-strlen(list_opt[0])/2,3);
-	cout<<list_opt[0];
+	border('#',1,1,80,25);
+	gotoxy(41-strlen(title)/2,3);
+	cout<<title;
 
 	int step=6;
-	for(int i=1; i<no_of_elements; ++i)
+	for(int i=0; i<no_of_elements; ++i)
 	{
-		if(i%2==1)
+		if(i%2==0)
 			{
 				border('+',11,step,25,5);
 				gotoxy(13,step+2);
 				cout<<list_opt[i];
 			}
-		if(i%2==0)
+		if(i%2==1)
 			{
 				border('+',46,step,25,5);
 				gotoxy(48,step+2);
@@ -74,7 +76,7 @@ char create_menu(char* list_opt[],int no_of_elements)
 
 	gotoxy(39,22);
 	cout<<"___";
-	gotoxy(34,23);
+	gotoxy(34,24);
 	cout<<"Press backspace to return to previous screen.";
 
 	gotoxy(40,22);
@@ -107,34 +109,34 @@ class User
 {
 	private:
 	
-	char username[30];
-	char password[30];
-	int initial_run;
+			char username[30];
+			char password[30];
+			int initial_run;
 	
 	public:
 	
-	char* ret_user()
-	{
-		return username;
-	}
-	
-	char* ret_pass()
-	{
-		return password; 
-	}
-	
-	int ret_ir()
-	{
-		return initial_run;
-	}
-	
-	void initial_login(char*);
-	
-	User :: User()
-	{
-		initial_run=1;
-	}
-}U;
+			char* ret_user()
+			{
+				return username;
+			}
+
+			char* ret_pass()
+			{
+				return password; 
+			}
+
+			int ret_ir()
+			{
+				return initial_run;
+			}
+
+			void initial_login(char*);
+
+			User :: User()
+			{
+				initial_run=1;
+			}
+}	U;
 
 class contacts
 {
@@ -156,7 +158,14 @@ class contacts
 			void charfix(char temp[],char letter,int mode);
 			void encrypt(char temp[]);
 			void decrypt(char temp[]);
-}c,f;
+}	c,f;
+
+class Note
+{
+	public:
+		char title[30],body[30];
+}	N;
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////login starts/////////////////////////////////////////////
 char* getpass(char* keyword="nor")
@@ -180,7 +189,7 @@ char* getpass(char* keyword="nor")
 		if(strcmp(keyword,"ini")==0)
 			if(!(pass[i]>96&&pass[i]<123 || pass[i]>64&&pass[i]<91 || pass[i]>32&&pass[i]<43 || pass[i]==13))
 			{
-				error_mssg("Use characters A-Z, a-z, ! \" # $ % & ' ( ) *",17);
+				error_message("Use characters A-Z, a-z, ! \" # $ % & ' ( ) *",17);
 				U.initial_login("pass");
 			}
 		
@@ -289,7 +298,7 @@ void login(char* keyword="user")
 
 		if(bool==0)
 		{
-			error_mssg("Username is incorrect",29);
+			error_message("Username is incorrect",29);
 			goto enter_username;
 		}
 		//////////////////////////////////////////////////////////////////////////
@@ -312,7 +321,7 @@ void login(char* keyword="user")
 
 		if(bool==0)
 		{
-			error_mssg("Password is incorrect",29);
+			error_message("Password is incorrect",29);
 			goto wrong_password_entered;
 		}
 		///////////////////////////////////////////////////////////////////////////
@@ -333,11 +342,12 @@ void menu()
 {
 	void world_clock();
 	void converter();
+	void notes();
+	void horoscope();
 	void snake();
-	contacts c;
 
-	char* main_menu[]={"Digital Diary","1. Contacts","2. Calc. & Conv.","3. World Clock","4. Notes","5. Horoscope","6. Games"};
-	char option=create_menu(main_menu,sizeof(main_menu)/4);
+	char* main_menu[]={"1. Contacts","2. Calc. & Conv.","3. World Clock","4. Notes","5. Horoscope","6. Games"};
+	char option=create_menu("Digital Diary",main_menu,ARRAY_SIZE(main_menu));
 
 	switch(option)
 	{
@@ -347,12 +357,14 @@ void menu()
 				break;
 		case '3':	world_clock();
 				break;
-		case '4':	cout<<"notes";
+		case '4':	notes();
+				break;
+		case '5':	horoscope();
 				break;
 		case '6':	snake();
 				break;
 		case 8	:	login();
-		default:	error_mssg("Invalid option!",32);
+		default:	error_message("Invalid option!",32);
 				menu();
 	}
 }
@@ -892,8 +904,8 @@ void converter()
 	void unit();
 	void calc();
 
-	char* converter_menu[]={"Calc. & Conv.","1. Currency","2. Unit","3. Calculator"};
-	char option=create_menu(converter_menu,sizeof(converter_menu)/4);
+	char* converter_menu[]={"1. Currency","2. Unit","3. Calculator"};
+	char option=create_menu("Calc. & Conv.",converter_menu,ARRAY_SIZE(converter_menu));
 	
 	switch(option)
 	{
@@ -905,7 +917,7 @@ void converter()
 				break;
 		case 8	:	menu();
 				break;
-		default :	error_mssg("Invalid option!");
+		default :	error_message("Invalid option!");
 				converter();
 	}
 }
@@ -920,14 +932,14 @@ void currency()
 		
 	converter_ui("Currency Converter","Currency");
 
-	create_list(currencies,sizeof(currencies)/4,13,2);
+	create_list(currencies,ARRAY_SIZE(currencies),13,2);
 	
 	gotoxy(22,7);
 	char in_cur[4];
 	gets(in_cur);
 	if(strcmpi(in_cur,"BHD")&&strcmpi(in_cur,"USD")&&strcmpi(in_cur,"INR")&&strcmpi(in_cur,"YEN")&&strcmpi(in_cur,"SAR")&&strcmpi(in_cur,"EUR"))	//checks if entered currency is valid
 	{
-		error_mssg("Invalid currency!",31);
+		error_message("Invalid currency!",31);
 		currency();
 	}
 	gotoxy(20,9);
@@ -941,7 +953,7 @@ void currency()
 	gets(out_cur);
 	if(strcmpi(out_cur,"BHD")&&strcmpi(out_cur,"USD")&&strcmpi(out_cur,"INR")&&strcmpi(out_cur,"YEN")&&strcmpi(out_cur,"SAR")&&strcmpi(out_cur,"EUR"))	//checks if entered currency is valid
 	{
-		error_mssg("Invalid currency!",31);
+		error_message("Invalid currency!",31);
 		currency();
 	}
 	
@@ -968,8 +980,8 @@ void unit()
 	void area();
 	void volume();
 	
-	char* unit_menu[]={"Unit Converter","1. Mass","2. Length","3. Area","4. Volume"};
-	char option=create_menu(unit_menu,sizeof(unit_menu)/4);
+	char* unit_menu[]={"1. Mass","2. Length","3. Area","4. Volume"};
+	char option=create_menu("Unit Converter",unit_menu,ARRAY_SIZE(unit_menu));
 
 	switch(option)
 	{
@@ -982,8 +994,9 @@ void unit()
 		case '4':	volume();
 				break;
 		case 8	:	converter();
-		default	:	error_mssg("Invalid option!",32);
-				unit();
+				break;
+		default	:	error_message("Invalid option!",32);
+					unit();
 	}
 }
 
@@ -996,14 +1009,14 @@ void mass()
 		
 	converter_ui("Mass Converter");
 
-	create_list(masses,sizeof(masses)/4,15,2);
+	create_list(masses,ARRAY_SIZE(masses),15,2);
 	
 	gotoxy(18,7);
 	char in_unit[4];
 	gets(in_unit);
 	if(strcmpi(in_unit,"t")&&strcmpi(in_unit,"kg")&&strcmpi(in_unit,"g")&&strcmpi(in_unit,"mg")&&strcmpi(in_unit,"ug")&&strcmpi(in_unit,"imt")&&strcmpi(in_unit,"ust")&&strcmpi(in_unit,"st")&&strcmpi(in_unit,"lb")&&strcmpi(in_unit,"oz"))	//checks if entered unit is valid
 	{
-		error_mssg("Invalid Mass Unit!");
+		error_message("Invalid Mass Unit!");
 		mass();
 	}
 	gotoxy(18,9);
@@ -1017,7 +1030,7 @@ void mass()
 	gets(out_unit);
 	if(strcmpi(out_unit,"t")&&strcmpi(out_unit,"kg")&&strcmpi(out_unit,"g")&&strcmpi(out_unit,"mg")&&strcmpi(out_unit,"ug")&&strcmpi(out_unit,"imt")&&strcmpi(out_unit,"ust")&&strcmpi(out_unit,"st")&&strcmpi(out_unit,"lb")&&strcmpi(out_unit,"oz"))
 	{
-		error_mssg("Invalid Mass Unit!");
+		error_message("Invalid Mass Unit!");
 		mass();
 	}
 
@@ -1046,14 +1059,14 @@ void length()
 		
 	converter_ui("Length Converter");
 
-	create_list(lengths,sizeof(lengths)/4,15,2);
+	create_list(lengths,ARRAY_SIZE(lengths),15,2);
 
 	gotoxy(18,7);
 	char in_unit[4];
 	gets(in_unit);
 	if(strcmpi(in_unit,"km")&&strcmpi(in_unit,"m")&&strcmpi(in_unit,"cm")&&strcmpi(in_unit,"mm")&&strcmpi(in_unit,"nm")&&strcmpi(in_unit,"mi")&&strcmpi(in_unit,"yd")&&strcmpi(in_unit,"ft")&&strcmpi(in_unit,"in")&&strcmpi(in_unit,"nmi"))	//checks if entered unit is valid
 	{
-		error_mssg("Invalid length unit!");
+		error_message("Invalid length unit!");
 		length();
 	}
 	gotoxy(20,9);
@@ -1067,7 +1080,7 @@ void length()
 	gets(out_unit);
 	if(strcmpi(out_unit,"km")&&strcmpi(out_unit,"m")&&strcmpi(out_unit,"cm")&&strcmpi(out_unit,"mm")&&strcmpi(out_unit,"nm")&&strcmpi(out_unit,"mi")&&strcmpi(out_unit,"yd")&&strcmpi(out_unit,"ft")&&strcmpi(out_unit,"in")&&strcmpi(out_unit,"nmi"))
 	{
-		error_mssg("Invalid length unit!");
+		error_message("Invalid length unit!");
 		length();
 	}
 
@@ -1096,14 +1109,14 @@ void area()
 		
 	converter_ui("Area Converter");
 
-	create_list(areas,sizeof(areas)/4,15,2);
+	create_list(areas,ARRAY_SIZE(areas),15,2);
 	
 	gotoxy(18,7);
 	char in_unit[6];
 	gets(in_unit);
 	if(strcmpi(in_unit,"sq km")&&strcmpi(in_unit,"sq m")&&strcmpi(in_unit,"sq mi")&&strcmpi(in_unit,"sq yd")&&strcmpi(in_unit,"sq ft")&&strcmpi(in_unit,"sq in")&&strcmpi(in_unit,"ac")&&strcmpi(in_unit,"ha"))
 	{
-		error_mssg("Invalid area unit!");
+		error_message("Invalid area unit!");
 		area();
 	}
 	gotoxy(18,9);
@@ -1117,7 +1130,7 @@ void area()
 	gets(out_unit);
 	if(strcmpi(out_unit,"sq km")&&strcmpi(out_unit,"sq m")&&strcmpi(out_unit,"sq mi")&&strcmpi(out_unit,"sq yd")&&strcmpi(out_unit,"sq ft")&&strcmpi(out_unit,"sq in")&&strcmpi(out_unit,"ac")&&strcmpi(out_unit,"ha"))
 	{
-		error_mssg("Invalid area unit!");
+		error_message("Invalid area unit!");
 		area();
 	}
 
@@ -1146,14 +1159,14 @@ void volume()
 	
 	converter_ui("Volume Converter");
 	
-	create_list(volumes,sizeof(volumes)/4,15,2);
+	create_list(volumes,ARRAY_SIZE(volumes),15,2);
 	
 	gotoxy(18,7);
 	char in_unit[4];
 	gets(in_unit);
 	/*if(strcmpi(in_unit,"t")&&strcmpi(in_unit,"kg")&&strcmpi(in_unit,"g")&&strcmpi(in_unit,"mg")&&strcmpi(in_unit,"ug")&&strcmpi(in_unit,"imt")&&strcmpi(in_unit,"ust")&&strcmpi(in_unit,"st")&&strcmpi(in_unit,"lb")&&strcmpi(in_unit,"oz"))	//checks if entered unit is valid
 	{
-		error_mssg("Invalid Mass Unit!");
+		error_message("Invalid Mass Unit!");
 		mass();
 	}*/
 	gotoxy(20,9);
@@ -1167,7 +1180,7 @@ void volume()
 	gets(out_unit);
 	/*if(strcmpi(out_unit,"t")&&strcmpi(out_unit,"kg")&&strcmpi(out_unit,"g")&&strcmpi(out_unit,"mg")&&strcmpi(out_unit,"ug")&&strcmpi(out_unit,"imt")&&strcmpi(out_unit,"ust")&&strcmpi(out_unit,"st")&&strcmpi(out_unit,"lb")&&strcmpi(out_unit,"oz"))
 	{
-		error_mssg("Invalid Mass Unit!");
+		error_message("Invalid Mass Unit!");
 		mass();
 	}*/
 
@@ -1324,7 +1337,7 @@ void calc()					//yet to optimize
 void world_clock()
 {
 	char* cities[]={"1. Los Angeles","2. New York","3. Buenos Aires","4. London","5. Paris","6. Riyadh","7. Delhi","8. Beijing","9. Sydney"};
-	
+
 	void display_time(char city[],int hr,int mn);
 
 	ask_time_option:
@@ -1336,7 +1349,7 @@ void world_clock()
 	gotoxy(3,5);
 	cout<<"Choose the city:";
 	
-	create_list(cities,sizeof(cities)/4,7);
+	create_list(cities,ARRAY_SIZE(cities),7);
 	
 	gotoxy(43,23);
 	cout<<"Press backspace to go to main menu..";
@@ -1367,7 +1380,7 @@ void world_clock()
 				break;
 		case 8	:	menu();
 				break;
-		default	:	error_mssg("Invalid option!",32);
+		default	:	error_message("Invalid option!",32);
 				goto ask_time_option;
 	}
 }
@@ -1400,6 +1413,152 @@ void display_time(char city[],int hr,int mn)
 		goto time_refresh;
 }
 /////////////////////////////////////world clock ends///////////////////////////////////////////
+//////////////////////////////////////notes starts//////////////////////////////////////////////
+
+void notes()
+{
+	void view_notes();
+	void add_notes();
+
+	char* notes_menu[]={"1. View Notes","2. Add Note"};
+	char option=create_menu("Notes", notes_menu, ARRAY_SIZE(notes_menu));
+
+	switch(option)
+	{
+		case '1':	view_notes();
+				break;
+		case '2':	add_notes();
+				break;
+		case 8  :	menu();
+				break;
+		default :	error_message("Invalid Option!",32);
+					notes();
+	}
+}
+
+void view_notes()
+{
+	char* notes_list[10]={"1.Placeholder"};
+
+	ifstream infile;
+	infile.open("notes.dat",ios::in|ios::binary);
+	if(!infile)
+	{
+		error_message("\"notes.dat\" file doesn\'t exist");
+		notes();
+	}
+
+	infile.seekg(0,ios::beg);
+	while(!infile.eof())
+	{
+		infile.read((char*)&N,sizeof(Note));
+		//strcpy(notes_list[i],N.title);
+	}
+
+	create_list(notes_list,ARRAY_SIZE(notes_list),6);
+	char option=create_menu("View Notes");
+
+	infile.seekg((option-1)*sizeof(Note),ios::beg);
+	infile.read((char*)&N,sizeof(Note));
+
+	clrscr();
+	gotoxy(30,5);
+	cout<<N.title;
+	gotoxy(3,7);
+	cout<<N.body;
+	getch();
+	notes();
+}
+
+void add_notes()
+{
+	strcpy(N.title,stringize(\r));
+	strcpy(N.body,stringize(\r));
+
+	clrscr();
+	//border('+',5,3,70,21);
+	gotoxy(30,5);
+	cout<<"Title";		//placeholder
+	gotoxy(30,5);
+	gets(N.title);
+
+	gotoxy(3,7);
+	cout<<"Body";		//placeholder
+	gotoxy(3,7);
+	while(1)
+	{
+		char a;
+		a=getche();
+		if(a==19)
+		{
+			strcat(N.body,stringize(\0));
+			break;
+		}
+		else if(a==13)
+		{
+			cout<<'\n';
+			strcat(N.body,stringize(\n));
+		}
+		else
+			strcat(N.body,stringize(a));
+	}
+
+	ofstream outfile;
+	outfile.open("notes.dat",ios::app|ios::binary);
+	outfile.write((char*)&N,sizeof(Note));
+	outfile.close();
+	notes();
+}
+
+////////////////////////////////////////notes ends//////////////////////////////////////////////
+//////////////////////////////////////horoscope starts//////////////////////////////////////////
+
+class Zodiac
+{
+	public:
+			char s_no;
+			char para[256];
+}Z;
+
+void horoscope()
+{
+	char* zodiac_signs[]={"1. Aries","2. Taurus","3. Gemini","4. Cancer","5. Leo","6. Virgo","7. Libra","8. Scorpio","9. Sagittarius","10. Capricorn","11. Aquarius","12. Pisces"};
+
+	border('%',1,1,80,25);
+	create_list(zodiac_signs,ARRAY_SIZE(zodiac_signs),10,2);
+	char option=create_menu("Horoscope");
+
+	if(option==8)
+		menu();
+
+	ifstream infile;
+	infile.open("ddhoroscope.dat",ios::in|ios::binary);
+	while(!infile.eof())
+	{
+		infile.read((char*)&Z, sizeof(Z));
+		if(Z.s_no==option)
+		{
+			cout<<Z.para;
+			break;
+		}
+		else
+		{
+			error_message("Invalid Option!");
+			horoscope();
+		}
+	}
+	infile.close();
+	
+	back:
+	gotoxy(34,23);
+	cout<<"Press backspace to return to previous screen.";
+	if(getch()==8)
+		horoscope();
+	else
+		goto back;
+}
+
+//////////////////////////////////////horoscope ends////////////////////////////////////////////
 /////////////////////////////////////snake game starts//////////////////////////////////////////
 void delay()
 {
