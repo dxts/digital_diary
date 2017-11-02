@@ -565,8 +565,6 @@ goto loop2;
 }
 void main()
 {
+clrscr();
 c.menu();
-//c.createnew();
-//c.file_edit();
-//c.deletecontact("bighnesh");
 }
