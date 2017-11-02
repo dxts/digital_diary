@@ -1,3 +1,25 @@
+/*
+PROBLEMS:       (BUGS)
+so far nothing :) , pls write down if u find any!!
+-Phone number not displaying properly
+
+*/
+
+/*
+SUGGESTIONS:
+Pls write down your suggestions
+-quick search                       (coming up)
+-way to come back to main menu      (coming up)
+-view all contacts  ???             (???)    vote-
+-revamp main menu so that it looks
+ like a contacts app where u can
+ scroll each contact then edit
+ his/her contact details             (???)    vote-
+-
+
+
+*/
+
 
 #include<iostream.h>
 #include<fstream.h>
@@ -519,4 +541,7 @@ goto loop2;
 void main()
 {
 c.menu();
+//c.createnew();
+//c.file_edit();
+//c.deletecontact("bighnesh");
 }
