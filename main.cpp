@@ -108,13 +108,13 @@ void create_list(char* list_elements[], int no_of_elements, int y_start, float n
 class User
 {
 	private:
-	
+
 			char username[30];
 			char password[30];
 			int initial_run;
-	
+
 	public:
-	
+
 			char* ret_user()
 			{
 				return username;
@@ -122,7 +122,7 @@ class User
 
 			char* ret_pass()
 			{
-				return password; 
+				return password;
 			}
 
 			int ret_ir()
@@ -130,7 +130,7 @@ class User
 				return initial_run;
 			}
 
-			void initial_login(char*);
+			void login(char*);
 
 			User :: User()
 			{
@@ -168,7 +168,7 @@ class Note
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////login starts/////////////////////////////////////////////
-char* getpass(char* keyword="nor")
+char* get_pass(char* keyword="nor")
 {
 	void login(char*);
 
@@ -176,83 +176,120 @@ char* getpass(char* keyword="nor")
 	for(int i=0;i<30;i++)
 	{
 		pass[i]=getch();
-		
+
 		if(i>=1 && pass[i]==8)
 		{
 			--i;
 			gotoxy(40+i,14);
 			cout<<' ';
 			gotoxy(40+i,14);
+			i--;
 			continue;
 		}
-		
+
 		if(strcmp(keyword,"ini")==0)
-			if(!(pass[i]>96&&pass[i]<123 || pass[i]>64&&pass[i]<91 || pass[i]>32&&pass[i]<43 || pass[i]==13))
+			if(!(pass[i]>96&&pass[i]<123 || pass[i]>64&&pass[i]<91 || pass[i]>32&&pass[i]<43 || pass[i]>47&&pass[i]<58 || pass[i]==13))
 			{
-				error_message("Use characters A-Z, a-z, ! \" # $ % & ' ( ) *",17);
-				U.initial_login("pass");
+				error_message("Use characters A-Z a-z 0-9 ! \" # $ % & ' ( ) *",17);
+				U.login("pass");
 			}
-		
+
 		if(pass[i]==13)
 		{
 			pass[i]='\0';
 			break;
 		}
-		
-		cout<<'*';	
+
+		cout<<'*';
 	}
 	return pass;
 }
 
-void User :: initial_login(char* keyword="user")
+void User :: login(char* keyword="user")
 {
-	ofstream fout;
-	fout.open("dduser.dat",ios::out|ios::binary);
-	
+	int bool;
+	fstream file;
+	file.open("dduser.dat", ios::in|ios::binary);
+	file.read((char*)&U, sizeof(User));
+	file.close();
+	file.open("dduser.dat", ios::app|ios::binary);
+
 	if(strcmp(keyword,"user")==0)
 		goto enter_username;
 	else if(strcmp(keyword,"pass")==0)
 		goto wrong_password_entered;
 	/////////////////////////////////////////////////////////
-	
+
 	enter_username:
-	
+
+	bool=0;
 	char temp_user[30];
-	
+
 	clrscr();
 	border('~',20,8,40,5);
-	gotoxy(21,14);
-	cout<<"Username should be less than 30 char";
+	if(U.ret_ir()==1)
+	{
+		gotoxy(21,6);
+		cout<<"Username should be less than 30 char";
+	}
 	gotoxy(30,10);
 	cout<<"Username: ";
 	gets(temp_user);
-	
-	if(strlen(temp_user)<30)
-		strcpy(username,temp_user);
-	else
-		goto enter_username;
+
+	if(U.ret_ir()==1)
+		if(strlen(temp_user)<30)
+			strcpy(username,temp_user);
+		else
+			goto enter_username;
+	if(U.ret_ir()==0)
+	{
+		if(strcmp(temp_user,U.ret_user())==0)
+			bool=1;
+		if(bool==0)
+		{
+			error_message("Username is incorrect",29);
+			goto enter_username;
+		}
+	}
 	/////////////////////////////////////////////////////////
-	
+
 	enter_password:
-	
+
+	bool=0;
 	border('~',20,12,40,5);
-	gotoxy(18,18);
-	cout<<"Use characters A-Z, a-z, ! \" # $ % & ' ( ) *";
-	gotoxy(21,14);
-	cout<<"         Password:                    ";
+	if(U.ret_ir()==1)
+	{
+		gotoxy(18,18);
+		cout<<"Use characters A-Z a-z 0-9 ! \" # $ % & ' ( ) *";
+	}
+	gotoxy(30,14);
+	cout<<"Password:                    ";
 	gotoxy(40,14);
-	strcpy(password,getpass("ini"));
-	
+	if(U.ret_ir()==1)
+		strcpy(password,get_pass("ini"));
+	if(U.ret_ir()==0)
+	{
+		char temp_pass[30];
+		strcpy(temp_pass,get_pass());
+		if(strcmp(temp_pass,password)==0)
+			bool=1;
+		if(bool==0)
+		{
+			error_message("Password is incorrect",29);
+			goto wrong_password_entered;
+		}
+		return;
+	}
+
 	initial_run=0;
-	
-	fout.seekp(0,ios::beg);
-	fout.write((char*)&U,sizeof(User));
-	fout.close();
+	file.seekp(0,ios::beg);
+	file.write((char*)&U,sizeof(User));
+	file.close();
 	return;
 	////////////////////////////////////////////////////////
-	
+
 	wrong_password_entered:
-	
+
 	clrscr();
 	border('~',20,8,40,5);
 	gotoxy(30,10);
@@ -261,81 +298,6 @@ void User :: initial_login(char* keyword="user")
 	goto enter_password;
 }
 
-void login(char* keyword="user")
-{
-	ifstream fin;
-	fin.open("dduser.dat",ios::in|ios::binary);
-	
-	if(!fin)
-	{
-		U.initial_login();
-		return;
-	}
-	
-	fin.seekg(0,ios::beg);
-	fin.read((char*)&U,sizeof(User));
-		
-	if(U.ret_ir()==0)
-	{
-		char uname[30],pass[30];
-		int bool=0;
-
-		if(strcmp(keyword,"user")==0)
-			goto enter_username;
-		else if(strcmp(keyword,"pass")==0)
-			goto wrong_password_entered;
-
-		enter_username:
-
-		clrscr();
-		border('~',20,8,40,5);
-		gotoxy(30,10);
-		cout<<"Username: ";
-		gets(uname);
-
-		if(strcmp(uname,U.ret_user())==0)
-			bool=1;
-
-		if(bool==0)
-		{
-			error_message("Username is incorrect",29);
-			goto enter_username;
-		}
-		//////////////////////////////////////////////////////////////////////////
-
-		enter_password:
-
-		bool=0;
-
-		border('~',20,12,40,5);
-		gotoxy(30,14);
-		cout<<"Password:                    ";
-		gotoxy(40,14);
-		strcpy(pass,getpass());
-
-		if(strcmp(pass,U.ret_pass())==0)
-		{
-			bool=1;
-			return;
-		}
-
-		if(bool==0)
-		{
-			error_message("Password is incorrect",29);
-			goto wrong_password_entered;
-		}
-		///////////////////////////////////////////////////////////////////////////
-
-		wrong_password_entered:
-
-		clrscr();
-		border('~',20,8,40,5);
-		gotoxy(30,10);
-		cout<<"Username: ";
-		cout<<U.ret_user();
-		goto enter_password;
-	}
-}
 //////////////////////////////////////login ends//////////////////////////////////////////////
 /////////////////////////////////////menu starts//////////////////////////////////////////////
 void menu()
@@ -363,10 +325,11 @@ void menu()
 				break;
 		case '6':	snake();
 				break;
-		case 8	:	login();
+		case 8	:	U.login();
+				break;
 		default:	error_message("Invalid option!",32);
-				menu();
 	}
+	menu();
 }
 /////////////////////////////////////menu ends////////////////////////////////////////////////
 ////////////////////////////////////contacts starts///////////////////////////////////////////
