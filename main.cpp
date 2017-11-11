@@ -1607,39 +1607,44 @@ class Zodiac
 
 void horoscope()
 {
-	char* zodiac_signs[]={"1. Aries","2. Taurus","3. Gemini","4. Cancer","5. Leo","6. Virgo","7. Libra","8. Scorpio","9. Sagittarius","10. Capricorn","11. Aquarius","12. Pisces"};
+	char* zodiac_signs[]={"1. Aries", "2. Taurus", "3. Gemini", "4. Cancer", "5. Leo", "6. Virgo", "7. Libra", "8. Scorpio", "9. Sagittarius", "A. Capricorn", "B. Aquarius", "C. Pisces"};
 
-	border('%',1,1,80,25);
+	border('#',1,1,81,25);
 	create_menu("Horoscope");
 	create_list(zodiac_signs,ARRAY_SIZE(zodiac_signs),10,2);
+
+	next_1:
 	gotoxy(40,22);
 	char option = getch();
-	
 	if(option==8)
 		menu();
+	else if(option<49 || option>57&&option<97 || option>99)
+		goto next_1;
 
 	ifstream infile;
 	infile.open("ddhoroscope.dat",ios::in|ios::binary);
 	while(infile.read((char*)&Z, sizeof(Z)))
 		if(Z.s_no==option)
 		{
+			clrscr();
+			gotoxy(4,10);
 			cout<<Z.para;
 			goto found;
 		}
-	
+
 	error_message("Invalid Option!");
 	horoscope();
-	
+
 	found:
 	infile.close();
-	
-	gotoxy(34,23);
+
+	gotoxy(34,24);
 	cout<<"Press backspace to return to previous screen.";
-	next:
+	next_2:
 	if(getch()==8)
 		horoscope();
 	else
-		goto next;
+		goto next_2;
 }
 
 //////////////////////////////////////horoscope ends////////////////////////////////////////////
