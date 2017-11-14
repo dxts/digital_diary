@@ -102,18 +102,19 @@ void create_list(char* list_elements[], int no_of_elements, int y_start, float n
 	}
 }
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 class User
 {
-	
+
 	private :
-	
+
 	char username[30];
 	char password[30];
 	int initial_run;
 
 	public :
-	
+
 	char* ret_user()
 	{
 		return username;
@@ -936,7 +937,7 @@ void converter()
 {
 	void currency();
 	void unit();
-	void calc();
+	void calculator();
 
 	char* converter_menu[]={"1. Currency","2. Unit","3. Calculator"};
 	create_menu("Calc. & Conv.",converter_menu,ARRAY_SIZE(converter_menu));
@@ -951,7 +952,7 @@ void converter()
 			unit();
 			break;
 		case '3':
-			calc();
+			calculator();
 			break;
 		case 8	:
 			menu();
@@ -1267,144 +1268,162 @@ void volume()
 		goto next;
 }
 /////////////////////////////////////////////////
-void calc()					//yet to optimize
- {
-  char l,l1,l2,l3,l4,ch[10];
-  int a,b;
-  double a1,b1;
-	cout<<"***************CALCULATOR***************";
-  do
+
+void calculator();
+class char_stack
+{
+	public:
+	char stack[256];
+	int s_top;
+
+	void push (char data)
 	{
-	  cout<<'\t'<<'\t'<<"\n 1:Arithemetic Operations";
-  cout<<'\t'<<'\t'<<"\n 2:Trignometric Functions";
-  cout<<'\t'<<'\t'<<"\n 3:Logarithmic Functions";
-  cout<<'\t'<<'\t'<<"\n 4:Power Functions";
-  l=getch();
-  switch(l)
+		if(s_top==255)
+		{
+			error_message("Stack Overflow..");
+			calculator();
+		}
+		s_top++;
+		stack[s_top]=data;
+	}
+
+	void pop ()
 	{
-	case'1':
-		 {
-		 cout<<'\t'<<'\t'<<"\n ADDITION         A";
-		 cout<<'\t'<<'\t'<<"\n SUBRACTION       S";
-		 cout<<'\t'<<'\t'<<"\n MULTIPLICATION   M";
-		 cout<<'\t'<<'\t'<<"\n DIVISION         D";
-		 cout<<'\t'<<'\t'<<"\n PERCENTAGE       P";
-		 l1=getch();
-		 if(l1=='A')
-		  {
-			cout<<"\n enter the numbers";
-			cin>>a>>b;
-			cout<<"\n the sum is"<<a+b;
-		  }
-		 else if(l1=='S')
-		  {
-			cout<<"\n enter the numbers";
-			cin>>a>>b;
-			cout<<"\n the difference is"<<a-b;
-		  }
-		 else if(l1=='M')
-		  {
-			cout<<"\n enter the numbers";
-			cin>>a>>b;
-			cout<<"\n the product is"<<a*b;
-		  }
-		 else if(l1=='D')
-		  {
-			cout<<"\n enter the numbers";
-			cin>>a>>b;
-			cout<<"\n the quotient is"<<a/b;
-		  }
-		 else if(l1=='P')
-		  {
-			cout<<"\n enter the numbers";
-			cin>>a>>b;
-			cout<<"\n the percent is"<<a%b;
-		  }
-		 else
-			cout<<"\n invalid operator \n";
-		break;
+		if(s_top==-1)
+		{
+			error_message("Stack Underflow..");
+			calculator();
 		}
-	case'2':
-		 {
-		 cout<<'\t'<<'\t'<<"\n COS FUNCTION     C";
-		 cout<<'\t'<<'\t'<<"\n SIN FUNCTION     S";
-		 cout<<'\t'<<'\t'<<"\n TAN FUNCTION     T";
-		 l2=getch();
-		 if(l2=='C')
-		  {
-			cout<<"\n enter the number";
-			cin>>a1;
-			cout<<"\n the value is"<<cos(a1);
-		  }
-		 else if(l2=='S')
-		  {
-			cout<<"\n enter the number";
-			cin>>a1;
-			cout<<"\n the value is"<<sin(a1);
-		  }
-		 else if(l2=='T')
-		  {
-			cout<<"\n enter the numbers";
-			cin>>a1;
-			cout<<"\n the value  is"<<tan(a1);
-		  }
-		 else
-			cout<<"\n invalid operator \n";
-		break;
+		s_top--;
+	}
+
+	char top()
+	{
+		return stack[s_top];
+	}
+
+	char_stack()
+	{	s_top=-1;	}
+
+}	Stack;
+
+void get_input (char * infix)
+{
+	gotoxy(5,10);
+	cout<<">> ";
+	fgets(infix, 256, stdin);
+}
+
+int is_operator (char p)
+{
+	if (p == '+' || p == '-' || p == '*' || p == '/' || p == '%' || p == '^')
+		return 1;
+	else
+		return 0;
+}
+
+int is_digit (char p)
+{
+	if (p >= '0' && p <= '9')
+		return 1;
+	else
+		return 0;
+}
+
+int char_to_digit (char p)
+{
+	if (p >= '0' && p <= '9')
+		return p - '0';
+	else
+		return 0;
+}
+
+int precedence(char left_operator, char right_operator)
+{
+    if ( left_operator == '^' )
+		return 1;
+    else if ( right_operator == '^' )
+		return 0;
+    else if ( left_operator == '*' || left_operator == '/' || left_operator == '%' )
+		return 1;
+	 else if ( right_operator == '*' || right_operator == '/' || right_operator == '%' )
+		return 0;
+
+	 return 1;
+}
+
+void to_postfix(char *infix, char* postfix)
+{
+	//char postfix[256];
+	Stack.push('(');
+
+	int i=0;
+	for(i=0; ; i++)
+	{
+		char current=infix[i];
+		if( !is_digit(current) && !is_operator(current) && !(current == 13))
+		{
+			//error_message("Invalid input..");
+			//calculator();
 		}
-	case'3':
-		 {
-		 cout<<'\t'<<'\t'<<"\n NATURAL LOG         N";
-		 cout<<'\t'<<'\t'<<"\n LOG WITH BASE 10    L";
-		 l3=getch();
-		 if(l3=='N')
-		  {
-			cout<<"\n enter the number";
-			cin>>a1;
-			cout<<"\n the value is"<<log(a1);
-		  }
-		 else if(l3=='S')
-		  {
-			cout<<"\n enter the number";
-			cin>>a1;
-			cout<<"\n the value is"<<log10(a1);
-		  }
-		 else
-			cout<<"\n invalid operator \n";
-		break;
+
+		if(is_digit(current))
+			postfix[0]=current;
+		else if(current == '(')
+			Stack.push(current);
+
+		else if(is_operator(current))
+		{
+			while(is_operator(Stack.top()) && precedence(Stack.top(), current))
+			{
+				postfix[i] = Stack.top();
+				Stack.pop();
+			}
+			Stack.push(current);
 		}
-	case'4':
-		 {
-		 cout<<'\t'<<'\t'<<"\n POWER         P";
-		 cout<<'\t'<<'\t'<<"\n SQURE ROOT    S";
-		 l4=getch();
-		 if(l4=='P')
-		  {
-			cout<<"\n enter the number and power";
-			cin>>a1>>b1;
-			cout<<"\n the value is"<<pow(a1,b1);
-		  }
-		 else if(l4=='S')
-		  {
-			cout<<"\n enter the number";
-			cin>>a1;
-			cout<<"\n the value is"<<sqrt(a1);
-		  }
-		 else
-			cout<<"\n invalid operator \n";
-		break;
+
+		else if(current == ')')
+		{
+			while(Stack.top() != '(')
+			{
+				postfix[i] = Stack.top();
+				Stack.pop();
+			}
+			Stack.pop();	//discarding left parenthesis
 		}
 	}
-  cout<<"\n do you want to continue";
-	gets(ch);
- }while(ch[0]=='Y');
+
+	while(Stack.top() != '(')
+	{
+		postfix[i++]=Stack.top();
+		Stack.pop();
+	}
+	Stack.pop();	//discard left parenthesis
 }
+
+int calculate (char *infix)
+{
+	char postfix[256];
+	to_postfix(infix, postfix);
+	cout<<postfix;
+	getch();
+	return 1;
+}
+
+void calculator()
+{
+	char in[256];
+	clrscr();
+	get_input(in);
+	int result = calculate(in);
+}
+
 ///////////////////////////////////////converter ends///////////////////////////////////////////
 //////////////////////////////////////world clock starts////////////////////////////////////////
 void world_clock()
 {
 	void display_time(char city[],int hr,int mn);
-	
+
 	char* cities[]={"1. Los Angeles","2. New York","3. Buenos Aires","4. London","5. Paris","6. Riyadh","7. Delhi","8. Beijing","9. Sydney"};
 
 	ask_time_option:
@@ -1412,7 +1431,7 @@ void world_clock()
 	create_list(cities,ARRAY_SIZE(cities),14,2);
 	gotoxy(40,22);
 	char option = getch();
-	
+
 	switch(option)
 	{
 		case '1':
@@ -1454,7 +1473,7 @@ void world_clock()
 void display_time(char city[],int hr,int mn)
 {
 	get_time:
-	
+
 	time_t rawtime=time(0);		//gets the unix timestamp. ie, no. of seconds since 1 Jan 1970
 	struct tm *gmt;
 	gmt=gmtime(&rawtime);		//converts rawtime to UTC and stores in struct gmt
@@ -1462,7 +1481,7 @@ void display_time(char city[],int hr,int mn)
 	border('.',25,7,30,5);
 	gotoxy(30,9);
 	cout<<city<<" --- "<<(14+hr+(gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);	// +14 because the utc time was off by 14 (temporary fix)
-	
+
 	gotoxy(3,24);
 	cout<<"Press r to refresh";
 	time_refresh:
@@ -1505,7 +1524,7 @@ void notes()
 
 void view_notes()
 {
-	char* notes_list[10]={"1.Placeholder","2.Also Placeholder"};
+	char* notes_list[10]={"1.Placeholder","2.Also Placeholder","","","","","","","",""};
 
 	ifstream infile;
 	infile.open("notes.dat",ios::in|ios::binary);
