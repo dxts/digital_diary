@@ -9,9 +9,10 @@ class contacts
 private:
 			char name[20],addline_1[20],addline_2[20],email_id[30];
 			char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
+			int index;
 public:
 			void file_edit();
-			void input();    //get contacts details by input
+			void input(int q);    //get contacts details by input
 			void display();
 			void menu();
 			void view();
@@ -135,7 +136,8 @@ ofstream file;
 file.open("contacts.cf",ios::binary||ios::out);
 while(i<n)
 	{
-	c.input();
+	c.input(i);
+	i++;
 	file.write((char*)&c,sizeof(c));i++;
 	}
 file.close();
@@ -239,8 +241,9 @@ else if (mode==5)
 else if (mode==6)
 	strcpy(addline_2,temp);
 }
-void contacts :: input()    //get contacts details by input
+void contacts :: input(int q)    //get contacts details by input
 {
+index=q;
 char a;
 gotoxy(38,8);
 cout<<"Contact Name:";
@@ -333,7 +336,7 @@ while(fio.read((char*)&c,sizeof(c)))   //testing if we can still read
 
 	if(strcmp(name,name1)==0)              //check name
 		{
-		input();
+		input(recc+1);
 		fout.seekp(recc*sizeof(c),ios::beg);
 		fout.write((char*)&c,sizeof(c));
 		fout.close();
@@ -366,9 +369,13 @@ ifstream file;
 ofstream temp;
 temp.open("$$.cf",ios::binary);
 file.open("contacts.cf",ios::binary);
+int recc=0;
 while(file.read((char*)&c,sizeof(c)))
-temp.write((char*)&c,sizeof(c));
-c.input();
+	{
+	temp.write((char*)&c,sizeof(c));
+	recc++;
+	}
+input(recc+1);
 temp.write((char*)&c,sizeof(c));
 temp.close();
 file.close();
@@ -377,28 +384,59 @@ rename("$$.cf","contacts.cf");
 clrscr();
 menu();
 }
-/*
+
 void contacts :: sort()
 {
-ifstream file;
-ofstream temp;
-char name1[20],name2[20],contact[100],sort[100];
-int i=0,j,k;
-temp.open("$$.cf",ios::binary);
-file.open("contacts.cf",ios::binary);
+cout<<"open";
+fstream file;
+char tmp[100];
+char contact[100][100];cout<<"pass2";
+int i=0;cout<<"pass1";
+int j=0;
+int n=0;                                   cout<<"pass3";
+file.open("contacts.cf",ios::binary|ios::in);
+file.seekg(0);cout<<"done";cout<<"pass3";
 while(file.read((char*)&c,sizeof(c)))
-{contact[i]=name;i++;}
-for(j=0;j<=i;j++)
+	{cout<<"pass3";
+	decrypt(name);
+	cout<<n; cout<<"pass3";
+	strcpy(name,decrypted_text);
+	strcpy(contact[n],name);
+	n++;
+	}
+for(i=0;i<n-1;i++)
 {
-	for(k=0;k<=i;k++)
+	for(j=i+1;j<n;j++)
 	{
-	if(strcmp(contact[i],contact[j])<0)
-	char tmp[]=contact[i];
-	contact[i]=contact[j];
-	strcpy(contact[j],tmp);
+		if(strcmpi(contact[i],contact[j])>0)
+		{
+		strcpy(tmp,contact[i]);
+		strcpy(contact[i],contact[j]);
+		strcpy(contact[j],tmp);
+		}
 	}
 }
-}*/
+for(i=0;i<n;i++)
+cout<<contact[i]<<endl;       //debug info
+file.seekg(0);
+int sorted[100];
+j=0;
+for(i=0;i<n;i++)
+	{
+		while(file.read((char*)&c,sizeof(c)))
+			{
+				decrypt(name);
+				if(strcmp(contact[i],decrypted_text)==0)
+					{
+						sorted[j]=index;
+						j++;
+					}
+			}
+	}
+file.close();
+for(i=0;i<n;i++)
+cout<<sorted[i]<<endl;       //debug info
+}
 
 void contacts :: search()
 {
@@ -420,7 +458,7 @@ void contacts :: menu()
 {
 gotoxy(0,24);
 cout<<"Use W & D keys to scroll through contacts";
-cout<<endl<<"Hit Enter to select contact";
+cout<<endl<<"Hit Enter to select contact. Press BackSpace to exit";
 gotoxy(38,17);
 cout<<"              ";
 gotoxy(38,18);
@@ -442,7 +480,8 @@ file.open("contacts.cf",ios::binary);
 cout<<endl<<endl;
 int n=0;
 cout<<"Contacts List:"<<endl;
-cout<<"+Add New+"<<endl;;
+cout<<"+Add New+"<<endl;
+file.seekg(0);
 while(file.read((char*)&c,sizeof(c)))
 	{
 	n++;
@@ -463,6 +502,8 @@ n--;
 loop:
 
 char a=getch();
+if(a!=8)
+{	//return;
 if(a=='w'&&y==8)
 	{
 	clrdsp();
@@ -487,7 +528,7 @@ if(a=='w'&&y>(n-5)&&y!=7)
 	cout<<"   ";y--;
 	gotoxy(x,y);
 	cout<<"<--";
-	file1.seekg(((recc*sizeof(c))-sizeof(c)),ios::beg);
+	file1.seekg(((recc*(sizeof(c)))-sizeof(c)),ios::beg);
 	file1.read((char*)&c,sizeof(c));
 	c.display();
 	recc--;
@@ -503,8 +544,8 @@ goto loop;
 enterkey:
 
 gotoxy(0,24);
-cout<<"Use A & S keys to choose option";
-cout<<endl<<"Hit Enter to select option. Press B to go back";
+cout<<"Use A & S keys to choose option                                              ";
+cout<<endl<<"Hit Enter to select option. Press B to go back. Press BackSpace to exit";
 gotoxy(10,y);
 cout<<"   ";
 int y1=18,x1=38;
@@ -559,12 +600,17 @@ if(b=='b'||b=='B')
 	clrscr();
 	menu();
 	}
+if(b==8)
+	return;
 
 goto loop2;
 
-}
+}   }
 void main()
 {
 clrscr();
-c.menu();
+c.file_edit();
+//c.menu();
+//clrscr();
+c.sort();
 }
