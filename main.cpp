@@ -13,35 +13,47 @@
 #define ARRAY_SIZE(array)	sizeof(array)/sizeof(array[0])
 #define stringize(ch)	#ch
 
-void border(char ch,int x,int y,int l,int b)
+void border(int x,int y,int l,int b)
 /*(x,y) is the top left corner point and l and b are the length and breadth of the rectangle*/
 {
-	for(int p=x; p<x+l; p++)			//creates the top horizontal rule
+	gotoxy(x,y);
+	cout<<char(201);
+	for(int p=x+1; p<x+l-1; p++)			//creates the top horizontal rule
 	{
 		gotoxy(p,y);
-		cout<<ch;
+		cout<<char(205);
 	}
-	for(int q=x; q<x+l-1; q++)			//creates the bottom horizontal rule
+	cout<<char(187);
+	
+	gotoxy(x,y+b-1);
+	cout<<char(200);
+	for(int q=x+1; q<x+l-1; q++)			//creates the bottom horizontal rule
 	{
 		gotoxy(q,y+b-1);
-		cout<<ch;
+		cout<<char(205);
 	}
-	for(int r=y; r<y+b; r++)			//creates the left vertical rule
+	
+	//gotoxy(x,y);
+	//cout<<char(201);
+	for(int r=y+1; r<y+b-1; r++)			//creates the left vertical rule
 	{
 		gotoxy(x,r);
-		cout<<ch;
+		cout<<char(186);
 	}
-	for(int s=y; s<y+b-1; s++)			//creates the right vertical rule
+	//gotoxy(x,y+b);
+	//cout<<char(200);
+	
+	for(int s=y+1; s<y+b-1; s++)			//creates the right vertical rule
 	{
 		gotoxy(x+l-1,s);
-		cout<<ch;
+		cout<<char(186);
 	}
 }
 
 void error_message(char mssg[],int x=27)
 {
 	clrscr();
-	border('#',15,10,50,7);
+	border(15,10,50,7);
 	gotoxy(x,12);
 	cout<<mssg;
 	gotoxy(36,15);
@@ -52,7 +64,7 @@ void error_message(char mssg[],int x=27)
 void create_menu(char* title, char* list_opt[]=NULL, int no_of_elements=0)
 {
 	clrscr();
-	border('#',1,1,80,25);
+	border(1,1,80,25);
 	gotoxy(41-strlen(title)/2,3);
 	cout<<title;
 
@@ -61,13 +73,13 @@ void create_menu(char* title, char* list_opt[]=NULL, int no_of_elements=0)
 	{
 		if(i%2==0)
 			{
-				border('+',11,step,25,5);
+				border(11,step,25,5);
 				gotoxy(13,step+2);
 				cout<<list_opt[i];
 			}
 		if(i%2==1)
 			{
-				border('+',46,step,25,5);
+				border(46,step,25,5);
 				gotoxy(48,step+2);
 				cout<<list_opt[i];
 				step+=5;
@@ -232,7 +244,7 @@ void User :: login(char* keyword="user")
 	char temp_user[30];
 
 	clrscr();
-	border('~',20,8,40,5);
+	border(20,8,40,5);
 	if(U.ret_ir()==1)
 	{
 		gotoxy(21,6);
@@ -262,7 +274,7 @@ void User :: login(char* keyword="user")
 	enter_password:
 
 	bool=0;
-	border('~',20,12,40,5);
+	border(20,12,40,5);
 	if(U.ret_ir()==1)
 	{
 		gotoxy(18,18);
@@ -297,7 +309,7 @@ void User :: login(char* keyword="user")
 	wrong_password_entered:
 
 	clrscr();
-	border('~',20,8,40,5);
+	border(20,8,40,5);
 	gotoxy(30,10);
 	cout<<"Username: ";
 	cout<<username;
@@ -905,11 +917,11 @@ double convert(char enter_unit[], double enter_amt, char* valid_units[], int no_
 void converter_ui(char* header,char* unit="Unit")
 {
 	clrscr();
-	border('#',1,1,81,24);
+	border(1,1,81,24);
 	gotoxy(34,4);
 	cout<<header;
 
-	border('.',10,6,25,5);
+	border(10,6,25,5);
 	gotoxy(12,7);
 	cout<<unit<<": ___";
 	gotoxy(12,9);
@@ -918,7 +930,7 @@ void converter_ui(char* header,char* unit="Unit")
 	gotoxy(39,8);
 	cout<<"TO";
 
-	border('.',45,6,25,5);
+	border(45,6,25,5);
 	gotoxy(47,7);
 	cout<<unit<<": ___";
 	gotoxy(47,9);
@@ -1478,7 +1490,7 @@ void display_time(char city[],int hr,int mn)
 	struct tm *gmt;
 	gmt=gmtime(&rawtime);		//converts rawtime to UTC and stores in struct gmt
 
-	border('.',25,7,30,5);
+	border(25,7,30,5);
 	gotoxy(30,9);
 	cout<<city<<" --- "<<(14+hr+(gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);	// +14 because the utc time was off by 14 (temporary fix)
 
@@ -1628,7 +1640,7 @@ void horoscope()
 {
 	char* zodiac_signs[]={"1. Aries", "2. Taurus", "3. Gemini", "4. Cancer", "5. Leo", "6. Virgo", "7. Libra", "8. Scorpio", "9. Sagittarius", "A. Capricorn", "B. Aquarius", "C. Pisces"};
 
-	border('#',1,1,81,25);
+	border(1,1,81,25);
 	create_menu("Horoscope");
 	create_list(zodiac_signs,ARRAY_SIZE(zodiac_signs),10,2);
 
