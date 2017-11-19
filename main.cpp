@@ -13,35 +13,47 @@
 #define ARRAY_SIZE(array)	sizeof(array)/sizeof(array[0])
 #define stringize(ch)	#ch
 
-void border(char ch,int x,int y,int l,int b)
+void border(int x,int y,int l,int b)
 /*(x,y) is the top left corner point and l and b are the length and breadth of the rectangle*/
 {
-	for(int p=x; p<x+l; p++)			//creates the top horizontal rule
+	gotoxy(x,y);
+	cout<<char(201);
+	for(int p=x+1; p<x+l-1; p++)			//creates the top horizontal rule
 	{
 		gotoxy(p,y);
-		cout<<ch;
+		cout<<char(205);
 	}
-	for(int q=x; q<x+l-1; q++)			//creates the bottom horizontal rule
+	cout<<char(187);
+	
+	gotoxy(x,y+b-1);
+	cout<<char(200);
+	for(int q=x+1; q<x+l-1; q++)			//creates the bottom horizontal rule
 	{
 		gotoxy(q,y+b-1);
-		cout<<ch;
+		cout<<char(205);
 	}
-	for(int r=y; r<y+b; r++)			//creates the left vertical rule
+	
+	//gotoxy(x,y);
+	//cout<<char(201);
+	for(int r=y+1; r<y+b-1; r++)			//creates the left vertical rule
 	{
 		gotoxy(x,r);
-		cout<<ch;
+		cout<<char(186);
 	}
-	for(int s=y; s<y+b-1; s++)			//creates the right vertical rule
+	//gotoxy(x,y+b);
+	//cout<<char(200);
+	
+	for(int s=y+1; s<y+b-1; s++)			//creates the right vertical rule
 	{
 		gotoxy(x+l-1,s);
-		cout<<ch;
+		cout<<char(186);
 	}
 }
 
 void error_message(char mssg[],int x=27)
 {
 	clrscr();
-	border('#',15,10,50,7);
+	border(15,10,50,7);
 	gotoxy(x,12);
 	cout<<mssg;
 	gotoxy(36,15);
@@ -52,7 +64,7 @@ void error_message(char mssg[],int x=27)
 void create_menu(char* title, char* list_opt[]=NULL, int no_of_elements=0)
 {
 	clrscr();
-	border('#',1,1,80,25);
+	border(1,1,80,25);
 	gotoxy(41-strlen(title)/2,3);
 	cout<<title;
 
@@ -61,13 +73,13 @@ void create_menu(char* title, char* list_opt[]=NULL, int no_of_elements=0)
 	{
 		if(i%2==0)
 			{
-				border('+',11,step,25,5);
+				border(11,step,25,5);
 				gotoxy(13,step+2);
 				cout<<list_opt[i];
 			}
 		if(i%2==1)
 			{
-				border('+',46,step,25,5);
+				border(46,step,25,5);
 				gotoxy(48,step+2);
 				cout<<list_opt[i];
 				step+=5;
@@ -108,67 +120,65 @@ class User
 {
 
 	private :
-
-	char username[30];
-	char password[30];
-	int initial_run;
+		char username[30];
+		char password[30];
+		int initial_run;
 
 	public :
 
-	char* ret_user()
-	{
-		return username;
-	}
+		char* ret_user()
+		{
+			return username;
+		}
 
-	char* ret_pass()
-	{
-		return password;
-	}
+		char* ret_pass()
+		{
+			return password;
+		}
 
-	int ret_ir()
-	{
-		return initial_run;
-	}
+		int ret_ir()
+		{
+			return initial_run;
+		}
 
-	void login(char*);
+		void login(char*);
 
-	User :: User()
-	{
-		initial_run=1;
-	}
+		User :: User()
+		{
+			initial_run=1;
+		}
 
 }	U;
 
 class contacts
 {
-	private :
-	
-	char name[20],addline_1[20],addline_2[20],email_id[30];
-	char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
-	
-	public :
-	
-	void file_edit();
-	void input();    //get contacts details by input
-	void display();
-	void menu();
-	void view();
-	void createnew();
-	void edit(char temp[]);
-	void search();
-	void deletecontact(char tmp[]);
-	void sort();
-	void clrdsp();
-	void charfix(char temp[],char letter,int mode);
-	void encrypt(char temp[]);
-	void decrypt(char temp[]);
+	private:
+		char name[20],addline_1[20],addline_2[20],email_id[30];
+		char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
+		int index;
 
+	public:
+		void file_edit();
+		void input(int q);    //get contacts details by input
+		void display();
+		void menu();
+		void view();
+		void createnew();
+		void edit(char temp[]);
+		void search();
+		void deletecontact(char tmp[]);
+		void sort();
+		void clrdsp();
+		void charfix(char temp[],char letter,int mode);
+		void encrypt(char temp[]);
+		void decrypt(char temp[]);
 }	c,f;
+
 
 class Note
 {
 	public :
-	char title[30],body[30];
+		char title[30],body[30];
 
 }	N;
 
@@ -232,7 +242,7 @@ void User :: login(char* keyword="user")
 	char temp_user[30];
 
 	clrscr();
-	border('~',20,8,40,5);
+	border(20,8,40,5);
 	if(U.ret_ir()==1)
 	{
 		gotoxy(21,6);
@@ -262,7 +272,7 @@ void User :: login(char* keyword="user")
 	enter_password:
 
 	bool=0;
-	border('~',20,12,40,5);
+	border(20,12,40,5);
 	if(U.ret_ir()==1)
 	{
 		gotoxy(18,18);
@@ -297,7 +307,7 @@ void User :: login(char* keyword="user")
 	wrong_password_entered:
 
 	clrscr();
-	border('~',20,8,40,5);
+	border(20,8,40,5);
 	gotoxy(30,10);
 	cout<<"Username: ";
 	cout<<username;
@@ -458,7 +468,8 @@ ofstream file;
 file.open("contacts.cf",ios::binary||ios::out);
 while(i<n)
 	{
-	c.input();
+	c.input(i);
+	i++;
 	file.write((char*)&c,sizeof(c));i++;
 	}
 file.close();
@@ -562,8 +573,9 @@ else if (mode==5)
 else if (mode==6)
 	strcpy(addline_2,temp);
 }
-void contacts :: input()    //get contacts details by input
+void contacts :: input(int q)    //get contacts details by input
 {
+index=q;
 char a;
 gotoxy(38,8);
 cout<<"Contact Name:";
@@ -656,7 +668,7 @@ while(fio.read((char*)&c,sizeof(c)))   //testing if we can still read
 
 	if(strcmp(name,name1)==0)              //check name
 		{
-		input();
+		input(recc+1);
 		fout.seekp(recc*sizeof(c),ios::beg);
 		fout.write((char*)&c,sizeof(c));
 		fout.close();
@@ -689,9 +701,13 @@ ifstream file;
 ofstream temp;
 temp.open("$$.cf",ios::binary);
 file.open("contacts.cf",ios::binary);
+int recc=0;
 while(file.read((char*)&c,sizeof(c)))
-temp.write((char*)&c,sizeof(c));
-c.input();
+	{
+	temp.write((char*)&c,sizeof(c));
+	recc++;
+	}
+input(recc+1);
 temp.write((char*)&c,sizeof(c));
 temp.close();
 file.close();
@@ -700,28 +716,59 @@ rename("$$.cf","contacts.cf");
 clrscr();
 menu();
 }
-/*
+
 void contacts :: sort()
 {
-ifstream file;
-ofstream temp;
-char name1[20],name2[20],contact[100],sort[100];
-int i=0,j,k;
-temp.open("$$.cf",ios::binary);
-file.open("contacts.cf",ios::binary);
+cout<<"open";
+fstream file;
+char tmp[100];
+char contact[100][100];cout<<"pass2";
+int i=0;cout<<"pass1";
+int j=0;
+int n=0;                                   cout<<"pass3";
+file.open("contacts.cf",ios::binary|ios::in);
+file.seekg(0);cout<<"done";cout<<"pass3";
 while(file.read((char*)&c,sizeof(c)))
-{contact[i]=name;i++;}
-for(j=0;j<=i;j++)
+	{cout<<"pass3";
+	decrypt(name);
+	cout<<n; cout<<"pass3";
+	strcpy(name,decrypted_text);
+	strcpy(contact[n],name);
+	n++;
+	}
+for(i=0;i<n-1;i++)
 {
-	for(k=0;k<=i;k++)
+	for(j=i+1;j<n;j++)
 	{
-	if(strcmp(contact[i],contact[j])<0)
-	char tmp[]=contact[i];
-	contact[i]=contact[j];
-	strcpy(contact[j],tmp);
+		if(strcmpi(contact[i],contact[j])>0)
+		{
+		strcpy(tmp,contact[i]);
+		strcpy(contact[i],contact[j]);
+		strcpy(contact[j],tmp);
+		}
 	}
 }
-}*/
+for(i=0;i<n;i++)
+cout<<contact[i]<<endl;       //debug info
+file.seekg(0);
+int sorted[100];
+j=0;
+for(i=0;i<n;i++)
+	{
+		while(file.read((char*)&c,sizeof(c)))
+			{
+				decrypt(name);
+				if(strcmp(contact[i],decrypted_text)==0)
+					{
+						sorted[j]=index;
+						j++;
+					}
+			}
+	}
+file.close();
+for(i=0;i<n;i++)
+cout<<sorted[i]<<endl;       //debug info
+}
 
 void contacts :: search()
 {
@@ -744,7 +791,7 @@ void contacts :: menu()
 	clrscr();
 	gotoxy(0,24);
 cout<<"Use W & D keys to scroll through contacts";
-cout<<endl<<"Hit Enter to select contact";
+cout<<endl<<"Hit Enter to select contact. Press BackSpace to exit";
 gotoxy(38,17);
 cout<<"              ";
 gotoxy(38,18);
@@ -766,7 +813,8 @@ file.open("contacts.cf",ios::binary);
 cout<<endl<<endl;
 int n=0;
 cout<<"Contacts List:"<<endl;
-cout<<"+Add New+"<<endl;;
+cout<<"+Add New+"<<endl;
+file.seekg(0);
 while(file.read((char*)&c,sizeof(c)))
 	{
 	n++;
@@ -787,6 +835,8 @@ n--;
 loop:
 
 char a=getch();
+if(a!=8)
+{	//return;
 if(a=='w'&&y==8)
 	{
 	clrdsp();
@@ -811,7 +861,7 @@ if(a=='w'&&y>(n-5)&&y!=7)
 	cout<<"   ";y--;
 	gotoxy(x,y);
 	cout<<"<--";
-	file1.seekg(((recc*sizeof(c))-sizeof(c)),ios::beg);
+	file1.seekg(((recc*(sizeof(c)))-sizeof(c)),ios::beg);
 	file1.read((char*)&c,sizeof(c));
 	c.display();
 	recc--;
@@ -827,8 +877,8 @@ goto loop;
 enterkey:
 
 gotoxy(0,24);
-cout<<"Use A & S keys to choose option";
-cout<<endl<<"Hit Enter to select option. Press B to go back";
+cout<<"Use A & S keys to choose option                                              ";
+cout<<endl<<"Hit Enter to select option. Press B to go back. Press BackSpace to exit";
 gotoxy(10,y);
 cout<<"   ";
 int y1=18,x1=38;
@@ -883,10 +933,13 @@ if(b=='b'||b=='B')
 	clrscr();
 	menu();
 	}
+if(b==8)
+	return;
 
 goto loop2;
 
-}
+}   }
+
 ///////////////////////////////////contacts ends//////////////////////////////////////////////
 /////////////////////////////////////converter starts/////////////////////////////////////////
 
@@ -905,11 +958,11 @@ double convert(char enter_unit[], double enter_amt, char* valid_units[], int no_
 void converter_ui(char* header,char* unit="Unit")
 {
 	clrscr();
-	border('#',1,1,81,24);
+	border(1,1,81,24);
 	gotoxy(34,4);
 	cout<<header;
 
-	border('.',10,6,25,5);
+	border(10,6,25,5);
 	gotoxy(12,7);
 	cout<<unit<<": ___";
 	gotoxy(12,9);
@@ -918,7 +971,7 @@ void converter_ui(char* header,char* unit="Unit")
 	gotoxy(39,8);
 	cout<<"TO";
 
-	border('.',45,6,25,5);
+	border(45,6,25,5);
 	gotoxy(47,7);
 	cout<<unit<<": ___";
 	gotoxy(47,9);
@@ -1054,7 +1107,7 @@ void unit()
 
 void mass()
 {
-	char* masses[]={"Tonne		t","Kilogram	kg","Gram		g","Milligram	mg","Microgram	ug","Imperial Ton	imt","US Ton		ust","Stone		st","Pound		lb","Ounce		oz"};
+	char* masses[]={"Tonne	t","Kilogram	kg","Gram		g","Milligram	mg","Microgram	ug","Imperial Ton		imt","US Ton		ust","Stone		st","Pound		lb","Ounce		oz"};
 	char* mass_units[]={"t","kg","g","mg","ug","imt","ust","st","lb","oz"};
 	double to_gram[]={1000000.0,1000.0,1.0,0.001,0.000001,1016000.0,907185.0,6350.29,453.592,28.3495};
 	double from_gram[]={0.000001,0.001,1.0,1000.0,1000000.0,0.00000098,0.0000011,0.0001575,0.0022046,0.035274};
@@ -1272,38 +1325,38 @@ void volume()
 void calculator();
 class char_stack
 {
+	private:
+		char stack[256];
+		int s_top;
+
 	public:
-	char stack[256];
-	int s_top;
 
 	void push (char data)
-	{
-		if(s_top==255)
 		{
-			error_message("Stack Overflow..");
-			calculator();
+			if(s_top == 255)
+			{
+				error_message("Stack Overflow..");
+				calculator();
+			}
+			s_top++;
+			stack[s_top]=data;
 		}
-		s_top++;
-		stack[s_top]=data;
-	}
 
-	void pop ()
-	{
-		if(s_top==-1)
+		void pop ()
 		{
-			error_message("Stack Underflow..");
-			calculator();
+			if(s_top == -1)
+			{
+				error_message("Stack Underflow..");
+				calculator();
+			}
+			s_top--;
 		}
-		s_top--;
-	}
 
-	char top()
-	{
-		return stack[s_top];
-	}
+		char top()
+		{	return stack[s_top];	}
 
-	char_stack()
-	{	s_top=-1;	}
+		char_stack()
+		{	s_top=-1;	}
 
 }	Stack;
 
@@ -1311,7 +1364,7 @@ void get_input (char * infix)
 {
 	gotoxy(5,10);
 	cout<<">> ";
-	fgets(infix, 256, stdin);
+	gets(infix);
 }
 
 int is_operator (char p)
@@ -1340,11 +1393,11 @@ int char_to_digit (char p)
 
 int precedence(char left_operator, char right_operator)
 {
-    if ( left_operator == '^' )
+	 if ( left_operator == '^' )
 		return 1;
-    else if ( right_operator == '^' )
+	 else if ( right_operator == '^' )
 		return 0;
-    else if ( left_operator == '*' || left_operator == '/' || left_operator == '%' )
+	 else if ( left_operator == '*' || left_operator == '/' || left_operator == '%' )
 		return 1;
 	 else if ( right_operator == '*' || right_operator == '/' || right_operator == '%' )
 		return 0;
@@ -1352,22 +1405,23 @@ int precedence(char left_operator, char right_operator)
 	 return 1;
 }
 
-void to_postfix(char *infix, char* postfix)
+void to_postfix(char infix[], char postfix[])
 {
-	//char postfix[256];
 	Stack.push('(');
 
 	int i=0;
-	for(i=0; ; i++)
+	for(i=0; ; ++i)
 	{
-		char current=infix[i];
+		char current = *infix++;
 		if( !is_digit(current) && !is_operator(current) && !(current == 13))
 		{
 			//error_message("Invalid input..");
 			//calculator();
 		}
 
-		if(is_digit(current))
+		if(current == ' ')
+		{	}
+		else if(is_digit(current))
 			postfix[0]=current;
 		else if(current == '(')
 			Stack.push(current);
@@ -1401,7 +1455,7 @@ void to_postfix(char *infix, char* postfix)
 	Stack.pop();	//discard left parenthesis
 }
 
-int calculate (char *infix)
+int calculate (char infix[])
 {
 	char postfix[256];
 	to_postfix(infix, postfix);
@@ -1417,6 +1471,7 @@ void calculator()
 	get_input(in);
 	int result = calculate(in);
 }
+
 
 ///////////////////////////////////////converter ends///////////////////////////////////////////
 //////////////////////////////////////world clock starts////////////////////////////////////////
@@ -1478,7 +1533,7 @@ void display_time(char city[],int hr,int mn)
 	struct tm *gmt;
 	gmt=gmtime(&rawtime);		//converts rawtime to UTC and stores in struct gmt
 
-	border('.',25,7,30,5);
+	border(25,7,30,5);
 	gotoxy(30,9);
 	cout<<city<<" --- "<<(14+hr+(gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);	// +14 because the utc time was off by 14 (temporary fix)
 
@@ -1628,7 +1683,7 @@ void horoscope()
 {
 	char* zodiac_signs[]={"1. Aries", "2. Taurus", "3. Gemini", "4. Cancer", "5. Leo", "6. Virgo", "7. Libra", "8. Scorpio", "9. Sagittarius", "A. Capricorn", "B. Aquarius", "C. Pisces"};
 
-	border('#',1,1,81,25);
+	border(1,1,81,25);
 	create_menu("Horoscope");
 	create_list(zodiac_signs,ARRAY_SIZE(zodiac_signs),10,2);
 
@@ -1668,10 +1723,13 @@ void horoscope()
 
 //////////////////////////////////////horoscope ends////////////////////////////////////////////
 /////////////////////////////////////snake game starts//////////////////////////////////////////
-void delay()
+void delay(int a=1)
 {
 	long i;
-	for(i=0;i<40000000;i++);
+	if(a==1)
+		for(i=0; i<40000000; i++);
+	else if(a==2)
+		for(i=0; i<60000000; i++);
 }
 
 int left=0,right=0,up=0,down=0,escape=0;
@@ -1732,7 +1790,7 @@ void snake()
 			cout<<"*"<<endl;
 			gotoxy(x,y-1);
 			cout<<" ";
-			delay();
+			delay(2);
 			if(y==24)
 			{
 				gotoxy(x,y);
@@ -1762,7 +1820,7 @@ void snake()
 			cout<<"*"<<endl;
 			gotoxy(x,y+1);
 			cout<<" ";
-			delay();
+			delay(2);
 			if(y==2)
 			{
 				gotoxy(x,y);
