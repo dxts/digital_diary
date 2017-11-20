@@ -10,7 +10,7 @@ class contacts
 			char name[20],addline_1[20],addline_2[20],email_id[30];
 			char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
 			char index;
-	public:
+	public:                                      
 			void file_edit();
 			void input(char q);    //get contacts details by input
 			void display();
@@ -58,8 +58,11 @@ void contacts::Sort()
 	}
 
 	cout<<endl;                      //debug info
-	for(i=0;i<n;i++)                 //debug info
-		cout<<contact[i]<<endl;		 //debug info
+	for(i=0;i<n;i++)
+	{
+		encrypt(contact[i]);
+		strcpy(contact[i],encrypted_text);
+	}
 	file.close();
 	ifstream file2;
 	ofstream file3;
@@ -73,8 +76,7 @@ void contacts::Sort()
 		file2.seekg(0);
 		while(file2.read((char*)&c,sizeof(c)))
 		{
-			decrypt(name);
-			if(strcmp(contact[k],decrypted_text)==0)
+			if(strcmp(contact[k],name)==0)
 			{
 				file3.write((char*)&c,sizeof(c));
 				i++;
@@ -479,7 +481,7 @@ void contacts :: menu()
 {
 	clrscr();
 	gotoxy(0,24);
-	cout<<"Use W & D keys to scroll through contacts";
+	cout<<"Use W & S keys to scroll through contacts";
 	cout<<endl<<"Hit Enter to select contact. Press BackSpace to exit";
 	gotoxy(38,17);
 	cout<<"              ";
@@ -495,7 +497,7 @@ void contacts :: menu()
 	ifstream file;
 	file.open("contacts.cf",ios::binary);
 	cout<<endl<<endl;
-	int n=0;
+	int n=0,scroll=0;
 	cout<<"Contacts List:"<<endl;
 	cout<<"+Add New+"<<endl;
 	file.seekg(0);
@@ -504,6 +506,8 @@ void contacts :: menu()
 		n++;
 		decrypt(name);
 		cout<<decrypted_text<<endl;
+		if(n==14)
+			break;
 	}
 
 	file.close();
@@ -531,7 +535,7 @@ void contacts :: menu()
 			cout<<"<--";
 		}
 
-	if(a=='s'&&y<(n+8))
+	if(a=='s'&&y<(n+9))
 	{
 		clrdsp();
 		gotoxy(x,y);
@@ -554,8 +558,24 @@ void contacts :: menu()
 		c.display();
 		recc--;
 	}
-  //	if(a=='s'&&y>18)
-  //		cout<<"ok";
+	if(a=='s'&&y==22)
+	{
+		clrscr();
+		gotoxy(0,6);
+		cout<<"Contacts List:"<<endl;
+		cout<<"+Add New+"<<endl;
+      file.seekg(0);
+		while(file.read((char*)&c,sizeof(c)))
+		{
+		cout<<"rea.";
+			n++;
+			decrypt(name);
+			cout<<decrypted_text<<endl;
+		}
+		file1.read((char*)&c,sizeof(c));
+		recc++;
+		c.display();
+	}
 	if(a==13&&y!=7)
 		goto enterkey;
 	if(a==13&&y==7)
