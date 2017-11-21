@@ -13,40 +13,28 @@
 #define ARRAY_SIZE(array)	sizeof(array)/sizeof(array[0])
 #define stringize(ch)	#ch
 
-void border(int x,int y,int l,int b)
+void border(int x, int y, int l, int b, char ch='#')
 /*(x,y) is the top left corner point and l and b are the length and breadth of the rectangle*/
 {
-	gotoxy(x,y);
-	cout<<char(201);
-	for(int p=x+1; p<x+l-1; p++)			//creates the top horizontal rule
+	for(int p=x; p<x+l; p++)			//creates the top horizontal rule
 	{
 		gotoxy(p,y);
-		cout<<char(205);
+		cout<<ch;
 	}
-	cout<<char(187);
-	
-	gotoxy(x,y+b-1);
-	cout<<char(200);
-	for(int q=x+1; q<x+l-1; q++)			//creates the bottom horizontal rule
+	for(int q=x; q<x+l-1; q++)			//creates the bottom horizontal rule
 	{
 		gotoxy(q,y+b-1);
-		cout<<char(205);
+		cout<<ch;
 	}
-	
-	//gotoxy(x,y);
-	//cout<<char(201);
-	for(int r=y+1; r<y+b-1; r++)			//creates the left vertical rule
+	for(int r=y; r<y+b; r++)			//creates the left vertical rule
 	{
 		gotoxy(x,r);
-		cout<<char(186);
+		cout<<ch;
 	}
-	//gotoxy(x,y+b);
-	//cout<<char(200);
-	
-	for(int s=y+1; s<y+b-1; s++)			//creates the right vertical rule
+	for(int s=y; s<y+b-1; s++)			//creates the right vertical rule
 	{
 		gotoxy(x+l-1,s);
-		cout<<char(186);
+		cout<<ch;
 	}
 }
 
@@ -116,7 +104,7 @@ void create_list(char* list_elements[], int no_of_elements, int y_start, float n
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-class User
+class USER
 {
 
 	private :
@@ -143,7 +131,7 @@ class User
 
 		void login(char*);
 
-		User :: User()
+		USER()
 		{
 			initial_run=1;
 		}
@@ -175,7 +163,7 @@ class contacts
 }	c,f;
 
 
-class Note
+class NOTE
 {
 	public :
 		char title[30],body[30];
@@ -221,12 +209,12 @@ char* get_pass(char* keyword="nor")
 	return pass;
 }
 
-void User :: login(char* keyword="user")
+void USER :: login(char* keyword="user")
 {
 	int bool;
 	fstream file;
 	file.open("dduser.dat", ios::in|ios::binary);
-	file.read((char*)&U, sizeof(User));
+	file.read((char*)&U, sizeof(USER));
 	file.close();
 	file.open("dduser.dat", ios::app|ios::binary);
 
@@ -299,7 +287,7 @@ void User :: login(char* keyword="user")
 
 	initial_run=0;
 	file.seekp(0,ios::beg);
-	file.write((char*)&U,sizeof(User));
+	file.write((char*)&U,sizeof(USER));
 	file.close();
 	return;
 	////////////////////////////////////////////////////////
@@ -320,11 +308,12 @@ void menu()
 {
 	void world_clock();
 	void converter();
+	void calculator();
 	void notes();
 	void horoscope();
 	void snake();
 
-	char* main_menu[]={"1. Contacts","2. Calc. & Conv.","3. World Clock","4. Notes","5. Horoscope","6. Games"};
+	char* main_menu[]={"1. Contacts","2. World Clock","3. Calculator","4. Converter","5. Notes","6. Horoscope"};
 	create_menu("Digital Diary",main_menu,ARRAY_SIZE(main_menu));
 	char option = getch();
 
@@ -334,18 +323,21 @@ void menu()
 			c.menu();
 			break;
 		case '2':
-			converter();
-			break;
-		case '3':
 			world_clock();
 			break;
+		case '3':
+			calculator();
+			break;
 		case '4':
-			notes();
+			converter();
 			break;
 		case '5':
-			horoscope();
+			notes();
 			break;
 		case '6':
+			horoscope();
+			break;
+		case 'g':
 			snake();
 			break;
 		case 8	:
@@ -992,8 +984,8 @@ void converter()
 	void unit();
 	void calculator();
 
-	char* converter_menu[]={"1. Currency","2. Unit","3. Calculator"};
-	create_menu("Calc. & Conv.",converter_menu,ARRAY_SIZE(converter_menu));
+	char* converter_menu[]={"1. Currency","2. Unit"};
+	create_menu("Converter",converter_menu,ARRAY_SIZE(converter_menu));
 	char option = getch();
 	
 	switch(option)
@@ -1003,9 +995,6 @@ void converter()
 			break;
 		case '2':
 			unit();
-			break;
-		case '3':
-			calculator();
 			break;
 		case 8	:
 			menu();
@@ -1320,52 +1309,48 @@ void volume()
 	else
 		goto next;
 }
-/////////////////////////////////////////////////
+/////////////////////////////////////////////converter ends///////////////////////////////////////////////////
+////////////////////////////////////////////////calculator starts//////////////////////////////////////////////
 
-void calculator();
-class char_stack
+class OP_STACK
 {
 	private:
-		char stack[256];
-		int s_top;
+		char stack[32];
+		int TOP;
 
 	public:
 
-	void push (char data)
+		void push (char data)
 		{
-			if(s_top == 255)
+			if(TOP == 63)
 			{
-				error_message("Stack Overflow..");
+				error_message("OP_STACK Overflow..");
 				calculator();
 			}
-			s_top++;
-			stack[s_top]=data;
+			TOP++;
+			stack[TOP]=data;
 		}
 
 		void pop ()
 		{
-			if(s_top == -1)
+			if(TOP == -1)
 			{
-				error_message("Stack Underflow..");
+				error_message("OP_STACK Underflow..");
 				calculator();
 			}
-			s_top--;
+			TOP--;
 		}
 
+		void clear()
+		{	TOP = -1;	}
+
 		char top()
-		{	return stack[s_top];	}
+		{	return stack[TOP];	}
 
-		char_stack()
-		{	s_top=-1;	}
+		OP_STACK()
+		{	TOP = -1;	}
 
-}	Stack;
-
-void get_input (char * infix)
-{
-	gotoxy(5,10);
-	cout<<">> ";
-	gets(infix);
-}
+}	O;
 
 int is_operator (char p)
 {
@@ -1375,20 +1360,15 @@ int is_operator (char p)
 		return 0;
 }
 
-int is_digit (char p)
-{
-	if (p >= '0' && p <= '9')
-		return 1;
-	else
-		return 0;
-}
 
-int char_to_digit (char p)
+int char_to_num (char p[])
 {
-	if (p >= '0' && p <= '9')
-		return p - '0';
-	else
-		return 0;
+	int num=0;
+	for(; *p !='\0'; ++p)
+	{
+		num = 10*num+ (*p-48);
+	}
+	return num;
 }
 
 int precedence(char left_operator, char right_operator)
@@ -1401,79 +1381,184 @@ int precedence(char left_operator, char right_operator)
 		return 1;
 	 else if ( right_operator == '*' || right_operator == '/' || right_operator == '%' )
 		return 0;
-
-	 return 1;
 }
 
 void to_postfix(char infix[], char postfix[])
 {
-	Stack.push('(');
+	O.clear();
+	O.push('(');
 
 	int i=0;
-	for(i=0; ; ++i)
+	for(i=0; *infix != '\0'; ++i, ++infix)
 	{
-		char current = *infix++;
-		if( !is_digit(current) && !is_operator(current) && !(current == 13))
-		{
-			//error_message("Invalid input..");
-			//calculator();
-		}
-
-		if(current == ' ')
+		
+		if(*infix == ' ')
 		{	}
-		else if(is_digit(current))
-			postfix[0]=current;
-		else if(current == '(')
-			Stack.push(current);
-
-		else if(is_operator(current))
+		else if(isdigit(*infix))
 		{
-			while(is_operator(Stack.top()) && precedence(Stack.top(), current))
+			*postfix=*infix;
+			postfix++;
+			while(isdigit(*++infix))
 			{
-				postfix[i] = Stack.top();
-				Stack.pop();
+				*postfix=*infix;
+				postfix++;
 			}
-			Stack.push(current);
+			*postfix=' ';
+			postfix++;
+			infix--;
+		}
+		else if(*infix == '(')
+			O.push('(');
+
+		else if(is_operator(*infix))
+		{
+			while(is_operator(O.top()) && precedence(O.top(), *infix))
+			{
+				*postfix = O.top();
+				O.pop();
+				postfix++;
+			}
+			O.push(*infix);
 		}
 
-		else if(current == ')')
+		else if(*infix == ')')
 		{
-			while(Stack.top() != '(')
+			while(O.top() != '(')
 			{
-				postfix[i] = Stack.top();
-				Stack.pop();
+				*postfix = O.top();
+				O.pop();
+				postfix++;
 			}
-			Stack.pop();	//discarding left parenthesis
+			O.pop();	//discarding left parenthesis
+		}
+		
+		else
+		{
+			error_message("Invalid input..");
+			calculator();
 		}
 	}
 
-	while(Stack.top() != '(')
+	while(O.top() != '(')
 	{
-		postfix[i++]=Stack.top();
-		Stack.pop();
+		*postfix=O.top();
+		O.pop();
+		postfix++;
 	}
-	Stack.pop();	//discard left parenthesis
+	O.pop();	//discard left parenthesis
+	*postfix='\0';
 }
 
-int calculate (char infix[])
+
+class NUM_STACK
 {
-	char postfix[256];
+	private:
+		struct STACK
+		{
+			int number;
+			STACK *next;
+		};
+		STACK *TOP ;
+		
+	public:
+
+		NUM_STACK()
+		{
+			TOP=NULL;
+		}
+		void push(int data)
+		{
+			STACK *P;
+			P = new STACK;
+			P->number=data;
+			P->next = TOP;
+			TOP = P;
+		}
+		
+		void pop()
+		{
+			if(TOP == NULL)
+			{
+				error_message("Stack Underflow..");
+				calculator();
+			}
+			STACK *P;
+			P = TOP;
+			TOP = TOP->next;
+			delete P;
+		}
+	
+		int top()
+		{
+			return TOP->number;
+		}
+
+}	N;
+
+
+int calculate ()
+{
+	char postfix[256]=" ", infix[256]=" ";
 	to_postfix(infix, postfix);
-	cout<<postfix;
-	getch();
-	return 1;
+	
+	for(int i=0; postfix[i] != '\0'; ++i)
+	{
+		if(postfix[i] == ' ')
+		{}
+		
+		else if(isdigit(postfix[i]))
+		{
+			int j=0;
+			char number[6];
+			number[j++]=postfix[i++];
+			while(isdigit(postfix[i]) && postfix[i] !=' ')
+				number[j++] = postfix[i++];
+			
+			number[j]='\0';
+			N.push(char_to_num(number));
+			i--;
+		}
+		
+		else if(is_operator(postfix[i]))
+		{
+			char op=postfix[i]; 
+			int r_operand=N.top();
+			N.pop();
+			int l_operand=N.top();
+			N.pop();
+
+			int ans=0;
+			switch(op)
+			{
+				case '+' :
+					ans = l_operand+r_operand;
+					N.push(ans);
+				case '-' :
+					ans = l_operand-r_operand;
+					N.push(ans);
+				case '*' :
+					ans = l_operand*r_operand;
+					N.push(ans);
+				case '/' :
+					ans = l_operand/r_operand;
+					N.push(ans);
+				case '^' :
+					ans = pow(l_operand, r_operand);
+					N.push(ans);
+			}
+		}
+	}
+	int result= N.top();
+	N.pop();
+	return result;
 }
 
 void calculator()
 {
-	char in[256];
 	clrscr();
-	get_input(in);
-	int result = calculate(in);
+	int result = calculate();
 }
-
-
-///////////////////////////////////////converter ends///////////////////////////////////////////
+///////////////////////////////////////calculator ends///////////////////////////////////////////
 //////////////////////////////////////world clock starts////////////////////////////////////////
 void world_clock()
 {
@@ -1535,7 +1620,7 @@ void display_time(char city[],int hr,int mn)
 
 	border(25,7,30,5);
 	gotoxy(30,9);
-	cout<<city<<" --- "<<(14+hr+(gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);	// +14 because the utc time was off by 14 (temporary fix)
+	cout<<city<<" --- "<<(hr+((gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);
 
 	gotoxy(3,24);
 	cout<<"Press r to refresh";
@@ -1590,7 +1675,7 @@ void view_notes()
 	}
 
 	infile.seekg(0,ios::beg);
-	for(int i=0; infile.read((char*)&N,sizeof(Note)); ++i)
+	for(int i=0; infile.read((char*)&N,sizeof(NOTE)); ++i)
 	{
 		strcpy(notes_list[i],N.title);			//error probably here
 	}
@@ -1606,8 +1691,8 @@ void view_notes()
 		notes();
 	else if(option>='0' && option<=ARRAY_SIZE(notes_list))
 	{
-		infile.seekg((option-1)*sizeof(Note),ios::beg);
-		infile.read((char*)&N,sizeof(Note));
+		infile.seekg((option-1)*sizeof(NOTE),ios::beg);
+		infile.read((char*)&N,sizeof(NOTE));
 	}
 	else
 		goto get_option;
@@ -1644,27 +1729,24 @@ void add_notes()
 	gotoxy(60,24);
 	cout<<"Ctrl+S to save..";
 	gotoxy(3,7);
-	while(1)
+	for(int i=0; ; ++i)
 	{
-		char a;
-		a=getche();
+		N.body[i]=getche();
 		if(a==19)
 		{
-			strcat(N.body,stringize(\0));	//adds whatever is in the brackets to end of string 
+			N.body[i] = '\0';
 			break;
 		}
 		else if(a==13)
 		{
 			cout<<'\n';
-			strcat(N.body,stringize(\n));
+			N.body[i] = '\n';
 		}
-		else
-			strcat(N.body,stringize(a));	//here it adds 'a' to sting not the value in a,  temporary 
 	}
 
 	ofstream outfile;
 	outfile.open("notes.dat",ios::app|ios::binary);
-	outfile.write((char*)&N,sizeof(Note));
+	outfile.write((char*)&N,sizeof(NOTE));
 	outfile.close();
 	notes();
 }
