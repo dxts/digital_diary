@@ -49,7 +49,7 @@ void error_message(char mssg[],int x=27)
 	getch();
 }
 
-void create_menu(char* title, char* list_opt[]=NULL, int no_of_elements=0)
+void create_menu(char title[], char list_opt[][25]=NULL, int no_of_elements=0)
 {
 	clrscr();
 	border(1,1,80,25);
@@ -82,7 +82,28 @@ void create_menu(char* title, char* list_opt[]=NULL, int no_of_elements=0)
 	gotoxy(40,22);
 }
 
-void create_list(char* list_elements[], int no_of_elements, int y_start, float no_of_columns=1)
+void create_list(char list_elements[][25], int no_of_elements, int y_start, float no_of_columns=1)
+{
+	int longest_element=1;
+	for(int i=0; i<no_of_elements; ++i)
+		if(longest_element<strlen(list_elements[i]))
+			longest_element=strlen(list_elements[i]);
+
+	int y=y_start;
+	i = 0;
+	for(int h=1; h<=no_of_columns; ++h)
+	{
+		int y=y_start;
+		for(; i<(no_of_elements/no_of_columns)*h; ++i)
+		{
+			gotoxy(((81/no_of_columns-longest_element)/2)/*centers the list in the column*/+(h-1)*(81/no_of_columns)/*shifts the column*/,y++);
+			cout<<list_elements[i];
+		}
+	}
+}
+
+
+void create_list(char list_elements[][50], int no_of_elements, int y_start, float no_of_columns=1)
 {
 	int longest_element=1;
 	for(int i=0; i<no_of_elements; ++i)
@@ -144,7 +165,7 @@ class contacts
 		char name[20],addline_1[20],addline_2[20],email_id[30];
 		char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
 		char index;
-	
+
 	public:                                      
 		void file_edit();
 		void input(char q);    //get contacts details by input
@@ -167,7 +188,7 @@ class NOTE
 {
 	public :
 		char title[30],body[30];
-
+		int serial_num;
 }	N;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,9 +332,9 @@ void menu()
 	void calculator();
 	void notes();
 	void horoscope();
-	void snake();
+	void pacman();
 
-	char* main_menu[]={"1. Contacts","2. World Clock","3. Calculator","4. Converter","5. Notes","6. Horoscope"};
+	char main_menu[][25]={"1. Contacts","2. World Clock","3. Calculator","4. Converter","5. Notes","6. Horoscope"};
 	create_menu("Digital Diary",main_menu,ARRAY_SIZE(main_menu));
 	char option = getch();
 
@@ -338,7 +359,7 @@ void menu()
 			horoscope();
 			break;
 		case 'g':
-			snake();
+			pacman();
 			break;
 		case 8	:
 			U.login();
@@ -979,7 +1000,7 @@ void contacts :: menu()
 ///////////////////////////////////contacts ends//////////////////////////////////////////////
 /////////////////////////////////////converter starts/////////////////////////////////////////
 
-double convert(char enter_unit[], double enter_amt, char* valid_units[], int no_of_units, double mltip_values[])
+double convert(char enter_unit[], double enter_amt, char valid_units[][25], int no_of_units, double mltip_values[])
 {
 	for(int i=0; i<no_of_units; ++i)   //If the strcmp is used here it terminates the loop
 		if(strcmpi(enter_unit,valid_units[i])==0)
@@ -991,7 +1012,7 @@ double convert(char enter_unit[], double enter_amt, char* valid_units[], int no_
 	return 0;   //Prevents crashes in case of invalid units
 }
 
-void converter_ui(char* header,char* unit="Unit")
+void converter_ui(char header[],char unit[]="Unit")
 {
 	clrscr();
 	border(1,1,81,24);
@@ -1014,7 +1035,7 @@ void converter_ui(char* header,char* unit="Unit")
 	cout<<"Amount: ______________";
 }
 
-int check_units(char* in_unit, char* units_list[], int no_of_elements)
+int check_units(char in_unit[], char units_list[][25], int no_of_elements)
 {
 	for(int i=0; i<no_of_elements; ++i)
 		if(strcmpi(in_unit,units_list[i])==0)
@@ -1028,7 +1049,7 @@ void converter()
 	void unit();
 	void calculator();
 
-	char* converter_menu[]={"1. Currency","2. Unit"};
+	char converter_menu[][25]={"1. Currency","2. Unit"};
 	create_menu("Converter",converter_menu,ARRAY_SIZE(converter_menu));
 	char option = getch();
 	
@@ -1052,8 +1073,8 @@ void converter()
 /////////////////////////////////////////////////
 void currency()
 {
-	char* currencies[]={"American Dollar	USD","Bahraini Dinar		BHD","Euro			EUR","Indian Rupee	INR","Japanese Yen	YEN","Saudi Riyal	SAR"};
-	char* currency_units[]={"BHD","INR","SAR","EUR","YEN","USD"};
+	char currencies[][25]={"American Dollar	USD","Bahraini Dinar		BHD","Euro			EUR","Indian Rupee	INR","Japanese Yen	YEN","Saudi Riyal	SAR"};
+	char currency_units[][25]={"BHD","INR","SAR","EUR","YEN","USD"};
 	double to_usd[]={2.65,0.016,0.27,1.14,0.0088,1};
 	double from_usd[]={0.375,64.46,3.75,0.88,112.98,1};
 		
@@ -1111,7 +1132,7 @@ void unit()
 	void area();
 	void volume();
 	
-	char* unit_menu[]={"1. Mass","2. Length","3. Area","4. Volume"};
+	char unit_menu[][25]={"1. Mass","2. Length","3. Area","4. Volume"};
 	create_menu("Unit Converter",unit_menu,ARRAY_SIZE(unit_menu));
 	char option = getch();
 
@@ -1140,15 +1161,15 @@ void unit()
 
 void mass()
 {
-	char* masses[]={"Tonne	t","Kilogram	kg","Gram		g","Milligram	mg","Microgram	ug","Imperial Ton		imt","US Ton		ust","Stone		st","Pound		lb","Ounce		oz"};
-	char* mass_units[]={"t","kg","g","mg","ug","imt","ust","st","lb","oz"};
+	char masses[][25]={"Tonne		t","Kilogram	kg","Gram		g","Milligram	mg","Microgram	ug","Imperial Ton		imt","US Ton		ust","Stone		st","Pound		lb","Ounce		oz"};
+	char mass_units[][25]={"t","kg","g","mg","ug","imt","ust","st","lb","oz"};
 	double to_gram[]={1000000.0,1000.0,1.0,0.001,0.000001,1016000.0,907185.0,6350.29,453.592,28.3495};
 	double from_gram[]={0.000001,0.001,1.0,1000.0,1000000.0,0.00000098,0.0000011,0.0001575,0.0022046,0.035274};
-		
+
 	converter_ui("Mass Converter");
 
 	create_list(masses,ARRAY_SIZE(masses),15,2);
-	
+
 	gotoxy(18,7);
 	char in_unit[4];
 	gets(in_unit);
@@ -1194,11 +1215,11 @@ void mass()
 
 void length()
 {
-	char* lengths[]={"Kilometre	km","Metre		m","Centimetre	cm","Millimetre	mm","Nanometre	nm","Mile		mi","Yard		yd","Foot		ft","Inch		in","Nautical mile	nmi"};
-	char* length_units[]={"km","m","cm","mm","nm","mi","yd","ft","in","nmi"};
+	char lengths[][25]={"Kilometre	km","Metre		m","Centimetre	cm","Millimetre	mm","Nanometre	nm","Mile		mi","Yard		yd","Foot		ft","Inch		in","Nautical mile	nmi"};
+	char length_units[][25]={"km","m","cm","mm","nm","mi","yd","ft","in","nmi"};
 	double to_metre[]={1000.0,1.0,0.01,0.001,0.000000001,1609.34,0.9144,0.3048,0.0254,1852.0};
 	double from_metre[]={0.001,1.0,100.0,1000.0,1000000000.0,0.000621371,1.09361,3.28084,39.3701,0.000539957};
-		
+
 	converter_ui("Length Converter");
 
 	create_list(lengths,ARRAY_SIZE(lengths),15,2);
@@ -1248,11 +1269,11 @@ void length()
 
 void area()
 {
-	char* areas[]={"Square kilometre	sq km","Square metre	sq m","Square mile	sq mi","Square yard	sq yd","Square foot	sq ft","Square inch	sq in","Hectare		ha","Acre		ac"};
-	char* area_units[]={"sq km","sq m","sq mi","sq yd","sq ft","sq in","ha","ac"};
+	char areas[][25]={"Square kilometre	sq km","Square metre	sq m","Square mile	sq mi","Square yard	sq yd","Square foot	sq ft","Square inch	sq in","Hectare		ha","Acre		ac"};
+	char area_units[][25]={"sq km","sq m","sq mi","sq yd","sq ft","sq in","ha","ac"};
 	double to_metre_sq[]={1000000.0,1.0,2590000.0,0.836127,0.092903,0.00064516,10000.0,4046.86};
 	double from_metre_sq[]={0.000001,1.0,0.0000003861,1.19599,10.7639,1550,0.0001,0.000247105};
-		
+
 	converter_ui("Area Converter");
 
 	create_list(areas,ARRAY_SIZE(areas),15,2);
@@ -1302,11 +1323,11 @@ void area()
 
 void volume()
 {
-	char* volumes[]={"US liquid gallon	US gal","US quart		US qt","US pint		US pt","US fluid ounce	US fl oz","US cup		US cp","Cubic metre		m3","Litre		L","Millilitre		ml","Imperial gallon	im gal","Imperial quart	im qt","Imperial pint	im pt","Imperial fluid ounce    im fl oz","Imperial cup		im cp","Cubic foot		ft3","Cubic inch		in3"};
-	char* volume_units[]={"US gal","US qt","US pt","US fl oz","US cp","m3","L","ml","im gal","im qt","im pt","im fl oz","im cp","ft3","in3"};
+	char volumes[][50]={"US liquid gallon	US gal","US quart		US qt","US pint		US pt","US fluid ounce	US fl oz","US cup		US cp","Cubic metre		m3","Litre		L","Millilitre		ml","Imperial gallon	im gal","Imperial quart	im qt","Imperial pint	im pt","Imperial fluid ounce    im fl oz","Imperial cup		im cp","Cubic foot		ft3","Cubic inch		in3"};
+	char volume_units[][25]={"US gal","US qt","US pt","US fl oz","US cp","m3","L","ml","im gal","im qt","im pt","im fl oz","im cp","ft3","in3"};
 	double to_litre[]={3.785411784,0.946352946,0.473176473,0.0295735295625,0.2365882365,1000.0,1.0,0.001,4.54609,1.1365225,0.56826125,0.0284130625,0.284131,28.3168,0.0163871};
 	double from_litre[]={0.264172,1.05669,2.11338,33.81405,4.16667,0.001,1.0,1000.0,0.219969,0.879877,1.75975,35.1951,3.51951,0.0353147,61.0237};
-	
+
 	converter_ui("Volume Converter");
 	
 	create_list(volumes,ARRAY_SIZE(volumes),15,2);
@@ -1543,8 +1564,11 @@ class NUM_STACK
 int calculate ()
 {
 	char postfix[256]=" ", infix[256]=" ";
+	gotoxy(5,10);
+	cout<<">>  ";
+	gets(infix);
 	to_postfix(infix, postfix);
-	
+
 	for(int i=0; postfix[i] != '\0'; ++i)
 	{
 		if(postfix[i] == ' ')
@@ -1565,7 +1589,7 @@ int calculate ()
 		
 		else if(is_operator(postfix[i]))
 		{
-			char op=postfix[i]; 
+			char op=postfix[i];
 			int r_operand=N_S.top();
 			N_S.pop();
 			int l_operand=N_S.top();
@@ -1577,18 +1601,27 @@ int calculate ()
 				case '+' :
 					ans = l_operand+r_operand;
 					N_S.push(ans);
+					break;
 				case '-' :
 					ans = l_operand-r_operand;
 					N_S.push(ans);
+					break;
 				case '*' :
 					ans = l_operand*r_operand;
 					N_S.push(ans);
+					break;
 				case '/' :
 					ans = l_operand/r_operand;
 					N_S.push(ans);
+					break;
+				case '%' :
+					ans = l_operand%r_operand;
+					N_S.push(ans);
+					break;
 				case '^' :
 					ans = pow(l_operand, r_operand);
 					N_S.push(ans);
+					break;
 			}
 		}
 	}
@@ -1601,6 +1634,9 @@ void calculator()
 {
 	clrscr();
 	int result = calculate();
+	gotoxy(60,11);
+	cout<<">> "<<result;
+	getch();
 }
 ///////////////////////////////////////calculator ends///////////////////////////////////////////
 //////////////////////////////////////world clock starts////////////////////////////////////////
@@ -1608,7 +1644,7 @@ void world_clock()
 {
 	void display_time(char city[],int hr,int mn);
 
-	char* cities[]={"1. Los Angeles","2. New York","3. Buenos Aires","4. London","5. Paris","6. Riyadh","7. Delhi","8. Beijing","9. Sydney"};
+	char cities[][25]={"1. Los Angeles","2. New York","3. Buenos Aires","4. London","5. Paris","6. Riyadh","7. Delhi","8. Beijing","9. Sydney"};
 
 	ask_time_option:
 	create_menu("World Clock");
@@ -1664,8 +1700,9 @@ void display_time(char city[],int hr,int mn)
 
 	border(25,7,34,5,'.');
 	gotoxy(30,9);
-	cout<<city<<" --- "<<(hr+((gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);
-
+	//cout<<city<<" --- "<<(hr+((gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);
+	cout<<city<<"---"<<gmt->tm_hour<<':'<<gmt->tm_min<<':'<<gmt->tm_sec;
+	
 	gotoxy(3,24);
 	cout<<"Press r to refresh";
 	time_refresh:
@@ -1685,7 +1722,7 @@ void notes()
 	void view_notes();
 	void add_notes();
 
-	char* notes_menu[]={"1. View Notes","2. Add Note"};
+	char notes_menu[][25]={"1. View Notes","2. Add Note"};
 	create_menu("Notes", notes_menu, ARRAY_SIZE(notes_menu));
 	char option = getch();
 
@@ -1708,7 +1745,7 @@ void notes()
 
 void view_notes()
 {
-	char* notes_list[10]={"1.Placeholder","2.Also Placeholder","","","","","","","",""};
+	char notes_list[][25]={"1.Placeholder","2.Also Placeholder","","","","","","","",""};
 
 	ifstream infile;
 	infile.open("notes.dat",ios::in|ios::binary);
@@ -1721,7 +1758,7 @@ void view_notes()
 	infile.seekg(0,ios::beg);
 	for(int i=0; infile.read((char*)&N,sizeof(NOTE)); ++i)
 	{
-		strcpy(notes_list[i],N.title);			//error probably here
+		strcpy(notes_list[i],N.title);
 	}
 
 	create_menu("View Notes");
@@ -1729,8 +1766,7 @@ void view_notes()
 	
 	get_option:
 	gotoxy(40,22);
-	int option;
-	cin>>option;
+	char option= getch();
 	if(option==8)
 		notes();
 	else if(option>='0' && option<=ARRAY_SIZE(notes_list))
@@ -1807,7 +1843,7 @@ class Zodiac
 
 void horoscope()
 {
-	char* zodiac_signs[]={"1. Aries", "2. Taurus", "3. Gemini", "4. Cancer", "5. Leo", "6. Virgo", "7. Libra", "8. Scorpio", "9. Sagittarius", "A. Capricorn", "B. Aquarius", "C. Pisces"};
+	char zodiac_signs[][25]={"1. Aries", "2. Taurus", "3. Gemini", "4. Cancer", "5. Leo", "6. Virgo", "7. Libra", "8. Scorpio", "9. Sagittarius", "A. Capricorn", "B. Aquarius", "C. Pisces"};
 
 	border(1,1,81,25);
 	create_menu("Horoscope");
@@ -1882,35 +1918,17 @@ void check()
 		escape=1;
 }
 
-void snake()
+void pacman()
 {
 	int x=2,y=2;
 	left=0;
 	right=0;
 	up=0;
 	down=1;
-	int score=0,eaten=1,a,b;
 	while(!GetAsyncKeyState(VK_ESCAPE))
 	{
-		randomize();
-		//score report
-		gotoxy(70,0);
-		cout<<score;
-		if(eaten)
-		{
-			b=rand()%10+rand()%10+10;
-			a=rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+rand()%10+10;
-			gotoxy(a,b);
-			cout<<"#";
-			eaten=0;
-		}
-
 		while(down)
 		{
-			if(x==a&&y==b)
-			{
-				score++;eaten=1;
-			}
 			check();
 			gotoxy(x,y);
 			cout<<"*"<<endl;
@@ -1936,11 +1954,6 @@ void snake()
 		out0:
 		while(up)
 		{
-			if(x==a&&y==b)
-			{
-				score++;
-				eaten=1;
-			}
 			check();
 			gotoxy(x,y);
 			cout<<"*"<<endl;
@@ -1960,16 +1973,11 @@ void snake()
 				gotoxy(x,y+1);cout<<" ";goto out1;
 			}
 		}
-	
+
 		out1:
 		while(left)
 		{
 			check();
-			if(x==a&&y==b)
-			{
-				score++;
-				eaten=1;
-			}
 			gotoxy(x,y);
 			cout<<"*"<<endl;
 			gotoxy(x+1,y);
@@ -1992,16 +2000,11 @@ void snake()
 				goto out2;
 			}
 		}
-		
+
 		out2:
 		while(right)
 		{
 			check();
-			if(x==a&&y==b)
-			{
-				score++;
-				eaten=1;
-			}
 			gotoxy(x,y);
 			cout<<"*"<<endl;
 			gotoxy(x-1,y);
@@ -2022,9 +2025,10 @@ void snake()
 				goto out3;
 			}
 		}
-		
+
 		out3:
 	}
+	return;
 }
 ////////////////////////////////////snake game ends///////////////////////////////////////////
 void main()
