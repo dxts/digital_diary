@@ -11,9 +11,8 @@
 #include <windows.h>
 
 #define ARRAY_SIZE(array)	sizeof(array)/sizeof(array[0])
-#define stringize(ch)	#ch
 
-void border(int x, int y, int l, int b, char ch='#')
+void border(int x=1, int y=1, int l=81, int b=25, char ch='#')
 /*(x,y) is the top left corner point and l and b are the length and breadth of the rectangle*/
 {
 	for(int p=x; p<x+l; p++)			//creates the top horizontal rule
@@ -125,13 +124,15 @@ void create_list(char list_elements[][50], int no_of_elements, int y_start, floa
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+char notes_file[30], contacts_file[30];
+
 class USER
 {
 
 	private :
 		char username[30];
 		char password[30];
-		int initial_run;
 
 	public :
 
@@ -145,43 +146,35 @@ class USER
 			return password;
 		}
 
-		int ret_ir()
-		{
-			return initial_run;
-		}
-
+		int check_user();
 		void login(char*);
 
 		USER()
-		{
-			initial_run=1;
-		}
+		{}
 
 }	U;
 
-class contacts
+class CONTACTS
 {
 	private:
-		char name[20],addline_1[20],addline_2[20],email_id[30];
-		char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
-		char index;
-
+			char name[20],addline_1[20],addline_2[20],email_id[30];
+			char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
+			char index;
 	public:                                      
-		void file_edit();
-		void input(char q);    //get contacts details by input
-		void display();
-		void menu();
-		void view();
-		void createnew();
-		void edit(char temp[]);
-		void search();
-		void deletecontact(char tmp[]);
-		void Sort();
-		void clrdsp();
-		void charfix(char temp[],char letter,int mode);
-		void encrypt(char temp[]);
-		void decrypt(char temp[]);
-
+			void file_edit();
+			void input(char q);    //get contacts details by input
+			void display();
+			void menu();
+			void view();
+			void createnew();
+			void edit(char temp[]);
+			void search();
+			void deletecontact(char tmp[]);
+			void Sort();
+			void clrdsp();
+			void charfix(char temp[],char letter,int mode);
+			void encrypt(char temp[]);
+			void decrypt(char temp[]);
 }	c,f;
 
 class NOTE
@@ -216,7 +209,7 @@ char* get_pass(char* keyword="nor")
 			if(!(pass[i]>96&&pass[i]<123 || pass[i]>64&&pass[i]<91 || pass[i]>32&&pass[i]<43 || pass[i]>47&&pass[i]<58 || pass[i]==13))
 			{
 				error_message("Use characters A-Z a-z 0-9 ! \" # $ % & ' ( ) *",17);
-				U.login("pass");
+				return NULL;
 			}
 
 		if(pass[i]==13)
@@ -232,97 +225,112 @@ char* get_pass(char* keyword="nor")
 
 void USER :: login(char* keyword="user")
 {
-	int bool;
-	fstream file;
-	file.open("dduser.dat", ios::in|ios::binary);
-	file.read((char*)&U, sizeof(USER));
-	file.close();
-	file.open("dduser.dat", ios::app|ios::binary);
-
-	if(strcmp(keyword,"user")==0)
-		goto enter_username;
-	else if(strcmp(keyword,"pass")==0)
+	char login_menu[][25]={"1. Login", "2. Create", "3. Delete"};
+	fstream file("dduser.dat", ios::app|ios::in|ios::binary);
+	
+	char option;
+	int bool=0, loc=0;
+	if(strcmp(keyword,"pass")==0)
 		goto wrong_password_entered;
 	/////////////////////////////////////////////////////////
 
-	enter_username:
+	start: 
+	border();
+	create_menu("Digital Diary", login_menu, ARRAY_SIZE(login_menu));
+	option=getche();
+	if(option=='1' || option=='2' || option=='3')
+	{	
+		enter_username:
+		char temp_user[30];
+		clrscr();
+		border(20,8,40,5);
+		if(option=='2')
+		{
+			gotoxy(21,6);
+			cout<<"Username should be less than 30 char";
+		}
+		gotoxy(30,10);
+		cout<<"Username: ";
+		gets(temp_user);
 
-	bool=0;
-	char temp_user[30];
-
-	clrscr();
-	border(20,8,40,5);
-	if(U.ret_ir()==1)
-	{
-		gotoxy(21,6);
-		cout<<"Username should be less than 30 char";
-	}
-	gotoxy(30,10);
-	cout<<"Username: ";
-	gets(temp_user);
-
-	if(U.ret_ir()==1)
-		if(strlen(temp_user)<30)
-			strcpy(username,temp_user);
-		else
-			goto enter_username;
-	if(U.ret_ir()==0)
-	{
-		if(strcmp(temp_user,U.ret_user())==0)
-			bool=1;
+		if(option=='2')
+			if(strlen(temp_user)<30)
+			{
+				strcpy(username,temp_user);
+				goto enter_password;
+			}
+			else
+				goto enter_username;
+		while(file.read((char*)&U, sizeof(USER)))
+			if(strcmpi(temp_user,U.ret_user())==0)
+			{
+				loc=file.tellp();
+				bool=1;
+			}
 		if(bool==0)
 		{
 			error_message("Username is incorrect",29);
 			goto enter_username;
 		}
-	}
-	/////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
 
-	enter_password:
-
-	bool=0;
-	border(20,12,40,5);
-	if(U.ret_ir()==1)
-	{
-		gotoxy(18,18);
-		cout<<"Use characters A-Z a-z 0-9 ! \" # $ % & ' ( ) *";
-	}
-	gotoxy(30,14);
-	cout<<"Password:                    ";
-	gotoxy(40,14);
-	if(U.ret_ir()==1)
-		strcpy(password,get_pass("ini"));
-	if(U.ret_ir()==0)
-	{
-		char temp_pass[30];
-		strcpy(temp_pass,get_pass());
-		if(strcmp(temp_pass,password)==0)
-			bool=1;
+		enter_password:
+		bool=0;
+		border(20,12,40,5);
+		if(option=='2')
+		{
+			gotoxy(18,18);
+			cout<<"Use characters A-Z a-z 0-9 ! \" # $ % & ' ( ) *";
+		}
+		gotoxy(30,14);
+		cout<<"Password:                    ";
+		gotoxy(40,14);
+		if(option=='2')
+		{
+			strcpy(password,get_pass("ini"));
+			file.write((char*)&U, sizeof(USER));
+			file.close();
+			return;
+		}
+		else if(option=='3')
+		{
+			file.seekp(loc, ios::beg);
+			for(int i=1; file.read((char*)&U, sizeof(USER)); ++i)
+			{
+				file.seekp(-2*sizeof(USER), ios::cur);
+				file.write((char*)&U, sizeof(USER));
+				file.seekp(sizeof(USER), ios::cur);
+			}
+			error_message("User Deleted.", 34);
+			goto start;
+		}
+		else
+		{
+			char temp_pass[30];
+			strcpy(temp_pass,get_pass());
+			while(file.read((char*)&U, sizeof(USER)))
+				if(strcmpi(U.ret_user(), temp_user)==0)
+					if(strcmp(U.ret_pass(), temp_pass)==0)
+						bool=1;
+		}
 		if(bool==0)
 		{
 			error_message("Password is incorrect",29);
 			goto wrong_password_entered;
 		}
 		return;
+
+		////////////////////////////////////////////////////////
+		wrong_password_entered:
+
+		clrscr();
+		border(20,8,40,5);
+		gotoxy(30,10);
+		cout<<"Username: "<<username;
+		goto enter_password;
 	}
-
-	initial_run=0;
-	file.seekp(0,ios::beg);
-	file.write((char*)&U,sizeof(USER));
-	file.close();
-	return;
-	////////////////////////////////////////////////////////
-
-	wrong_password_entered:
-
-	clrscr();
-	border(20,8,40,5);
-	gotoxy(30,10);
-	cout<<"Username: ";
-	cout<<username;
-	goto enter_password;
+	goto start;
 }
-
 //////////////////////////////////////login ends//////////////////////////////////////////////
 /////////////////////////////////////menu starts//////////////////////////////////////////////
 void menu()
@@ -334,6 +342,12 @@ void menu()
 	void horoscope();
 	void pacman();
 
+	strcpy(notes_file, U.ret_user());
+	strcpy(contacts_file, U.ret_user());
+	strcat(notes_file, "ddn.dat");
+	strcat(contacts_file, "ddc.dat");
+	
+	start:
 	char main_menu[][25]={"1. Contacts","2. World Clock","3. Calculator","4. Converter","5. Notes","6. Horoscope"};
 	create_menu("Digital Diary",main_menu,ARRAY_SIZE(main_menu));
 	char option = getch();
@@ -362,23 +376,22 @@ void menu()
 			pacman();
 			break;
 		case 8	:
-			U.login();
-			break;
+			return;
 		default:
 			error_message("Invalid option!",32);
 	}
-	menu();
+	goto start;
 }
 /////////////////////////////////////menu ends////////////////////////////////////////////////
 ////////////////////////////////////contacts starts///////////////////////////////////////////
 
-void contacts::Sort()
+void CONTACTS::Sort()
 {
 	int i=0;
 	char contact[100][20];
 	char tmp[20];
 	ifstream file;
-	file.open("contacts.cf",ios::binary);
+	file.open(contacts_file,ios::binary);
 	while(file.read((char*)&c,sizeof(c)))
 	{
 		decrypt(name);
@@ -412,7 +425,7 @@ void contacts::Sort()
 	ifstream file2;
 	ofstream file3;
 	file3.open("temp.cf",ios::binary);
-	file2.open("contacts.cf",ios::binary);
+	file2.open(contacts_file,ios::binary);
 	char sorted[100];
 	i=0;
 
@@ -432,23 +445,23 @@ void contacts::Sort()
 	cout<<endl;                      //debug info
 	for(i=0;i<n;i++)                 //debug info
 		cout<<int(sorted[i])<<endl;       //debug info
-	remove("contacts.cf");
-	rename("temp.cf","contacts.cf");
+	remove(contacts_file);
+	rename("temp.cf",contacts_file);
 	file2.close();
 	file3.close();
 	file.close();
 	clrscr();
 }
-void contacts :: clrdsp()
+void CONTACTS :: clrdsp()
 {
-	gotoxy(38,8);cout<<"                                     ";
-	gotoxy(38,9);cout<<"                                     ";
-	gotoxy(38,10);cout<<"                                    ";
-	gotoxy(38,11);cout<<"                                    ";
-	gotoxy(38,12);cout<<"                                    ";
-	gotoxy(38,13);cout<<"                                    ";
+	gotoxy(38,8);cout<<"                                         ";
+	gotoxy(38,9);cout<<"                                         ";
+	gotoxy(38,10);cout<<"                                         ";
+	gotoxy(38,11);cout<<"                                         ";
+	gotoxy(38,12);cout<<"                                         ";
+	gotoxy(38,13);cout<<"                                         ";
 }
-void contacts :: encrypt(char temp[])
+void CONTACTS :: encrypt(char temp[])
 {
 	char ekeyl[]="gi*dhwp(k{}?|^y$x#fv'%q!ua@. ICFEUSWRVD";
 	char ekeyu[]="coenXmZ&):<>+][_`jlorz~s-=@.";
@@ -461,39 +474,37 @@ void contacts :: encrypt(char temp[])
 	for(int i=0;i<=l-1;i++)
 	{
 		con:
-			for(int j=0;j<=39;j++)
+		for(int j=0;j<=39;j++)
+		{
+			//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
+			if(temp[i]==dkeyl[j])
 			{
-				//cout<<i<<dkeyl[j]<<"."<<temp[i]<<endl<<output<<endl;          //debug info
-				if(temp[i]==dkeyl[j])
-				{
-					output[i]=ekeyl[j];
-					i++;
-					if(i!=l)
-						goto con;
-					else
-						goto exit;
-				}
-
-				if(dkeyu[j]==temp[i])
-				{
-					//cout<<"here2";                                                //debug info
-					output[i]=ekeyu[j];
-					i++;
-					if(i!=l)
-						goto con;
-					else
-						goto exit;
-				}
+				output[i]=ekeyl[j];
+				i++;
+				if(i!=l)
+					goto con;
+				else
+					goto exit;
 			}
+			if(dkeyu[j]==temp[i])
+			{
+				//cout<<"here2";                                                //debug info
+				output[i]=ekeyu[j];
+				i++;
+				if(i!=l)
+					goto con;
+				else
+					goto exit;
+			}
+		}
 	}
-
 	exit:
 	output[i]='\0';
 	//cout<<endl<<output;                                           //debug info
 	strcpy(encrypted_text,output);
 }
 
-void contacts :: decrypt(char temp[])
+void CONTACTS :: decrypt(char temp[])
 {
 	char ekeyl[]="gi*dhwp(k{}?|^y$x#fv'%q!ua@. ICFEUSWRVD";
 	char ekeyu[]="coenXmZ&):<>+][_`jlorz~s-=@.";
@@ -538,14 +549,14 @@ void contacts :: decrypt(char temp[])
 	strcpy(decrypted_text,output);
 }
 
-void contacts :: file_edit()
+void CONTACTS :: file_edit()
 {
 	int n;
 	char i=0;
-	cout<<"Enter number of contacts:";
+	cout<<"Enter number of contacts: ";
 	cin>>n;
 	ofstream file;
-	file.open("contacts.cf",ios::binary||ios::out);
+	file.open(contacts_file,ios::binary||ios::out);
 	while(i<n)
 	{
 		c.input(i);
@@ -570,13 +581,13 @@ void contacts :: file_edit()
 	exit:
 }
 
-void contacts :: deletecontact(char tmp[])
+void CONTACTS :: deletecontact(char tmp[])
 {
 	ifstream file;
 	ofstream temp;
 	int fail=1;
 	temp.open("$$.cf",ios::binary);
-	file.open("contacts.cf",ios::binary);
+	file.open(contacts_file,ios::binary);
 	while(file.read((char*)&c,sizeof(c)))
 	{
 		decrypt(name);
@@ -589,8 +600,8 @@ void contacts :: deletecontact(char tmp[])
 	}
 	temp.close();
 	file.close();
-	remove("contacts.cf");
-	rename("$$.cf","contacts.cf");
+	remove(contacts_file);
+	rename("$$.cf",contacts_file);
 	gotoxy(38,8);
 	if(fail==0)
 		cout<<"Contact Deleted";
@@ -606,7 +617,7 @@ void contacts :: deletecontact(char tmp[])
 	}
 }
 
-void contacts :: display()
+void CONTACTS :: display()
 {
 	gotoxy(51,8);cout<<"                         ";
 	gotoxy(36,9);cout<<"                         ";
@@ -643,7 +654,7 @@ void contacts :: display()
 	decrypt(addline_2);
 	puts(decrypted_text);
 }
-void contacts :: charfix(char temp[],char letter,int mode)
+void CONTACTS :: charfix(char temp[],char letter,int mode)
 {
 	int l=strlen(temp);
 	//temp[l]='o';                //just increasing the array size by 1
@@ -663,7 +674,7 @@ void contacts :: charfix(char temp[],char letter,int mode)
 	else if (mode==6)
 		strcpy(addline_2,temp);
 }
-void contacts :: input(char q)    //get contacts details by input
+void CONTACTS :: input(char q)    //get contacts details by input
 {
 	index=q;
 	char a;
@@ -743,13 +754,13 @@ void contacts :: input(char q)    //get contacts details by input
 
 }
 
-void contacts :: edit(char tmpp[])
+void CONTACTS :: edit(char tmpp[])
 {
 	fstream fio;
 	ofstream fout;
-	fout.open("contacts.cf",ios::out||ios::binary);
+	fout.open(contacts_file,ios::out||ios::binary);
 	int recc=0;
-	fio.open("contacts.cf",ios::out||ios::in||ios::binary);
+	fio.open(contacts_file,ios::out||ios::in||ios::binary);
 	char name1[20];
 	strcpy(name1,tmpp);
 
@@ -770,10 +781,10 @@ void contacts :: edit(char tmpp[])
 	c.menu();
 }
 
-void contacts:: view()
+void CONTACTS:: view()
 {
 	ifstream file;
-	file.open("contacts.cf",ios::binary);
+	file.open(contacts_file,ios::binary);
 	file.seekg(0,ios::beg);
 	while(file.read((char*)&c,sizeof(c)))
 		c.display();cout<<endl;
@@ -781,12 +792,12 @@ void contacts:: view()
 }
 
 
-void contacts::createnew()
+void CONTACTS::createnew()
 {
 	ifstream file;
 	ofstream temp;
 	temp.open("$$.cf",ios::binary);
-	file.open("contacts.cf",ios::binary);
+	file.open(contacts_file,ios::binary);
 	int recc=0;
 	while(file.read((char*)&c,sizeof(c)))
 	{
@@ -797,8 +808,8 @@ void contacts::createnew()
 	temp.write((char*)&c,sizeof(c));
 	temp.close();
 	file.close();
-	remove("contacts.cf");
-	rename("$$.cf","contacts.cf");
+	remove(contacts_file);
+	rename("$$.cf",contacts_file);
 	clrscr();
 	ph_no[0]='\0';
 	mob_no[0]='\0';
@@ -806,13 +817,13 @@ void contacts::createnew()
 	menu();
 }
 
-void contacts :: search()
+void CONTACTS :: search()
 {
 char tmp[20];
 cout<<"Enter Contact's Name:";
 gets(tmp);
 ifstream file;
-file.open("contacts.cf",ios::binary);
+file.open(contacts_file,ios::binary);
 while(file.read((char*)&c,sizeof(c)))
 	{
 	decrypt(name);
@@ -822,7 +833,7 @@ while(file.read((char*)&c,sizeof(c)))
 file.close();
 }
 
-void contacts :: menu()
+void CONTACTS :: menu()
 {
 	clrscr();
 	gotoxy(0,24);
@@ -840,7 +851,7 @@ void contacts :: menu()
 	cout<<endl<<endl<<endl;
 
 	ifstream file;
-	file.open("contacts.cf",ios::binary);
+	file.open(contacts_file,ios::binary);
 	cout<<endl<<endl;
 	int n=0,scroll=0;
 	cout<<"Contacts List:"<<endl;
@@ -857,7 +868,7 @@ void contacts :: menu()
 
 	file.close();
 	ifstream file1;
-	file1.open("contacts.cf",ios::binary);
+	file1.open(contacts_file,ios::binary);
 	int y=8,x=20,recc=0;
 	gotoxy(x,y);
 	cout<<"<--";
@@ -1049,6 +1060,7 @@ void converter()
 	void unit();
 	void calculator();
 
+	start:
 	char converter_menu[][25]={"1. Currency","2. Unit"};
 	create_menu("Converter",converter_menu,ARRAY_SIZE(converter_menu));
 	char option = getch();
@@ -1062,17 +1074,17 @@ void converter()
 			unit();
 			break;
 		case 8	:
-			menu();
-			break;
+			return;
 		default :
 			error_message("Invalid option!");
 	}
-	converter();
+	goto start;
 }
 
 /////////////////////////////////////////////////
 void currency()
 {
+	start:
 	char currencies[][25]={"American Dollar	USD","Bahraini Dinar		BHD","Euro			EUR","Indian Rupee	INR","Japanese Yen	YEN","Saudi Riyal	SAR"};
 	char currency_units[][25]={"BHD","INR","SAR","EUR","YEN","USD"};
 	double to_usd[]={2.65,0.016,0.27,1.14,0.0088,1};
@@ -1118,9 +1130,9 @@ void currency()
 	next:
 	char temp=getch();
 	if(temp==13)
-		currency();
+		goto start;
 	else if(temp==8)
-		converter();
+		return;
 	else 
 		goto next;
 }
@@ -1131,7 +1143,8 @@ void unit()
 	void length();
 	void area();
 	void volume();
-	
+
+	start:
 	char unit_menu[][25]={"1. Mass","2. Length","3. Area","4. Volume"};
 	create_menu("Unit Converter",unit_menu,ARRAY_SIZE(unit_menu));
 	char option = getch();
@@ -1151,16 +1164,16 @@ void unit()
 			volume();
 			break;
 		case 8	:
-			converter();
-			break;
+			return;
 		default	:
 			error_message("Invalid option!",32);
 	}
-	unit();
+	goto start;
 }
 
 void mass()
 {
+	start:
 	char masses[][25]={"Tonne		t","Kilogram	kg","Gram		g","Milligram	mg","Microgram	ug","Imperial Ton		imt","US Ton		ust","Stone		st","Pound		lb","Ounce		oz"};
 	char mass_units[][25]={"t","kg","g","mg","ug","imt","ust","st","lb","oz"};
 	double to_gram[]={1000000.0,1000.0,1.0,0.001,0.000001,1016000.0,907185.0,6350.29,453.592,28.3495};
@@ -1206,15 +1219,16 @@ void mass()
 	next:
 	char temp=getch();
 	if(temp==13)
-		mass();
+		goto start;
 	else if(temp==8)
-		converter();
+		return;
 	else
 		goto next;
 }
 
 void length()
 {
+	start:
 	char lengths[][25]={"Kilometre	km","Metre		m","Centimetre	cm","Millimetre	mm","Nanometre	nm","Mile		mi","Yard		yd","Foot		ft","Inch		in","Nautical mile	nmi"};
 	char length_units[][25]={"km","m","cm","mm","nm","mi","yd","ft","in","nmi"};
 	double to_metre[]={1000.0,1.0,0.01,0.001,0.000000001,1609.34,0.9144,0.3048,0.0254,1852.0};
@@ -1260,15 +1274,16 @@ void length()
 	next:
 	char temp=getch();
 	if(temp==13)
-		length();
+		goto start;
 	else if(temp==8)
-		converter();
+		return;
 	else
 		goto next;
 }
 
 void area()
 {
+	start:
 	char areas[][25]={"Square kilometre	sq km","Square metre	sq m","Square mile	sq mi","Square yard	sq yd","Square foot	sq ft","Square inch	sq in","Hectare		ha","Acre		ac"};
 	char area_units[][25]={"sq km","sq m","sq mi","sq yd","sq ft","sq in","ha","ac"};
 	double to_metre_sq[]={1000000.0,1.0,2590000.0,0.836127,0.092903,0.00064516,10000.0,4046.86};
@@ -1314,15 +1329,16 @@ void area()
 	next:
 	char temp=getch();
 	if(temp==13)
-		area();
+		goto start;
 	else if(temp==8)
-		converter();
+		return;
 	else
 		goto next;
 }
 
 void volume()
 {
+	start:
 	char volumes[][50]={"US liquid gallon	US gal","US quart		US qt","US pint		US pt","US fluid ounce	US fl oz","US cup		US cp","Cubic metre		m3","Litre		L","Millilitre		ml","Imperial gallon	im gal","Imperial quart	im qt","Imperial pint	im pt","Imperial fluid ounce    im fl oz","Imperial cup		im cp","Cubic foot		ft3","Cubic inch		in3"};
 	char volume_units[][25]={"US gal","US qt","US pt","US fl oz","US cp","m3","L","ml","im gal","im qt","im pt","im fl oz","im cp","ft3","in3"};
 	double to_litre[]={3.785411784,0.946352946,0.473176473,0.0295735295625,0.2365882365,1000.0,1.0,0.001,4.54609,1.1365225,0.56826125,0.0284130625,0.284131,28.3168,0.0163871};
@@ -1368,9 +1384,9 @@ void volume()
 	
 	char temp=getch();
 	if(temp==13)
-		volume();
+		goto start;
 	else if(temp==8)
-		converter();
+		return;
 	else
 		goto next;
 }
@@ -1390,7 +1406,7 @@ class OP_STACK
 			if(TOP == 63)
 			{
 				error_message("OP_STACK Overflow..");
-				calculator();
+				return;
 			}
 			TOP++;
 			stack[TOP]=data;
@@ -1401,7 +1417,7 @@ class OP_STACK
 			if(TOP == -1)
 			{
 				error_message("OP_STACK Underflow..");
-				calculator();
+				return;
 			}
 			TOP--;
 		}
@@ -1500,7 +1516,7 @@ void to_postfix(char infix[], char postfix[])
 		else
 		{
 			error_message("Invalid input..");
-			calculator();
+			return;
 		}
 	}
 
@@ -1545,7 +1561,7 @@ class NUM_STACK
 			if(TOP == NULL)
 			{
 				error_message("Stack Underflow..");
-				calculator();
+				return;
 			}
 			STACK *P;
 			P = TOP;
@@ -1563,6 +1579,7 @@ class NUM_STACK
 
 int calculate ()
 {
+	start:
 	char postfix[256]=" ", infix[256]=" ";
 	gotoxy(5,10);
 	cout<<">>  ";
@@ -1622,6 +1639,9 @@ int calculate ()
 					ans = pow(l_operand, r_operand);
 					N_S.push(ans);
 					break;
+				default	 :
+					error_message("Invalid Operation", 32);
+					goto start;
 			}
 		}
 	}
@@ -1632,11 +1652,27 @@ int calculate ()
 
 void calculator()
 {
+	start:
 	clrscr();
+	border();
+
 	int result = calculate();
 	gotoxy(60,11);
 	cout<<">> "<<result;
-	getch();
+	
+	gotoxy(50,24);
+	cout<<"Press Backspace to go back..";
+	gotoxy(10,24);
+	cout<<"Press Enter to use again..";
+	
+	next:
+	char temp=getch();
+	if(temp==13)
+		goto start;
+	else if(temp==8)
+		return;
+	else
+		goto next;
 }
 ///////////////////////////////////////calculator ends///////////////////////////////////////////
 //////////////////////////////////////world clock starts////////////////////////////////////////
@@ -1644,9 +1680,9 @@ void world_clock()
 {
 	void display_time(char city[],int hr,int mn);
 
+	start:
 	char cities[][25]={"1. Los Angeles","2. New York","3. Buenos Aires","4. London","5. Paris","6. Riyadh","7. Delhi","8. Beijing","9. Sydney"};
 
-	ask_time_option:
 	create_menu("World Clock");
 	create_list(cities,ARRAY_SIZE(cities),14,2);
 	gotoxy(40,22);
@@ -1682,12 +1718,11 @@ void world_clock()
 			display_time("Sydney",10,0);
 			break;
 		case 8	:
-			menu();
-			break;
+			return;
 		default	:
 			error_message("Invalid option!",32);
-			goto ask_time_option;
 	}
+	goto start;
 }
 
 void display_time(char city[],int hr,int mn)
@@ -1705,14 +1740,14 @@ void display_time(char city[],int hr,int mn)
 	
 	gotoxy(3,24);
 	cout<<"Press r to refresh";
-	time_refresh:
+	next:
 	char temp=getch();
 	if(temp=='r'||temp=='R')
 		goto get_time;
 	else if(temp==8)
-		world_clock();
-	else					//this is so that it rejects other key presses
-		goto time_refresh;
+		return;
+	else
+		goto next;
 }
 /////////////////////////////////////world clock ends///////////////////////////////////////////
 //////////////////////////////////////notes starts//////////////////////////////////////////////
@@ -1721,7 +1756,8 @@ void notes()
 {
 	void view_notes();
 	void add_notes();
-
+	
+	start:
 	char notes_menu[][25]={"1. View Notes","2. Add Note"};
 	create_menu("Notes", notes_menu, ARRAY_SIZE(notes_menu));
 	char option = getch();
@@ -1735,23 +1771,23 @@ void notes()
 			add_notes();
 			break;
 		case 8  :
-			menu();
-			break;
+			return;
 		default :
 			error_message("Invalid Option!",32);
 	}
-	notes();
+	goto start;
 }
 
 void view_notes()
 {
+	start:
 	char notes_list[][25]={"1.Placeholder","2.Also Placeholder","","","","","","","",""};
 
 	ifstream infile;
-	infile.open("notes.dat",ios::in|ios::binary);
+	infile.open(notes_file,ios::in|ios::binary);
 	if(!infile)
 	{
-		error_message("\"notes.dat\" file doesn\'t exist");
+		error_message("Notes file doesn\'t exist");
 		notes();
 	}
 
@@ -1768,7 +1804,7 @@ void view_notes()
 	gotoxy(40,22);
 	char option= getch();
 	if(option==8)
-		notes();
+		return;
 	else if(option>='0' && option<=ARRAY_SIZE(notes_list))
 	{
 		infile.seekg((option-1)*sizeof(NOTE),ios::beg);
@@ -1786,7 +1822,7 @@ void view_notes()
 	next:
 	char temp=getch();
 	if(temp==8)
-		notes();
+		return;
 	//else if(temp==13)
 	//	edit_notes();
 	else
@@ -1795,9 +1831,7 @@ void view_notes()
 
 void add_notes()
 {
-	strcpy(N.title,stringize(\r));	//will remove after I remember why they are here
-	strcpy(N.body,stringize(\r));
-
+	start:
 	clrscr();
 	gotoxy(30,5);
 	cout<<"Title";		//placeholder
@@ -1825,10 +1859,9 @@ void add_notes()
 	}
 
 	ofstream outfile;
-	outfile.open("notes.dat",ios::app|ios::binary);
+	outfile.open(notes_file ,ios::app|ios::binary);
 	outfile.write((char*)&N,sizeof(NOTE));
 	outfile.close();
-	notes();
 }
 
 ////////////////////////////////////////notes ends//////////////////////////////////////////////
@@ -1843,9 +1876,10 @@ class Zodiac
 
 void horoscope()
 {
+	start:
 	char zodiac_signs[][25]={"1. Aries", "2. Taurus", "3. Gemini", "4. Cancer", "5. Leo", "6. Virgo", "7. Libra", "8. Scorpio", "9. Sagittarius", "A. Capricorn", "B. Aquarius", "C. Pisces"};
 
-	border(1,1,81,25);
+	border();
 	create_menu("Horoscope");
 	create_list(zodiac_signs,ARRAY_SIZE(zodiac_signs),10,2);
 
@@ -1853,10 +1887,11 @@ void horoscope()
 	gotoxy(40,22);
 	char option = getch();
 	if(option==8)
-		menu();
+		return;
 	else if(option<49 || option>57&&option<97 || option>99)
 		goto next_1;
 
+	int bool=0;
 	ifstream infile;
 	infile.open("ddhoroscope.dat",ios::in|ios::binary);
 	while(infile.read((char*)&Z, sizeof(Z)))
@@ -1865,20 +1900,20 @@ void horoscope()
 			clrscr();
 			gotoxy(4,10);
 			cout<<Z.para;
-			goto found;
+			bool=1;
 		}
-
-	error_message("Invalid Option!");
-	horoscope();
-
-	found:
+	if(bool==0)
+	{
+		error_message("Invalid Option!");
+		goto start;
+	}
 	infile.close();
 
 	gotoxy(34,24);
 	cout<<"Press backspace to return to previous screen.";
 	next_2:
 	if(getch()==8)
-		horoscope();
+		return;
 	else
 		goto next_2;
 }
@@ -2035,4 +2070,5 @@ void main()
 {
 	U.login();
 	menu();
+	clrscr();
 }
