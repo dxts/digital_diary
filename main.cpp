@@ -12,7 +12,7 @@
 
 #define ARRAY_SIZE(array)	sizeof(array)/sizeof(array[0])
 
-void border(int x=1, int y=1, int l=81, int b=25, char ch='#')
+void border(int x=1, int y=1, int l=80, int b=25, char ch='#')
 /*(x,y) is the top left corner point and l and b are the length and breadth of the rectangle*/
 {
 	for(int p=x; p<x+l; p++)			//creates the top horizontal rule
@@ -46,6 +46,15 @@ void error_message(char mssg[],int x=27)
 	gotoxy(36,15);
 	cout<<"Press any key to continue..";
 	getch();
+}
+
+void delay(int a=1)
+{
+	long i;
+	if(a==1)
+		for(i=0; i<40000000; i++);
+	else if(a==2)
+		for(i=0; i<60000000; i++);
 }
 
 void create_menu(char title[], char list_opt[][25]=NULL, int no_of_elements=0)
@@ -177,16 +186,9 @@ class CONTACTS
 			void decrypt(char temp[]);
 }	c,f;
 
-class NOTE
-{
-	public :
-		char title[30],body[30];
-		int serial_num;
-}	N;
-
 //////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////login starts/////////////////////////////////////////////
-char* get_pass(char* keyword="nor")
+char* get_pass(char* keyword="check")
 {
 	void login(char*);
 
@@ -205,7 +207,7 @@ char* get_pass(char* keyword="nor")
 			continue;
 		}
 
-		if(strcmp(keyword,"ini")==0)
+		if(strcmp(keyword,"create")==0)
 			if(!(pass[i]>96&&pass[i]<123 || pass[i]>64&&pass[i]<91 || pass[i]>32&&pass[i]<43 || pass[i]>47&&pass[i]<58 || pass[i]==13))
 			{
 				error_message("Use characters A-Z a-z 0-9 ! \" # $ % & ' ( ) *",17);
@@ -223,13 +225,23 @@ char* get_pass(char* keyword="nor")
 	return pass;
 }
 
+int check_username(char user[])		//returns loc of user if it exists, 0 if not
+{
+	USER U1;
+	ifstream infile("dduser.dat", ios::in|ios::binary);
+	while(infile.read((char*)&U1, sizeof(USER)))
+		if(strcmpi(user, U1.ret_user()))
+			return infile.tellg();
+	return 0;
+}
+
 void USER :: login(char* keyword="user")
 {
 	char login_menu[][25]={"1. Login", "2. Create", "3. Delete"};
-	fstream file("dduser.dat", ios::app|ios::in|ios::binary);
+	fstream file("dduser.dat", ios::in|ios::app|ios::binary);
 	
 	char option;
-	int bool=0, loc=0;
+	int bool=0, loc=0, wu=0, wp=0;		// wu,wp count # of times wrong username,password is entered
 	if(strcmp(keyword,"pass")==0)
 		goto wrong_password_entered;
 	/////////////////////////////////////////////////////////
@@ -254,22 +266,28 @@ void USER :: login(char* keyword="user")
 		gets(temp_user);
 
 		if(option=='2')
-			if(strlen(temp_user)<30)
+			if(check_username(temp_user))
 			{
 				strcpy(username,temp_user);
 				goto enter_password;
 			}
 			else
-				goto enter_username;
-		while(file.read((char*)&U, sizeof(USER)))
-			if(strcmpi(temp_user,U.ret_user())==0)
 			{
-				loc=file.tellp();
-				bool=1;
+				error_message("Username taken.", 33);
+				goto enter_username;
 			}
+		else
+		{
+			loc=check_username(temp_user);
+			if(loc)
+				bool=1;
+		}
 		if(bool==0)
 		{
 			error_message("Username is incorrect",29);
+			wu++;
+			if(wu==2)
+				goto start;
 			goto enter_username;
 		}
 		/////////////////////////////////////////////////////////
@@ -287,7 +305,7 @@ void USER :: login(char* keyword="user")
 		gotoxy(40,14);
 		if(option=='2')
 		{
-			strcpy(password,get_pass("ini"));
+			strcpy(password,get_pass("create"));
 			file.write((char*)&U, sizeof(USER));
 			file.close();
 			return;
@@ -295,7 +313,7 @@ void USER :: login(char* keyword="user")
 		else if(option=='3')
 		{
 			file.seekp(loc, ios::beg);
-			for(int i=1; file.read((char*)&U, sizeof(USER)); ++i)
+			while(file.read((char*)&U, sizeof(USER)))
 			{
 				file.seekp(-2*sizeof(USER), ios::cur);
 				file.write((char*)&U, sizeof(USER));
@@ -316,6 +334,9 @@ void USER :: login(char* keyword="user")
 		if(bool==0)
 		{
 			error_message("Password is incorrect",29);
+			wp++;
+			if(wp==2)
+				goto start;
 			goto wrong_password_entered;
 		}
 		return;
@@ -469,7 +490,7 @@ void CONTACTS :: encrypt(char temp[])
 	char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
 
 	char output[100];
-//gets(temp);
+	//gets(temp);
 	int l=strlen(temp);
 	for(int i=0;i<=l-1;i++)
 	{
@@ -819,18 +840,18 @@ void CONTACTS::createnew()
 
 void CONTACTS :: search()
 {
-char tmp[20];
-cout<<"Enter Contact's Name:";
-gets(tmp);
-ifstream file;
-file.open(contacts_file,ios::binary);
-while(file.read((char*)&c,sizeof(c)))
+	char tmp[20];
+	cout<<"Enter Contact's Name:";
+	gets(tmp);
+	ifstream file;
+	file.open(contacts_file,ios::binary);
+	while(file.read((char*)&c,sizeof(c)))
 	{
-	decrypt(name);
-	if(strcmpi(decrypted_text,tmp)==0)
-		display();
+		decrypt(name);
+		if(strcmpi(decrypted_text,tmp)==0)
+			display();
 	}
-file.close();
+	file.close();
 }
 
 void CONTACTS :: menu()
@@ -920,7 +941,7 @@ void CONTACTS :: menu()
 		gotoxy(0,6);
 		cout<<"Contacts List:"<<endl;
 		cout<<"+Add New+"<<endl;
-      file.seekg(0);
+		file.seekg(0);
 		while(file.read((char*)&c,sizeof(c)))
 		{
 		cout<<"rea.";
@@ -1430,13 +1451,14 @@ class OP_STACK
 
 		OP_STACK()
 		{	TOP = -1;	}
-
 }	O;
 
-int is_operator (char p)
+int is_operator (char p)	//return 1 if unary operator, 2 if binary operator, 0 if not 
 {
-	if (p == '+' || p == '-' || p == '*' || p == '/' || p == '%' || p == '^')
+	if (p=='s' || p=='c' || p=='t')
 		return 1;
+	else if (p=='+' || p=='-' || p=='*' || p=='/' || p=='%' || p=='^')
+		return 2;
 	else
 		return 0;
 }
@@ -1452,15 +1474,19 @@ int char_to_num (char p[])
 	return num;
 }
 
-int precedence(char left_operator, char right_operator)
+int precedence(char operator_1, char operator_2)		//returns 1 if operator_1 has higher precedence, 0 if lower precedence
 {
-	 if ( left_operator == '^' )
-		return 1;
-	 else if ( right_operator == '^' )
+	if (operator_1=='s' || operator_1=='c' || operator_1=='t')
+	 	return 1;
+	else if (operator_2=='s' || operator_2=='c' || operator_2=='t')
 		return 0;
-	 else if ( left_operator == '*' || left_operator == '/' || left_operator == '%' )
+	else if ( operator_1 == '^' )
 		return 1;
-	 else if ( right_operator == '*' || right_operator == '/' || right_operator == '%' )
+	else if ( operator_2 == '^' )
+		return 0;
+	else if ( operator_1 == '*' || operator_1 == '/' || operator_1 == '%' )
+		return 1;
+	else if ( operator_2 == '*' || operator_2 == '/' || operator_2 == '%' )
 		return 0;
 }
 
@@ -1573,7 +1599,6 @@ class NUM_STACK
 		{
 			return TOP->number;
 		}
-
 }	N_S;
 
 
@@ -1606,11 +1631,14 @@ int calculate ()
 		
 		else if(is_operator(postfix[i]))
 		{
-			char op=postfix[i];
-			int r_operand=N_S.top();
+			char op =postfix[i];
+			int r_operand=N_S.top(), l_operand;
 			N_S.pop();
-			int l_operand=N_S.top();
-			N_S.pop();
+			if (op==2)
+			{
+				l_operand=N_S.top();
+				N_S.pop();
+			}
 
 			int ans=0;
 			switch(op)
@@ -1637,6 +1665,18 @@ int calculate ()
 					break;
 				case '^' :
 					ans = pow(l_operand, r_operand);
+					N_S.push(ans);
+					break;
+				case 's' :
+					ans = sin(r_operand);
+					N_S.push(ans);
+					break;
+				case 'c' :
+					ans = cos(r_operand);
+					N_S.push(ans);
+					break;
+				case 't' :
+					ans = tan(r_operand);
 					N_S.push(ans);
 					break;
 				default	 :
@@ -1691,31 +1731,31 @@ void world_clock()
 	switch(option)
 	{
 		case '1':
-			display_time("Los Angeles",-8,0);
+			display_time("Los Angeles",-11,0);
 			break;
 		case '2':
-			display_time("New York",-5,0);
+			display_time("New York",-8,0);
 			break;
 		case '3':
-			display_time("Buenos Aires",-3,0);
+			display_time("Buenos Aires",-6,0);
 			break;
 		case '4':
-			display_time("London",0,0);
+			display_time("London",-3,0);
 			break;
 		case '5':
-			display_time("Paris",1,0);
+			display_time("Paris",-2,0);
 			break;
 		case '6':
-			display_time("Riyadh",3,0);
+			display_time("Riyadh",0,0);
 			break;
 		case '7':
-			display_time("Delhi",5,30);
+			display_time("Delhi",2,30);
 			break;
 		case '8':
-			display_time("Beijing",8,0);
+			display_time("Beijing",5,0);
 			break;
 		case '9':
-			display_time("Sydney",10,0);
+			display_time("Sydney",7,0);
 			break;
 		case 8	:
 			return;
@@ -1729,14 +1769,14 @@ void display_time(char city[],int hr,int mn)
 {
 	get_time:
 
-	time_t rawtime=time(0);		//gets the unix timestamp. ie, no. of seconds since 1 Jan 1970
-	struct tm *gmt;
-	gmt=gmtime(&rawtime);		//converts rawtime to UTC and stores in struct gmt
+	time_t rawtime=time(0);		//gets the unix timestamp, ie. number of seconds since 1 Jan 1970, stores it in rawtime
+	tm *lt;
+	lt=localtime(&rawtime);		//converts rawtime to local time, i.e. Bahrain time and stores in lt
 
 	border(25,7,34,5,'.');
 	gotoxy(30,9);
-	//cout<<city<<" --- "<<(hr+((gmt->tm_hour)+(mn+(gmt->tm_min))/60)%24)%24<<":"<<(mn+(gmt->tm_min))%60<<":"<<(gmt->tm_sec);
-	cout<<city<<"---"<<gmt->tm_hour<<':'<<gmt->tm_min<<':'<<gmt->tm_sec;
+	cout<<city<<" --- "<<(hr+(lt->tm_hour)+(mn+(lt->tm_min))/60)%24<<":"<<(mn+(lt->tm_min))%60<<":"<<(lt->tm_sec)<<' ';
+	//cout<<city<<"---"<<lt->tm_hour<<':'<<lt->tm_min<<':'<<lt->tm_sec;
 	
 	gotoxy(3,24);
 	cout<<"Press r to refresh";
@@ -1752,13 +1792,21 @@ void display_time(char city[],int hr,int mn)
 /////////////////////////////////////world clock ends///////////////////////////////////////////
 //////////////////////////////////////notes starts//////////////////////////////////////////////
 
+class NOTE
+{
+	public :
+		char title[30],body[30];
+}	N;
+int note_number=1;
+
 void notes()
 {
 	void view_notes();
 	void add_notes();
+	void delete_notes();
 	
 	start:
-	char notes_menu[][25]={"1. View Notes","2. Add Note"};
+	char notes_menu[][25]={"1. View Notes","2. Add Note", "3.Delete Notes"};
 	create_menu("Notes", notes_menu, ARRAY_SIZE(notes_menu));
 	char option = getch();
 
@@ -1769,6 +1817,9 @@ void notes()
 			break;
 		case '2':
 			add_notes();
+			break;
+		case '3':
+			delete_notes();
 			break;
 		case 8  :
 			return;
@@ -1781,14 +1832,14 @@ void notes()
 void view_notes()
 {
 	start:
-	char notes_list[][25]={"1.Placeholder","2.Also Placeholder","","","","","","","",""};
+	char notes_list[][25]={"1.Placeholder"," "," "," "," "," "," "," "," "," "};
 
 	ifstream infile;
 	infile.open(notes_file,ios::in|ios::binary);
 	if(!infile)
 	{
 		error_message("Notes file doesn\'t exist");
-		notes();
+		return;
 	}
 
 	infile.seekg(0,ios::beg);
@@ -1805,7 +1856,7 @@ void view_notes()
 	char option= getch();
 	if(option==8)
 		return;
-	else if(option>='0' && option<=ARRAY_SIZE(notes_list))
+	else if(option >='0' && option <=note_number+48)
 	{
 		infile.seekg((option-1)*sizeof(NOTE),ios::beg);
 		infile.read((char*)&N,sizeof(NOTE));
@@ -1823,8 +1874,6 @@ void view_notes()
 	char temp=getch();
 	if(temp==8)
 		return;
-	//else if(temp==13)
-	//	edit_notes();
 	else
 		goto next;
 }
@@ -1843,7 +1892,10 @@ void add_notes()
 	gotoxy(60,24);
 	cout<<"Ctrl+S to save..";
 	gotoxy(3,7);
-	for(int i=0; ; ++i)
+	
+	N.body[0]=(note_number++)+48;
+	strcat(N.body, ". ");
+	for(int i=3; ; ++i)
 	{
 		N.body[i]=getche();
 		if(N.body[i]==19)
@@ -1864,6 +1916,54 @@ void add_notes()
 	outfile.close();
 }
 
+void delete_notes()
+{
+	start:
+	char notes_list[][25]={"1.Placeholder","","","","","","","","",""};
+
+	fstream file;
+	file.open(notes_file,ios::in|ios::app|ios::binary);
+	if(!file)
+	{
+		error_message("Notes file doesn\'t exist");
+		return;
+	}
+
+	file.seekg(0,ios::beg);
+	for(int i=0; file.read((char*)&N,sizeof(NOTE)); ++i)
+	{
+		strcpy(notes_list[i],N.title);
+	}
+
+	create_menu("Delete Notes");
+	create_list(notes_list,ARRAY_SIZE(notes_list),6);
+	
+	get_option:
+	gotoxy(40,22);
+	char option= getch();
+	if(option==8)
+		return;
+	else if(option>='0' && option<= note_number+48)
+	{
+		gotoxy(34,21);
+		cout<<"Are you sure?";
+		if(getche()=='y')
+		{
+			file.seekp(option*sizeof(NOTE), ios::beg);
+			while(file.read((char*)&N, sizeof(NOTE)))
+			{
+				file.seekp(-2*sizeof(NOTE), ios::cur);
+				file.write((char*)&N, sizeof(NOTE));
+				file.seekp(sizeof(NOTE), ios::cur);
+			}
+			error_message("NOTE Deleted.", 34);
+			goto start;
+		}
+
+	}
+	else
+		goto get_option;
+}
 ////////////////////////////////////////notes ends//////////////////////////////////////////////
 //////////////////////////////////////horoscope starts//////////////////////////////////////////
 
@@ -1920,15 +2020,6 @@ void horoscope()
 
 //////////////////////////////////////horoscope ends////////////////////////////////////////////
 /////////////////////////////////////snake game starts//////////////////////////////////////////
-void delay(int a=1)
-{
-	long i;
-	if(a==1)
-		for(i=0; i<40000000; i++);
-	else if(a==2)
-		for(i=0; i<60000000; i++);
-}
-
 int left=0,right=0,up=0,down=0,escape=0;
 
 void check()
