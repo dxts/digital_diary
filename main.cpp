@@ -20,11 +20,18 @@ void border(int x=1, int y=1, int l=80, int b=25, char ch='#')
 		gotoxy(p,y);
 		cout<<ch;
 	}
-	for(int q=x; q<x+l-1; q++)			//creates the bottom horizontal rule
-	{
-		gotoxy(q,y+b-1);
-		cout<<ch;
-	}
+	if(b==25)
+		for(int q=x; q<x+l-1; q++)			//creates the bottom horizontal rule
+		{
+			gotoxy(q,y+b-1);
+			cout<<ch;
+		}
+	else
+		for(int q=x; q<x+l; q++)
+		{
+			gotoxy(q,y+b-1);
+			cout<<ch;
+		}
 	for(int r=y; r<y+b; r++)			//creates the left vertical rule
 	{
 		gotoxy(x,r);
@@ -246,7 +253,7 @@ void USER :: login(char* keyword="user")
 		goto wrong_password_entered;
 	/////////////////////////////////////////////////////////
 
-	start: 
+	start:
 	border();
 	create_menu("Digital Diary", login_menu, ARRAY_SIZE(login_menu));
 	option=getche();
@@ -266,7 +273,7 @@ void USER :: login(char* keyword="user")
 		gets(temp_user);
 
 		if(option=='2')
-			if(check_username(temp_user))
+			if(!check_username(temp_user))
 			{
 				strcpy(username,temp_user);
 				goto enter_password;
@@ -306,7 +313,7 @@ void USER :: login(char* keyword="user")
 		if(option=='2')
 		{
 			strcpy(password,get_pass("create"));
-			file.write((char*)&U, sizeof(USER));
+			file.write((char*)this, sizeof(USER));
 			file.close();
 			return;
 		}
@@ -319,6 +326,12 @@ void USER :: login(char* keyword="user")
 				file.write((char*)&U, sizeof(USER));
 				file.seekp(sizeof(USER), ios::cur);
 			}
+			strcpy(notes_file, U.ret_user());
+			strcpy(contacts_file, U.ret_user());
+			strcat(notes_file, "ddn.dat");
+			strcat(contacts_file, "ddc.dat");
+			remove(notes_file);
+			remove(contacts_file);
 			error_message("User Deleted.", 34);
 			goto start;
 		}
@@ -1619,7 +1632,7 @@ int calculate ()
 		else if(isdigit(postfix[i]))
 		{
 			int j=0;
-			char number[6];
+			char number[11];
 			number[j++]=postfix[i++];
 			while(isdigit(postfix[i]) && postfix[i] !=' ')
 				number[j++] = postfix[i++];
@@ -1796,6 +1809,7 @@ class NOTE
 {
 	public :
 		char title[30],body[30];
+		int serial_num;
 }	N;
 int note_number=1;
 
@@ -1805,6 +1819,11 @@ void notes()
 	void add_notes();
 	void delete_notes();
 	
+	ifstream file(notes_file, ios::in|ios::binary);
+	file.seekg(-1*sizeof(NOTE), ios::end);
+	file.read((char*)&N, sizeof(NOTE));
+	note_number=N.serial_num;
+
 	start:
 	char notes_menu[][25]={"1. View Notes","2. Add Note", "3.Delete Notes"};
 	create_menu("Notes", notes_menu, ARRAY_SIZE(notes_menu));
@@ -1883,18 +1902,20 @@ void add_notes()
 	start:
 	clrscr();
 	gotoxy(30,5);
-	cout<<"Title";		//placeholder
+	cout<<"Title";				//placeholder
+	N.serial_num=note_number;
+	N.title[0]=(note_number++)+48;
+	
+	strcat(N.title, ". ");
 	gotoxy(30,5);
 	gets(N.title);
 	
 	gotoxy(3,7);
-	cout<<"Body";		//placeholder
+	cout<<"Body";				//placeholder
 	gotoxy(60,24);
 	cout<<"Ctrl+S to save..";
 	gotoxy(3,7);
 	
-	N.body[0]=(note_number++)+48;
-	strcat(N.body, ". ");
 	for(int i=3; ; ++i)
 	{
 		N.body[i]=getche();
