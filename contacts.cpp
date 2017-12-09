@@ -4,36 +4,38 @@
 #include<string.h>
 #include<conio.h>
 
-class CONTACTS
+//public variables
+char encrypted_text[30],decrypted_text[30];
+
+class contacts
 {
 	private:
 			char name[20],addline_1[20],addline_2[20],email_id[30];
-			char ph_no[10],mob_no[10],encrypted_text[30],decrypted_text[30];
+			char ph_no[10],mob_no[10];
 			char index;
-	public:                                      
+	public:
 			void file_edit();
 			void input(char q);    //get contacts details by input
 			void display();
 			void menu();
-			void view();
 			void createnew();
 			void edit(char temp[]);
-			void search();
 			void deletecontact(char tmp[]);
 			void Sort();
+			void Scroll();
 			void clrdsp();
 			void charfix(char temp[],char letter,int mode);
 			void encrypt(char temp[]);
 			void decrypt(char temp[]);
-}	c,f;
+}c,f;
 
-void CONTACTS::Sort()
+void contacts::Sort()
 {
 	int i=0;
 	char contact[100][20];
 	char tmp[20];
 	ifstream file;
-	file.open("contacts_file",ios::binary);
+	file.open("contacts.cf",ios::binary);
 	while(file.read((char*)&c,sizeof(c)))
 	{
 		decrypt(name);
@@ -67,7 +69,7 @@ void CONTACTS::Sort()
 	ifstream file2;
 	ofstream file3;
 	file3.open("temp.cf",ios::binary);
-	file2.open("contacts_file",ios::binary);
+	file2.open("contacts.cf",ios::binary);
 	char sorted[100];
 	i=0;
 
@@ -87,26 +89,26 @@ void CONTACTS::Sort()
 	cout<<endl;                      //debug info
 	for(i=0;i<n;i++)                 //debug info
 		cout<<int(sorted[i])<<endl;       //debug info
-	remove("contacts_file");
-	rename("temp.cf","contacts_file");
+	remove("contacts.cf");
+	rename("temp.cf","contacts.cf");
 	file2.close();
 	file3.close();
 	file.close();
 	clrscr();
 }
-void CONTACTS :: clrdsp()
+void contacts :: clrdsp()
 {
-	gotoxy(38,8);cout<<"                                     ";
-	gotoxy(38,9);cout<<"                                     ";
-	gotoxy(38,10);cout<<"                                    ";
-	gotoxy(38,11);cout<<"                                    ";
-	gotoxy(38,12);cout<<"                                    ";
-	gotoxy(38,13);cout<<"                                    ";
+	gotoxy(38,8);cout<<"                                           ";
+	gotoxy(38,9);cout<<"                                           ";
+	gotoxy(38,10);cout<<"                                          ";
+	gotoxy(38,11);cout<<"                                          ";
+	gotoxy(38,12);cout<<"                                          ";
+	gotoxy(38,13);cout<<"                                          ";
 }
-void CONTACTS :: encrypt(char temp[])
+void contacts :: encrypt(char temp[])
 {
 	char ekeyl[]="gi*dhwp(k{}?|^y$x#fv'%q!ua@. ICFEUSWRVD";
-	char ekeyu[]="coenXmZ&):<>+][_`jlorz~s-=@.";
+	char ekeyu[]="coenXmZ&):<>+][_`jlOrz~s-=@.";
 	char dkeyl[]="abcdefghijklmnopqrstuvwxyz@. 0123456789";
 	char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
 
@@ -148,10 +150,10 @@ void CONTACTS :: encrypt(char temp[])
 	strcpy(encrypted_text,output);
 }
 
-void CONTACTS :: decrypt(char temp[])
+void contacts :: decrypt(char temp[])
 {
 	char ekeyl[]="gi*dhwp(k{}?|^y$x#fv'%q!ua@. ICFEUSWRVD";
-	char ekeyu[]="coenXmZ&):<>+][_`jlorz~s-=@.";
+	char ekeyu[]="coenXmZ&):<>+][_`jlOrz~s-=@.";
 	char dkeyl[]="abcdefghijklmnopqrstuvwxyz@. 0123456789";
 	char dkeyu[]="ABCDEFGHIJKLMNOPQRSTUVWXYZ@.";
 
@@ -193,14 +195,14 @@ void CONTACTS :: decrypt(char temp[])
 	strcpy(decrypted_text,output);
 }
 
-void CONTACTS :: file_edit()
+void contacts :: file_edit()
 {
 	int n;
 	char i=0;
-	cout<<"Enter number of contacts: ";
+	cout<<"Enter number of contacts:";
 	cin>>n;
 	ofstream file;
-	file.open("contacts_file",ios::binary||ios::out);
+	file.open("contacts.cf",ios::binary||ios::out);
 	while(i<n)
 	{
 		c.input(i);
@@ -208,30 +210,15 @@ void CONTACTS :: file_edit()
 		file.write((char*)&c,sizeof(c));
 	}
 	file.close();
-
-	char a;
-	again:
-	cout<<"Do You Want to View Contacts:(Y/N)";
-	a=getchar();
-	if(a=='Y'||a=='y')
-		view();
-	else if(a=='N'||a=='n')
-		goto exit;
-	else
-	{
-		cout<<"Invalid input, Enter again";
-		goto again;
-	}
-	exit:
 }
 
-void CONTACTS :: deletecontact(char tmp[])
+void contacts :: deletecontact(char tmp[])
 {
 	ifstream file;
 	ofstream temp;
 	int fail=1;
 	temp.open("$$.cf",ios::binary);
-	file.open("contacts_file",ios::binary);
+	file.open("contacts.cf",ios::binary);
 	while(file.read((char*)&c,sizeof(c)))
 	{
 		decrypt(name);
@@ -244,13 +231,13 @@ void CONTACTS :: deletecontact(char tmp[])
 	}
 	temp.close();
 	file.close();
-	remove("contacts_file");
-	rename("$$.cf","contacts_file");
+	remove("contacts.cf");
+	rename("$$.cf","contacts.cf");
 	gotoxy(38,8);
 	if(fail==0)
 		cout<<"Contact Deleted";
 	if(fail!=0)
-		cout<<"ERROR 2";
+		cout<<"ERROR FILE READ ERROR";
 	gotoxy(38,9);
 	cout<<"Hit Enter to continue.....";
 	char c=getch();
@@ -261,7 +248,7 @@ void CONTACTS :: deletecontact(char tmp[])
 	}
 }
 
-void CONTACTS :: display()
+void contacts :: display()
 {
 	gotoxy(51,8);cout<<"                         ";
 	gotoxy(36,9);cout<<"                         ";
@@ -297,8 +284,9 @@ void CONTACTS :: display()
 	cout<<"Address (line 2):";
 	decrypt(addline_2);
 	puts(decrypted_text);
+
 }
-void CONTACTS :: charfix(char temp[],char letter,int mode)
+void contacts :: charfix(char temp[],char letter,int mode)
 {
 	int l=strlen(temp);
 	//temp[l]='o';                //just increasing the array size by 1
@@ -318,7 +306,7 @@ void CONTACTS :: charfix(char temp[],char letter,int mode)
 	else if (mode==6)
 		strcpy(addline_2,temp);
 }
-void CONTACTS :: input(char q)    //get contacts details by input
+void contacts :: input(char q)    //get contacts details by input
 {
 	index=q;
 	char a;
@@ -398,15 +386,17 @@ void CONTACTS :: input(char q)    //get contacts details by input
 
 }
 
-void CONTACTS :: edit(char tmpp[])
+void contacts :: edit(char tmpp[])
 {
 	fstream fio;
 	ofstream fout;
-	fout.open("contacts_file",ios::out||ios::binary);
+	fout.open("contacts.cf",ios::out||ios::binary);
 	int recc=0;
-	fio.open("contacts_file",ios::out||ios::in||ios::binary);
+	fio.open("contacts.cf",ios::out||ios::in||ios::binary);
 	char name1[20];
 	strcpy(name1,tmpp);
+	int fail=1;
+	fio.seekg(0);
 
 	while(fio.read((char*)&c,sizeof(c)))   //testing if we can still read
 	{
@@ -416,32 +406,33 @@ void CONTACTS :: edit(char tmpp[])
 			fout.seekp(recc*sizeof(c),ios::beg);
 			fout.write((char*)&c,sizeof(c));
 			fout.close();
+			fail=0;
 			break;
 		}
 		gotoxy(1,1);
 		recc++;
 	}
+	if(fail==1)
+		cout<<"FILE READ ERROR        ";
 	fio.close();
-	c.menu();
+	fio.close();
+	//c.menu();
 }
 
-void CONTACTS:: view()
+void contacts::createnew()
 {
-	ifstream file;
-	file.open("contacts_file",ios::binary);
-	file.seekg(0,ios::beg);
-	while(file.read((char*)&c,sizeof(c)))
-		c.display();cout<<endl;
-	file.close();
-}
+	//clear values
+	name[0]='\0';
+	ph_no[0]='\0';
+	mob_no[0]='\0';
+	email_id[0]='\0';
+	addline_1[0]='\0';
+	addline_2[0]='\0';
 
-
-void CONTACTS::createnew()
-{
 	ifstream file;
 	ofstream temp;
 	temp.open("$$.cf",ios::binary);
-	file.open("contacts_file",ios::binary);
+	file.open("contacts.cf",ios::binary);
 	int recc=0;
 	while(file.read((char*)&c,sizeof(c)))
 	{
@@ -451,33 +442,168 @@ void CONTACTS::createnew()
 	input(recc+1);
 	temp.write((char*)&c,sizeof(c));
 	temp.close();
+	temp.close();
 	file.close();
-	remove("contacts_file");
-	rename("$$.cf","contacts_file");
+	file.close();
+	remove("contacts.cf");
+	rename("$$.cf","contacts.cf");
 	clrscr();
+	//clear values
+	name[0]='\0';
 	ph_no[0]='\0';
 	mob_no[0]='\0';
+	email_id[0]='\0';
+	addline_1[0]='\0';
+	addline_2[0]='\0';
+
 	Sort();
 	menu();
 }
 
-void CONTACTS :: search()
+int recc=0,scroll=0;
+
+void contacts::Scroll()
 {
-char tmp[20];
-cout<<"Enter Contact's Name:";
-gets(tmp);
-ifstream file;
-file.open("contacts_file",ios::binary);
-while(file.read((char*)&c,sizeof(c)))
+		clrscr();
+		gotoxy(0,6);
+		ifstream file3;
+		int m=0;
+		file3.open("contacts.cf",ios::binary);
+		cout<<"Contacts List:"<<endl;
+		cout<<"+Add New+"<<endl;
+
+		while(file3.read((char*)&c,sizeof(c)))
+		{
+			m++;
+			if(m>15)
+			{
+				decrypt(name);
+				cout<<decrypted_text<<endl;
+			}
+		}
+		file3.close();
+		//int l=0;
+		int x=20,z=15;
+		int y=8;
+		gotoxy(x,y);
+		cout<<"<--";
+		gotoxy(x,y);
+		ifstream file7;
+		file7.open("contacts.cf",ios::binary);
+		file7.seekg(15*sizeof(c),ios::beg);
+		file7.read((char*)&c,sizeof(c));
+		c.display();
+		int n=m-15;
+		loop10:
+		char a=getch();
+		if(a=='s' && y==20)
+		{
+			clrscr();
+			cout<<"MAXIMUM CONTACTS REACHED..";
+		}
+		if(a=='s' && y<n+7)
+		{
+			gotoxy(x,y);
+			cout<<"   ";
+			y++;
+			gotoxy(x,y);
+			cout<<"<--";
+			file7.read((char*)&c,sizeof(c));
+			c.display();
+			z++;
+		}
+
+		if(a=='w' && y>=8)
+		{
+			gotoxy(x,y);
+			cout<<"   ";
+			y--;
+			gotoxy(x,y);
+			cout<<"<--";
+			file7.seekg((--z)*sizeof(c),ios::beg);
+			file7.read((char*)&c,sizeof(c));
+			c.display();
+		}
+		if(a=='w' && y==7)
+		{
+			scroll=0;
+			clrscr();
+			menu();
+		}
+		if(a==13&&y!=7)
+		goto enterkey;
+
+		goto loop10;
+
+	enterkey:
+
+	gotoxy(0,24);
+	cout<<"Use A & S keys to choose option                                              ";
+	cout<<endl<<"Hit Enter to select option. Press B to go back. Press BackSpace to exit";
+	gotoxy(10,y);
+	cout<<"   ";
+	int y1=18,x1=38;
+	gotoxy(38,y1-1);
+	cout<<"Edit Contact";
+	gotoxy(55,y1-1);
+	cout<<"Delete Contact";
+	gotoxy(x1,y1);
+	cout<<"************";
+
+	loop11:
+
+	char b=getch();
+	if(b=='d')
 	{
-	decrypt(name);
-	if(strcmpi(decrypted_text,tmp)==0)
-		display();
+		x1=55;
+		gotoxy(38,y1);
+		cout<<"               ";
+		gotoxy(55,y1);
+		cout<<"               ";
+		gotoxy(x1,y1);
+		cout<<"***************";
 	}
-file.close();
+
+	if(b=='a')
+	{
+		x1=38;
+		gotoxy(38,y1);
+		cout<<"               ";
+		gotoxy(55,y1);
+		cout<<"               ";
+		gotoxy(x1,y1);
+		cout<<"************";
+	}
+	if(b==13&&x1==38)
+	{
+		//clrdsp();
+		file7.close();
+		gotoxy(38,8);
+		edit(name);
+	}
+	if(b==13&&x1==55)
+	{
+		clrdsp();
+		file7.close();
+		decrypt(name);
+		char name2[20];
+		strcpy(name2,decrypted_text);
+		deletecontact(name2);
+	}
+	if(b=='b'||b=='B')
+	{
+		clrscr();
+		Scroll();
+	}
+	if(b==8)
+		return;
+
+	goto loop11;
+
+
 }
 
-void CONTACTS :: menu()
+void contacts :: menu()
 {
 	clrscr();
 	gotoxy(0,24);
@@ -495,9 +621,9 @@ void CONTACTS :: menu()
 	cout<<endl<<endl<<endl;
 
 	ifstream file;
-	file.open("contacts_file",ios::binary);
+	file.open("contacts.cf",ios::binary);
 	cout<<endl<<endl;
-	int n=0,scroll=0;
+	int n=0;
 	cout<<"Contacts List:"<<endl;
 	cout<<"+Add New+"<<endl;
 	file.seekg(0);
@@ -512,7 +638,7 @@ void CONTACTS :: menu()
 
 	file.close();
 	ifstream file1;
-	file1.open("contacts_file",ios::binary);
+	file1.open("contacts.cf",ios::binary);
 	int y=8,x=20,recc=0;
 	gotoxy(x,y);
 	cout<<"<--";
@@ -523,6 +649,10 @@ void CONTACTS :: menu()
 	loop:
 
 	char a=getch();
+	if(scroll==1)
+		Scroll();
+	else
+	{
 	if(a!=8)
 	{	//return;
 		if(a=='w'&&y==8)
@@ -558,23 +688,10 @@ void CONTACTS :: menu()
 		c.display();
 		recc--;
 	}
-	if(a=='s'&&y==22)
+	if(a=='s'&& y==22)
 	{
-		clrscr();
-		gotoxy(0,6);
-		cout<<"Contacts List:"<<endl;
-		cout<<"+Add New+"<<endl;
-      file.seekg(0);
-		while(file.read((char*)&c,sizeof(c)))
-		{
-		cout<<"rea.";
-			n++;
-			decrypt(name);
-			cout<<decrypted_text<<endl;
-		}
-		file1.read((char*)&c,sizeof(c));
-		recc++;
-		c.display();
+		scroll=1;
+		Scroll();
 	}
 	if(a==13&&y!=7)
 		goto enterkey;
@@ -650,12 +767,10 @@ void CONTACTS :: menu()
 	goto loop2;
 
 	}
+	}
 }
 void main()
 {
 	clrscr();
-	//c.file_edit();
 	c.menu();
-	//clrscr();
-	//c.Sort();
 }
